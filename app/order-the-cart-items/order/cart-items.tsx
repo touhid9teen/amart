@@ -3,26 +3,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ShoppingCart, Shield, Clock, Truck } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+
+interface CartItem {
+  id: number;
+  name: string;
+  sellingPice: number;
+  quantity: number;
+  image?: string;
+}
 
 export default function CartItems() {
   const { cartItems, totalAmount } = useCart();
-  const router = useRouter();
-  const items = Object.values(cartItems);
-
+  const items = Object.values(cartItems) as CartItem[];
   const deliveryCharge = 40;
   const grandTotal = totalAmount + deliveryCharge;
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
-
-  const handleConfirm = () => {
-    // Navigate to order confirmation with order details
-    const orderId = Math.floor(Math.random() * 900000) + 100000; // Generate random order ID
-    router.push(`/order-confirmation?orderId=${orderId}`);
-  };
 
   return (
     <div className="space-y-6">
@@ -147,14 +145,6 @@ export default function CartItems() {
                 </div>
               </div>
             </div>
-
-            {/* Confirm Button */}
-            <Button
-              onClick={handleConfirm}
-              className="w-full bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 text-sm h-12 shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              Complete Order →
-            </Button>
 
             {/* Security Badge */}
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">

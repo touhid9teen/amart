@@ -2,24 +2,15 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   MapPin,
-  Phone,
-  Mail,
   CreditCard,
-  Truck,
   Navigation,
   Loader2,
   CheckCircle,
@@ -32,6 +23,22 @@ interface LocationState {
   coordinates: { lat: number; lng: number } | null;
   address: string;
 }
+
+interface CheckoutComponentProps {
+  onOrderSubmit: (formData: typeof initialFormData) => void;
+}
+
+const initialFormData = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  city: "",
+  area: "",
+  address: "",
+  postalCode: "",
+  orderNotes: "",
+};
 
 // Area mapping for Bangladesh cities
 const areaMapping: { [key: string]: string[] } = {
@@ -58,25 +65,11 @@ const areaMapping: { [key: string]: string[] } = {
   sylhet: ["Zindabazar, Sylhet", "Ambarkhana, Sylhet", "Subhanighat, Sylhet"],
 };
 
-export default function CheckoutComponent() {
-  const [paymentMethod, setPaymentMethod] = useState("cod");
-  const [deliveryMethod, setDeliveryMethod] = useState("standard");
-  const [availableAreas, setAvailableAreas] = useState<string[]>(
-    areaMapping.dhaka
-  );
-
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-    city: "",
-    area: "",
-    address: "",
-    postalCode: "",
-    orderNotes: "",
-  });
-
+export default function CheckoutComponent({
+  onOrderSubmit,
+}: CheckoutComponentProps) {
+  const [paymentMethod, setPaymentMethod] = useState<string>("cod");
+  const [formData, setFormData] = useState(initialFormData);
   const [location, setLocation] = useState<LocationState>({
     loading: false,
     error: null,
@@ -85,23 +78,7 @@ export default function CheckoutComponent() {
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Update available areas when city changes
-    if (field === "city") {
-      const cityKey = value.toLowerCase();
-      setAvailableAreas(areaMapping[cityKey] || areaMapping.dhaka);
-      // Reset area if city changes
-      setFormData((current) => {
-        if (current.city !== value) {
-          return { ...current, area: "" };
-        }
-        return current;
-      });
-    }
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const detectLocation = async () => {
@@ -161,7 +138,7 @@ export default function CheckoutComponent() {
       // Extract road/street information from informative data
       if (informative.length > 0) {
         const roadInfo = informative.find(
-          (info) =>
+          (info: { description?: string; name?: string }) =>
             info.description?.toLowerCase().includes("road") ||
             info.description?.toLowerCase().includes("street")
         );
@@ -185,21 +162,16 @@ export default function CheckoutComponent() {
           formattedAddress || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
       });
 
-      // Set available areas based on detected city
-      const cityKey = city.toLowerCase();
-      const areas = areaMapping[cityKey] || areaMapping.dhaka;
-      setAvailableAreas(areas);
-
       // Find best matching area
       let bestArea = "";
       if (detectedArea) {
         bestArea =
-          areas.find((area) =>
+          areas.find((area: string) =>
             area.toLowerCase().includes(detectedArea.toLowerCase())
           ) || "";
         if (!bestArea) {
           bestArea =
-            areas.find((area) =>
+            areas.find((area: string) =>
               detectedArea
                 .toLowerCase()
                 .includes(area.split(",")[0].toLowerCase())
@@ -376,6 +348,14 @@ export default function CheckoutComponent() {
           </RadioGroup>
         </CardContent>
       </Card>
+
+      {/* Submit Button */}
+      <Button
+        className="w-full bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 text-sm h-12 shadow-lg hover:shadow-xl transition-all duration-200"
+        onClick={() => onOrderSubmit(formData)}
+      >
+        Complete Order →
+      </Button>
     </div>
   );
 }

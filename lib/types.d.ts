@@ -45,3 +45,25 @@ type Category = {
   slug?: string;
   name?: string;
 };
+
+type CartItem = {
+  id: number;
+  name: string;
+  sellingPice: number;
+  quantity: number;
+  image?: string;
+}
+
+type OrderPayload = {
+  user: string;
+  address: string;
+  total_amount: number;
+  delivery_charge: number;
+  items: {
+    product_name: string;
+    product_id: string | number;
+    quantity: number;
+    price: number;
+    image: string;
+  }[];
+};
