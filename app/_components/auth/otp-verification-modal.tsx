@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import {
@@ -9,7 +9,6 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { countryCodes } from "@/lib/variables";
 
 export function OtpVerificationModal() {
   const { authState, phoneNumber, verifyOtp, hideModals, isLoading, login } =
@@ -18,7 +17,6 @@ export function OtpVerificationModal() {
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
-  // Reset state when modal opens
   useEffect(() => {
     if (authState === "verifying") {
       setOtp("");
@@ -27,9 +25,9 @@ export function OtpVerificationModal() {
     }
   }, [authState]);
 
-  // Set up countdown timer
   useEffect(() => {
     if (authState !== "verifying") return;
+    if (canResend) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -43,7 +41,7 @@ export function OtpVerificationModal() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [authState]);
+  }, [authState, canResend]);
 
   const handleVerify = async () => {
     if (otp.length === 6) {
@@ -53,27 +51,25 @@ export function OtpVerificationModal() {
 
   const handleResendOTP = async () => {
     if (canResend) {
-      await login(phoneNumber, countryCodes[0]);
+      await login(phoneNumber);
       setCountdown(60);
       setCanResend(false);
       setOtp("");
     }
   };
 
-  const goBack = () => {
-    hideModals();
-  };
-
   return (
     <Dialog open={authState === "verifying"} onOpenChange={hideModals}>
       <DialogContent className="w-[90vw] max-w-sm border-0 p-0">
+        <DialogTitle className="sr-only">OTP Verification</DialogTitle>
         <div className="bg-white rounded-xl p-4 sm:p-6 relative">
           {/* Back Arrow */}
           <button
-            onClick={goBack}
-            className="absolute top-3 left-3 sm:top-4 sm:left-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
+            onClick={hideModals}
+            className="absolute top-4 left-4 p-1 rounded-full text-gray-500 hover:text-gray-700 transition-colors"
+            aria-label="Close"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-600" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
 
           {/* Title */}

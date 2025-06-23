@@ -3,10 +3,9 @@
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/auth-context";
 import Logo from "../header/logo";
-import { countryCodes } from "@/lib/variables";
 
 type LoginState = "initial" | "success";
 
@@ -17,9 +16,8 @@ export function LoginModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ""); // Remove non-digits
-    console.log("Input value:", value);
 
-    if (value.length === 11) {
+    if (value.length >= 10) {
       setLoginState("success");
     } else {
       setLoginState("initial");
@@ -33,10 +31,10 @@ export function LoginModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (loginState !== "success" || phoneNumber.length !== 11) return;
+    if (loginState !== "success" || phoneNumber.length < 10) return;
 
     try {
-      await login(phoneNumber, countryCodes[0]);
+      await login(phoneNumber);
       setPhoneNumber(""); // Clear only after successful login
     } catch (error) {
       console.error("Login failed:", error);
@@ -50,6 +48,7 @@ export function LoginModal() {
         className="w-full max-w-[90vw] sm:max-w-sm border-0 p-0 rounded-xl"
         style={{ padding: 0 }}
       >
+        <DialogTitle className="sr-only">Login or Sign Up</DialogTitle>
         <div className="bg-white rounded-xl w-full px-4 py-6 sm:px-6 sm:py-8">
           {/* Logo */}
           <div className="flex justify-center mb-4">

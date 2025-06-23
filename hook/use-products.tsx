@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Product } from "@/lib/types";
 import GlobalApi from "@/app/_utils/GlobalApi";
 
 const fetchProductsFromAPI = async (): Promise<Product[]> => {

@@ -1,23 +1,13 @@
 "use client";
 
 import GlobalApi from "@/app/_utils/GlobalApi";
+import { countryCodes } from "@/lib/variables";
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
+import { jwtDecode as jwt_decode } from "jwt-decode";
 
 type AuthState = "unauthenticated" | "login" | "verifying" | "authenticated";
-type CountryCode = {
-  code: string;
-  name: string;
-  country: string;
-};
-type Category = {
-  id: number;
-  name: string;
-  slug: string;
-  image: string;
-  image_alt: string;
-};
 
 interface AuthContextType {
   authState: AuthState;
@@ -42,7 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [country_code, setCountryCode] = useState("+880");
   const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -62,8 +51,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const fetchCategories = async () => {
       try {
         const res = await GlobalApi.getCategoryList();
-        setCategoryList(res);
+        if (Array.isArray(res)) {
+          setCategoryList(res);
+        } else {
+          setCategoryList([]);
+        }
       } catch (error) {
+        setCategoryList([]);
         console.error("Failed to fetch categories:", error);
       }
     };
@@ -86,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (phone: string, country_code: CountryCode) => {
+  const login = async (phone: string) => {
     setIsLoading(true);
     try {
       const response = await fetch(`${baseUrl}/auth/phone-login/`, {
@@ -95,22 +89,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          country_code: country_code.code,
+          country_code: countryCodes[0].code as string,
           phone_number: phone,
         }),
       });
 
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.message || "Failed to send OTP");
       }
 
       setPhoneNumber(phone);
-      setCountryCode(country_code.code);
-      console.log(authState);
       setAuthState("verifying");
-      console.log(authState);
 
       toast("OTP Sent", {
         description: "Please check your phone for the verification code",
@@ -126,6 +116,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getRefreshToken = () => {
+    return localStorage.getItem("refreshToken");
+  };
+
+  const setTokens = (access: string, refresh: string) => {
+    localStorage.setItem("authToken", access);
+    setAuthToken(access);
+    if (refresh) {
+      localStorage.setItem("refreshToken", refresh);
+    }
+  };
+
+  const isTokenExpired = (token: string | null) => {
+    if (!token) return true;
+    try {
+      const decoded = jwt_decode<{ exp?: number }>(token);
+      if (!decoded.exp) return true;
+      return decoded.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  };
+
+  const refreshAuthToken = async () => {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+      logout();
+      return null;
+    }
+    try {
+      const response = await fetch(`${baseUrl}/auth/refresh-token/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.access) {
+        logout();
+        return null;
+      }
+      setTokens(data.access, data.refresh || refreshToken);
+      return data.access;
+    } catch (error) {
+      logout();
+      return null;
+    }
+  };
+
+  // On mount, check if token is expired and refresh if needed
+  useEffect(() => {
+    const checkAndRefresh = async () => {
+      const token = localStorage.getItem("authToken");
+      const refreshToken = getRefreshToken();
+      if (token && isTokenExpired(token) && refreshToken) {
+        await refreshAuthToken();
+      }
+    };
+    checkAndRefresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const verifyOtp = async (otp: string) => {
     setIsLoading(true);
     try {
@@ -135,7 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          country_code: country_code,
+          country_code: countryCodes[0].code as string,
           phone_number: phoneNumber,
           phoneNumber,
           otp: otp,
@@ -144,16 +195,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json();
 
-      console.log("------------------", data);
-
       if (!response.ok) {
         throw new Error(data.message || "Failed to verify OTP");
       }
 
-      // Store auth token
+      // Store auth token and refresh token
       if (data.access_token) {
-        localStorage.setItem("authToken", data.access_token);
-        setAuthToken(data.access_token);
+        setTokens(data.access_token, data.refresh_token);
+        // Set cookie for server-side auth (middleware)
+        document.cookie = `authToken=${data.access_token}; path=/;`;
       }
       if (data.user_id) {
         localStorage.setItem("authId", data.user_id);
@@ -176,39 +226,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // const resendOtp = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch("/api/auth/send-otp", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ phoneNumber }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message || "Failed to resend OTP");
-  //     }
-
-  //     toast("OTP Resent", {
-  //       description: "Please check your phone for the new verification code",
-  //     });
-  //   } catch (error) {
-  //     console.error("Error resending OTP:", error);
-  //     toast.error("Error", {
-  //       description:
-  //         error instanceof Error ? error.message : "Failed to resend OTP",
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const logout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("authId");
     setAuthState("unauthenticated");
     setPhoneNumber("");

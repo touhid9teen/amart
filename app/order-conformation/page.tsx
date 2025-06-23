@@ -1,36 +1,87 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Package, Clock } from "lucide-react";
+import { CheckCircle, Package, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { useAuth } from "@/contexts/auth-context";
+import axios from "axios";
 
 export default function OrderConfirmationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId") || "#452671";
+  const orderId = searchParams.get("id") || "";
+  const [orderData, setOrderData] = useState<unknown>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const { authToken } = useAuth();
 
-  const [orderData, setOrderData] = useState({
-    orderId: orderId,
-    orderDate: "21-06-2025, 15:49",
-    status: "confirmed",
-    estimatedDelivery: "16 minutes",
-    totalAmount: 1100.0,
-    paymentMethod: "COD",
-    items: [
-      {
-        id: 1,
-        name: "RFL Polypropylene Royal Rok Chair - Black",
-        code: "EX82481",
-        price: 1100.0,
-        quantity: 1,
-        image: "/placeholder.svg?height=80&width=80",
-      },
-    ],
-  });
+  useEffect(() => {
+    if (!orderId) return;
+    const fetchOrder = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+        const headers: Record<string, string> = {};
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+        const res = await axios.get(`${baseUrl}/detail/orders/${orderId}/`, {
+          headers,
+        });
+        setOrderData(res.data);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to load order");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrder();
+  }, [orderId, authToken]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+        <div className="text-lg font-semibold text-gray-700">
+          Loading order details...
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !orderData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="text-lg font-semibold text-red-600 mb-2">
+          {error || "Order not found."}
+        </div>
+        <Button onClick={() => router.push("/")}>Go Home</Button>
+      </div>
+    );
+  }
+
+  // Type assertion for orderData
+  const order = orderData as {
+    id?: string | number;
+    created_at?: string;
+    status?: string;
+    address?: string;
+    payment_method?: string;
+    total_amount?: number;
+    items?: Array<{
+      product_id?: string | number;
+      product_name?: string;
+      name?: string;
+      id?: string | number;
+      image?: string;
+      quantity?: number;
+      price?: number;
+    }>;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-gray-50">
@@ -73,17 +124,19 @@ export default function OrderConfirmationPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-xl">
-                  Order {orderData.orderId}
+                  Order {order.id || orderId}
                 </CardTitle>
                 <p className="text-sm text-gray-600 mt-1">
-                  {orderData.orderDate}
+                  {order.created_at
+                    ? new Date(order.created_at).toLocaleString()
+                    : ""}
                 </p>
               </div>
               <Badge
                 variant="secondary"
                 className="bg-green-100 text-green-800"
               >
-                {orderData.status.toUpperCase()}
+                {order.status ? order.status.toUpperCase() : "CONFIRMED"}
               </Badge>
             </div>
           </CardHeader>
@@ -96,11 +149,9 @@ export default function OrderConfirmationPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">
-                    Estimated Delivery
+                    Delivery Address
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {orderData.estimatedDelivery}
-                  </p>
+                  <p className="text-sm text-gray-600">{order.address}</p>
                 </div>
               </div>
 
@@ -114,7 +165,7 @@ export default function OrderConfirmationPage() {
                     Payment Method
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {orderData.paymentMethod}
+                    {order.payment_method || "COD"}
                   </p>
                 </div>
               </div>
@@ -127,7 +178,10 @@ export default function OrderConfirmationPage() {
                 <div>
                   <h3 className="font-semibold text-gray-900">Total Amount</h3>
                   <p className="text-sm text-gray-600">
-                    ৳{orderData.totalAmount.toFixed(2)}
+                    ৳
+                    {order.total_amount
+                      ? Number(order.total_amount).toFixed(2)
+                      : "0.00"}
                   </p>
                 </div>
               </div>
@@ -142,30 +196,43 @@ export default function OrderConfirmationPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {orderData.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
-                >
-                  <img
-                    src={item.image || "/placeholder.svg"}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded-md border"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">{item.name}</h4>
-                    <p className="text-sm text-gray-500">Code: {item.code}</p>
-                    <p className="text-sm text-gray-600">
-                      Quantity: {item.quantity}
-                    </p>
+              {order.items && order.items.length > 0 ? (
+                order.items.map((item, idx) => (
+                  <div
+                    key={item.product_id || item.id || idx}
+                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                  >
+                    <Image
+                      src={item.image || "/placeholder.svg"}
+                      alt={item.product_name || item.name || "Product"}
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 object-cover rounded-md border"
+                      unoptimized
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900">
+                        {item.product_name || item.name}
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        ID: {item.product_id || item.id}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Quantity: {item.quantity}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">
+                        ৳{item.price?.toFixed(2) || "0.00"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">
-                      ৳{item.price.toFixed(2)}
-                    </p>
-                  </div>
+                ))
+              ) : (
+                <div className="text-gray-500">
+                  No items found in this order.
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>

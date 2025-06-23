@@ -17,18 +17,41 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-interface LocationState {
-  loading: boolean;
-  error: string | null;
-  coordinates: { lat: number; lng: number } | null;
+// Add a default list of areas for autofill logic
+const areas = [
+  "Dhanmondi",
+  "Gulshan",
+  "Banani",
+  "Uttara",
+  "Mirpur",
+  "Mohammadpur",
+  "Bashundhara",
+  "Baridhara",
+  "Motijheel",
+  "Farmgate",
+  // Add more as needed
+];
+
+// Define the type for the checkout form data
+export interface CheckoutFormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  city: string;
+  area: string;
   address: string;
+  postalCode: string;
+  orderNotes: string;
 }
 
+// Define the props type for CheckoutComponent
 interface CheckoutComponentProps {
-  onOrderSubmit: (formData: typeof initialFormData) => void;
+  onOrderSubmit: (formData: CheckoutFormData) => void;
+  loading?: boolean;
 }
 
-const initialFormData = {
+const initialFormData: CheckoutFormData = {
   firstName: "",
   lastName: "",
   phone: "",
@@ -40,33 +63,9 @@ const initialFormData = {
   orderNotes: "",
 };
 
-// Area mapping for Bangladesh cities
-const areaMapping: { [key: string]: string[] } = {
-  dhaka: [
-    "Badda, Dhaka",
-    "Gulshan, Dhaka",
-    "Dhanmondi, Dhaka",
-    "Uttara, Dhaka",
-    "Mirpur, Dhaka",
-    "Mohakhali, Dhaka",
-    "Banani, Dhaka",
-    "Wari, Dhaka",
-    "Ramna, Dhaka",
-    "Tejgaon, Dhaka",
-    "Pallabi, Dhaka",
-    "Savar, Dhaka",
-  ],
-  chittagong: [
-    "Agrabad, Chittagong",
-    "Panchlaish, Chittagong",
-    "Khulshi, Chittagong",
-    "Halishahar, Chittagong",
-  ],
-  sylhet: ["Zindabazar, Sylhet", "Ambarkhana, Sylhet", "Subhanighat, Sylhet"],
-};
-
 export default function CheckoutComponent({
   onOrderSubmit,
+  loading,
 }: CheckoutComponentProps) {
   const [paymentMethod, setPaymentMethod] = useState<string>("cod");
   const [formData, setFormData] = useState(initialFormData);
@@ -113,7 +112,6 @@ export default function CheckoutComponent({
       }
 
       const data = await response.json();
-      console.log("Location data:", data); // For debugging
 
       // Extract comprehensive address information
       const city = data.city || data.locality || "Dhaka";
@@ -353,8 +351,10 @@ export default function CheckoutComponent({
       <Button
         className="w-full bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 text-sm h-12 shadow-lg hover:shadow-xl transition-all duration-200"
         onClick={() => onOrderSubmit(formData)}
+        disabled={loading}
       >
-        Complete Order →
+        {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+        {loading ? "Placing Order..." : "Complete Order →"}
       </Button>
     </div>
   );

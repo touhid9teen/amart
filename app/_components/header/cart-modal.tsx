@@ -42,6 +42,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
       {/* Modal */}
       <div className="fixed right-0 top-0 h-full w-full max-w-sm bg-white z-50 flex flex-col shadow-lg">
+        <h2 className="sr-only">My Cart</h2>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-extrabold text-gray-900">My Cart</h2>
@@ -83,7 +84,11 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
               ) : (
                 Object.values(cartItems).map((item: AnyType, indx) => {
                   return (
-                    <ProductItem key={indx} product={item} isFeatured={false} />
+                    <ProductItem
+                      key={indx}
+                      product={item as Product}
+                      isFeatured={false}
+                    />
                   );
                 })
               )}
@@ -129,11 +134,11 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
         {/* Bottom Button */}
         <div className="fixed bottom-0 right-0 max-w-sm w-full mx-auto bg-white p-4 border-t border-gray-200 z-50">
-          <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold text-base shadow">
-            <div
-              className="flex items-center justify-between w-full"
-              onClick={handleProceed}
-            >
+          <Button
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold text-base shadow"
+            onClick={handleProceed}
+          >
+            <div className="flex items-center justify-between w-full">
               <span>৳{grandTotal}</span>
               <span>
                 {authState !== "authenticated"

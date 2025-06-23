@@ -30,11 +30,7 @@ export default function LoginLogout() {
               <User className="h-4 w-4 text-primary" />
             </div>
 
-            <div className="hidden sm:flex flex-col items-start">
-              <span className="text-sm font-medium text-gray-900 max-w-[100px] truncate">
-                {phoneNumber}
-              </span>
-            </div>
+            
 
             <ChevronDown className="h-3 w-3 opacity-60 hidden sm:block" />
           </button>

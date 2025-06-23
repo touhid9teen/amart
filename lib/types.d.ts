@@ -52,7 +52,7 @@ type CartItem = {
   sellingPice: number;
   quantity: number;
   image?: string;
-}
+};
 
 type OrderPayload = {
   user: string;
@@ -66,4 +66,23 @@ type OrderPayload = {
     price: number;
     image: string;
   }[];
+};
+
+type LocationState = {
+  loading: boolean;
+  error: string | null;
+  coordinates: { lat: number; lng: number } | null;
+  address: string;
+};
+
+type CheckoutComponentProps = {
+  onOrderSubmit: (formData: typeof initialFormData) => void;
+};
+
+type Category = {
+  id: number;
+  name: string;
+  slug: string;
+  image: string;
+  image_alt: string;
 };
