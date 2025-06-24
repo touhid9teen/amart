@@ -15,7 +15,7 @@ import axios from "axios";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, totalAmount } = useCart();
+  const { cartItems, totalAmount, updateCart } = useCart();
   const { authToken } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -50,7 +50,16 @@ export default function CheckoutPage() {
       });
       const data = res.data;
       console.log("Order created successfully:", data);
-      router.replace(`/order-conformation?page=success&id=${data.order_id}`);
+      // Clear cart after successful order using updateCart to sync context and localStorage
+      updateCart({});
+      // Use startTransition for non-blocking navigation
+      import("react").then(({ startTransition }) => {
+        startTransition(() => {
+          router.replace(
+            `/order-conformation?page=success&id=${data.order_id}`
+          );
+        });
+      });
     } catch (err) {
       toast.error("Order failed. Please try again or check your login.");
       console.error(err);

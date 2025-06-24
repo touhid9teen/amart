@@ -38,13 +38,11 @@ export default function CartButton() {
           </span>
 
           {/* Bottom line: total or empty with opacity-0 for consistent spacing */}
-          <span
-            className={`text-sm font-semibold leading-tight text-left ${
-              cartCount === 0 ? "opacity-0" : ""
-            }`}
-          >
-            ৳{totalAmount.toLocaleString()}
-          </span>
+          {cartCount !== 0 && (
+            <span className="text-sm font-semibold leading-tight text-left">
+              ৳{totalAmount.toLocaleString()}
+            </span>
+          )}
         </div>
       </button>
 

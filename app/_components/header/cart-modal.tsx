@@ -27,8 +27,13 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     if (authState !== "authenticated") {
       showLoginModal();
     } else {
+      // Use startTransition for non-blocking navigation
+      import("react").then(({ startTransition }) => {
+        startTransition(() => {
+          router.push("/order-the-cart-items");
+        });
+      });
       onClose();
-      router.push("/order-the-cart-items");
     }
   };
 

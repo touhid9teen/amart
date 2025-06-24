@@ -2,7 +2,6 @@
 
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
-import { AnyType, AuthToken } from "@/lib/types";
 import axios from "axios";
 import {
   createContext,

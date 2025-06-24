@@ -234,6 +234,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setPhoneNumber("");
     setAuthToken(null);
     setAuthId(null);
+    // Remove cookies by setting them to expired
+    document.cookie =
+      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   };
 
   return (
