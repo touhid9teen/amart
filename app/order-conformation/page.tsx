@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,40 +8,33 @@ import { CheckCircle, Package, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/contexts/auth-context";
-import axios from "axios";
+import { useQuery } from "@/lib/queries";
+import { getOrderById } from "@/lib/actions";
 
 export default function OrderConfirmationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id") || "";
-  const [orderData, setOrderData] = useState<unknown>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const { authToken } = useAuth();
 
-  useEffect(() => {
-    if (!orderId) return;
-    const fetchOrder = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
-        const headers: Record<string, string> = {};
-        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
-        const res = await axios.get(`${baseUrl}/detail/orders/${orderId}/`, {
-          headers,
-        });
-        setOrderData(res.data);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Failed to load order");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrder();
-  }, [orderId, authToken]);
+  // Use TanStack Query for order details
+  const {
+    data: orderData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["order", orderId],
+    queryFn: async () => {
+      if (!orderId || !authToken)
+        throw new Error("Missing orderId or authToken");
+      return await getOrderById(orderId, authToken);
+    },
+    enabled: !!orderId && !!authToken,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1,
+  });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
@@ -57,7 +49,7 @@ export default function OrderConfirmationPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="text-lg font-semibold text-red-600 mb-2">
-          {error || "Order not found."}
+          {error instanceof Error ? error.message : "Order not found."}
         </div>
         <Button onClick={() => router.push("/")}>Go Home</Button>
       </div>
@@ -85,9 +77,6 @@ export default function OrderConfirmationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-gray-50">
-    
-     
-
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Success Message */}
         <div className="text-center mb-8">

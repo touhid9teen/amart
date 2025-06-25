@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/auth-context";
 import { AuthModalsProvider } from "@/providers/auth-modal-provider";
 import { CartProvider } from "@/contexts/cart-context";
+import ReactQueryProvider from "@/providers/react-query-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,15 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <AuthProvider>
-          <CartProvider>
-            <Toaster />
-            <AuthModalsProvider />
-            <Header />
-            {children}
-            <Footer />
-          </CartProvider>
-        </AuthProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <CartProvider>
+              <Toaster />
+              <AuthModalsProvider />
+              <Header />
+              {children}
+              <Footer />
+            </CartProvider>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -3,7 +3,7 @@
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
 import axios from "axios";
-import { setCookie, deleteCookie, cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 // 1. Get all cart items
 export async function getCartItems(jwt: string) {
@@ -99,16 +99,14 @@ export async function verifyOtpServer(
     });
     // Set cookies for access and refresh tokens
     if (response.data.access_token) {
-      await setCookie("authToken", response.data.access_token, { path: "/" });
+      await setCookie("authToken", response.data.access_token);
       if (response.data.refresh_token) {
-        await setCookie("refreshToken", response.data.refresh_token, {
-          path: "/",
-        });
+        await setCookie("refreshToken", response.data.refresh_token);
       }
     }
     // Set user id in cookie if present
     if (response.data.user_id) {
-      await setCookie("authId", response.data.user_id, { path: "/" });
+      await setCookie("authId", response.data.user_id);
     }
     return handleSuccess(response);
   } catch (error) {
@@ -125,9 +123,9 @@ export async function refreshAuthTokenServer() {
     const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth/refresh-token/`;
     const response = await axios.post(endpoint, { refresh: refreshToken });
     if (response.data.access) {
-      await setCookie("authToken", response.data.access, { path: "/" });
+      await setCookie("authToken", response.data.access);
       if (response.data.refresh) {
-        await setCookie("refreshToken", response.data.refresh, { path: "/" });
+        await setCookie("refreshToken", response.data.refresh);
       }
     }
     return handleSuccess(response);
@@ -136,13 +134,57 @@ export async function refreshAuthTokenServer() {
   }
 }
 
+// Cookie management functions
+export async function setCookie(key: string, value: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(key, value, {
+    httpOnly: false, // allow client-side JS to read
+    secure: true,
+    sameSite: "strict",
+  });
+}
+
 // 4. Logout
 export async function logoutUserServer() {
   try {
-    await deleteCookie("authToken", { path: "/" });
-    await deleteCookie("refreshToken", { path: "/" });
-    await deleteCookie("authId", { path: "/" });
+    const cookieStore = await cookies();
+    cookieStore.set("authToken", "");
+    cookieStore.set("refreshToken", "");
+    cookieStore.set("authId", "");
     return { success: true };
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+// Get order by ID
+export async function getOrderById(orderId: string, authToken: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+  const headers: Record<string, string> = {};
+  if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+  const res = await axios.get(`${baseUrl}/detail/orders/${orderId}/`, {
+    headers,
+  });
+  return res.data;
+}
+
+// Get all products (server action)
+export async function getProductsServer() {
+  try {
+    const endpoint = await getEndpoint("getProducts");
+    const response = await axios.get(endpoint);
+    return response.data;
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+// Get all categories (server action)
+export async function getCategoryListServer() {
+  try {
+    const endpoint = await getEndpoint("getCategoryList");
+    const response = await axios.get(endpoint);
+    return response.data;
   } catch (error) {
     return handleError(error);
   }

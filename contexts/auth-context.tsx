@@ -6,8 +6,21 @@ import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { jwtDecode as jwt_decode } from "jwt-decode";
+import { useRehydrateAuth } from "./useRehydrateAuth";
+import {
+  loginWithPhone,
+  verifyOtpServer,
+  refreshAuthTokenServer,
+  setCookie,
+  logoutUserServer,
+} from "@/lib/actions";
+import type { Category } from "@/lib/types";
 
-type AuthState = "unauthenticated" | "login" | "verifying" | "authenticated";
+export type AuthState =
+  | "unauthenticated"
+  | "login"
+  | "verifying"
+  | "authenticated";
 
 interface AuthContextType {
   authState: AuthState;
@@ -32,10 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [categoryList, setCategoryList] = useState([]);
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -46,14 +57,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setCategoryList([]);
         }
-      } catch (error) {
+      } catch {
         setCategoryList([]);
-        console.error("Failed to fetch categories:", error);
+        // console.error("Failed to fetch categories:", error);
       }
     };
 
     fetchCategories();
   }, []);
+
+  // Rehydrate auth state from cookies on mount
+  useRehydrateAuth(setAuthState, setAuthToken, setAuthId);
 
   const showLoginModal = () => {
     setAuthState("login");
@@ -73,48 +87,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (phone: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${baseUrl}/auth/phone-login/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          country_code: countryCodes[0].code as string,
-          phone_number: phone,
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to send OTP");
+      const result = await loginWithPhone(
+        phone,
+        countryCodes[0].code as string
+      );
+      if (!result.success) {
+        throw new Error(result.message || "Failed to send OTP");
       }
-
       setPhoneNumber(phone);
       setAuthState("verifying");
-
       toast("OTP Sent", {
         description: "Please check your phone for the verification code",
       });
-    } catch (error) {
-      console.error("Error sending OTP:", error);
+    } catch {
       toast.error("Error", {
-        description:
-          error instanceof Error ? error.message : "Failed to send OTP",
+        description: "Failed to send OTP",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getRefreshToken = () => {
-    return localStorage.getItem("refreshToken");
-  };
-
-  const setTokens = (access: string, refresh: string) => {
-    localStorage.setItem("authToken", access);
-    setAuthToken(access);
-    if (refresh) {
-      localStorage.setItem("refreshToken", refresh);
+  const setTokens = async (access: string, refresh: string) => {
+    try {
+      await setCookie("authToken", access);
+      setAuthToken(access);
+      if (refresh) {
+        await setCookie("refreshToken", refresh);
+      }
+    } catch {
+      // Optionally handle error
     }
   };
 
@@ -130,25 +132,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const refreshAuthToken = async () => {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) {
-      logout();
-      return null;
-    }
     try {
-      const response = await fetch(`${baseUrl}/auth/refresh-token/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh: refreshToken }),
-      });
-      const data = await response.json();
-      if (!response.ok || !data.access) {
+      const result = await refreshAuthTokenServer();
+      if (!result.success || !result.data?.access) {
         logout();
         return null;
       }
-      setTokens(data.access, data.refresh || refreshToken);
-      return data.access;
-    } catch (error) {
+      setTokens(result.data.access, result.data.refresh || "");
+      return result.data.access;
+    } catch {
       logout();
       return null;
     }
@@ -157,80 +149,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // On mount, check if token is expired and refresh if needed
   useEffect(() => {
     const checkAndRefresh = async () => {
-      const token = localStorage.getItem("authToken");
-      const refreshToken = getRefreshToken();
-      if (token && isTokenExpired(token) && refreshToken) {
+      const token = authToken;
+      // Use rehydrated authToken, not localStorage or cookies
+      if (token && isTokenExpired(token)) {
         await refreshAuthToken();
       }
     };
     checkAndRefresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authToken]);
 
   const verifyOtp = async (otp: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${baseUrl}/auth/verify-otp/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          country_code: countryCodes[0].code as string,
-          phone_number: phoneNumber,
-          phoneNumber,
-          otp: otp,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to verify OTP");
+      const result = await verifyOtpServer(
+        phoneNumber,
+        countryCodes[0].code as string,
+        otp
+      );
+      if (!result.success) {
+        throw new Error(result.message || "Failed to verify OTP");
       }
-
-      // Store auth token and refresh token
-      if (data.access_token) {
-        setTokens(data.access_token, data.refresh_token);
-        // Set cookie for server-side auth (middleware)
-        document.cookie = `authToken=${data.access_token}; path=/;`;
-      }
-      if (data.user_id) {
-        localStorage.setItem("authId", data.user_id);
-        setAuthId(data.user_id);
-      }
-
       setAuthState("authenticated");
-
       toast("Success", {
         description: "Phone number verified successfully",
       });
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
+    } catch {
       toast.error("Error", {
-        description:
-          error instanceof Error ? error.message : "Failed to verify OTP",
+        description: "Failed to verify OTP",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("authId");
+  const logout = async () => {
     setAuthState("unauthenticated");
     setPhoneNumber("");
     setAuthToken(null);
     setAuthId(null);
-    // Remove cookies by setting them to expired
-    document.cookie =
-      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie =
-      "csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie =
-      "sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    try {
+      await logoutUserServer();
+    } catch {
+      // Optionally handle error
+    }
   };
 
   return (
@@ -249,8 +211,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         isLoading,
         categoryList,
-        // numberOfCartItems,
-        // handleCartItemCountChange,
       }}
     >
       {children}
