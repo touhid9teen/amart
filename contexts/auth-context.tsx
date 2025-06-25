@@ -38,16 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const id = localStorage.getItem("authId");
-    if (token) {
-      setAuthState("authenticated");
-      setAuthToken(token);
-      setAuthId(id);
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await GlobalApi.getCategoryList();

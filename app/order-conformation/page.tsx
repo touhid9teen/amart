@@ -85,18 +85,8 @@ export default function OrderConfirmationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="text-sm text-gray-500 mb-2">
-            <Link href="/" className="hover:text-gray-700">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <span>Your order has been received</span>
-          </nav>
-        </div>
-      </div>
+    
+     
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Success Message */}

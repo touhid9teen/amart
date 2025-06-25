@@ -106,6 +106,10 @@ export async function verifyOtpServer(
         });
       }
     }
+    // Set user id in cookie if present
+    if (response.data.user_id) {
+      await setCookie("authId", response.data.user_id, { path: "/" });
+    }
     return handleSuccess(response);
   } catch (error) {
     return handleError(error);
@@ -137,6 +141,7 @@ export async function logoutUserServer() {
   try {
     await deleteCookie("authToken", { path: "/" });
     await deleteCookie("refreshToken", { path: "/" });
+    await deleteCookie("authId", { path: "/" });
     return { success: true };
   } catch (error) {
     return handleError(error);

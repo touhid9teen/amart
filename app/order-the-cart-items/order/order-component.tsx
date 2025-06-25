@@ -52,14 +52,8 @@ export default function CheckoutPage() {
       console.log("Order created successfully:", data);
       // Clear cart after successful order using updateCart to sync context and localStorage
       updateCart({});
-      // Use startTransition for non-blocking navigation
-      import("react").then(({ startTransition }) => {
-        startTransition(() => {
-          router.replace(
-            `/order-conformation?page=success&id=${data.order_id}`
-          );
-        });
-      });
+      // Use router.replace directly for instant navigation
+      router.replace(`/order-conformation?page=success&id=${data.order_id}`);
     } catch (err) {
       toast.error("Order failed. Please try again or check your login.");
       console.error(err);
