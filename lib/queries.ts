@@ -1,8 +1,7 @@
 "use client";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRequest } from "./requests";
 import type { AnyType, EndpointType } from "./types";
+import { getRequest } from "./requests";
 
 export { useMutation, useQuery, useQueryClient };
 
@@ -23,11 +22,3 @@ export const GetQuery = (
     ...(initialData ? { initialData } : {}),
   });
 };
-
-export function useProductsQuery() {
-  return GetQuery("getProducts");
-}
-
-export function useCategoryListQuery() {
-  return GetQuery("getCategoryList");
-}

@@ -1,10 +1,11 @@
+"use client";
 import FeaturesSection from "./_components/feature-section";
 import Products from "./_components/product/products";
 import Slider from "./_components/Slider";
 import TopCategories from "./_components/categorry/top-category";
 import { GetQuery } from "@/lib/queries";
 
-export default async function Home() {
+export default function Home() {
   const { data: productList } = GetQuery(
     "getProducts",
     {},

@@ -1,6 +1,6 @@
 "use client";
 
-import GlobalApi from "@/app/_utils/GlobalApi";
+import { GetQuery } from "@/lib/queries";
 import { countryCodes } from "@/lib/variables";
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
@@ -45,26 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
+  const { data: categoryList = [] } = GetQuery("getCategoryList");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await GlobalApi.getCategoryList();
-        if (Array.isArray(res)) {
-          setCategoryList(res);
-        } else {
-          setCategoryList([]);
-        }
-      } catch {
-        setCategoryList([]);
-        // console.error("Failed to fetch categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   // Rehydrate auth state from cookies on mount
   useRehydrateAuth(setAuthState, setAuthToken, setAuthId);

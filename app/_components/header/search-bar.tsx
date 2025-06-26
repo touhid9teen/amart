@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/hook/use-products";
 import { searchItems } from "@/lib/variables";
+import type { Product } from "@/lib/types";
 
 let debounceTimer: NodeJS.Timeout;
 
@@ -11,7 +12,6 @@ export default function SearchBar() {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [placeholder, setPlaceholder] = useState(searchItems[0]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -24,12 +24,14 @@ export default function SearchBar() {
     if (input.trim()) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % searchItems.length);
-      setPlaceholder(searchItems[(currentIndex + 1) % searchItems.length]);
+      setPlaceholder((prev) => {
+        const nextIndex = (searchItems.indexOf(prev) + 1) % searchItems.length;
+        return searchItems[nextIndex];
+      });
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [input, currentIndex]);
+  }, [input]);
 
   useEffect(() => {
     if (!input.trim()) {
@@ -45,7 +47,7 @@ export default function SearchBar() {
       setSuggestions(result.slice(0, 5));
       setLoading(false);
     }, 500);
-  }, [input, searchProducts]);
+  }, [input]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

@@ -1,38 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
-import GlobalApi from "@/app/_utils/GlobalApi";
-
-const fetchProductsFromAPI = async (): Promise<Product[]> => {
-  try {
-    const response = await GlobalApi.getProducts();
-    return response;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    throw error;
-  }
-};
+import { useCallback } from "react";
+import { GetQuery } from "@/lib/queries";
+import type { Product } from "@/lib/types";
 
 export const useProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const fetchedProducts = await fetchProductsFromAPI();
-        setProducts(fetchedProducts);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load products"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadProducts();
-  }, []);
+  const {
+    data: products = [],
+    isLoading: loading,
+    error,
+  } = GetQuery("getProducts", {}, true, null, Infinity) as {
+    data: Product[];
+    isLoading: boolean;
+    error: any;
+  };
 
   const searchProducts = useCallback(
     (query: string): Product[] => {
