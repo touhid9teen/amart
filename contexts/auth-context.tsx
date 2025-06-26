@@ -14,7 +14,6 @@ import {
   setCookie,
   logoutUserServer,
 } from "@/lib/actions";
-import type { Category } from "@/lib/types";
 
 export type AuthState =
   | "unauthenticated"
@@ -36,6 +35,7 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   categoryList: Category[];
+  productList: Product[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,8 +45,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const { data: categoryList = [] } = GetQuery("getCategoryList");
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: categoryList = [], isLoading: isCategoryLoading } = GetQuery(
+    "getCategoryList",
+    {},
+    true,
+    null,
+    Infinity
+  );
+  const { data: productList = [], isLoading: isProductLoading } = GetQuery(
+    "getProducts",
+    {},
+    true,
+    null,
+    Infinity
+  );
+
+  // Use only the query loading state for UI loading
+  const isLoading = isCategoryLoading || isProductLoading;
 
   // Rehydrate auth state from cookies on mount
   useRehydrateAuth(setAuthState, setAuthToken, setAuthId);
@@ -67,7 +82,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = async (phone: string) => {
-    setIsLoading(true);
     try {
       const result = await loginWithPhone(
         phone,
@@ -85,8 +99,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.error("Error", {
         description: "Failed to send OTP",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -142,7 +154,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [authToken]);
 
   const verifyOtp = async (otp: string) => {
-    setIsLoading(true);
     try {
       const result = await verifyOtpServer(
         phoneNumber,
@@ -160,8 +171,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.error("Error", {
         description: "Failed to verify OTP",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -193,6 +202,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         isLoading,
         categoryList,
+        productList,
       }}
     >
       {children}

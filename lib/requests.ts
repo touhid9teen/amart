@@ -37,7 +37,6 @@ export async function getRequest(
   query: QueryParamType = queryParamDefaultValue
 ) {
   const endpoint = await getEndpoint(url, query.pathname);
-  // const locale = await getLocale(); // Add if you have locale logic
   const time = new Date().getTime();
   return await api
     .get(endpoint, {

@@ -9,6 +9,9 @@ const endpoints: EndpointType = {
   getCartItems: "/store/user-cart/",
   removeCartItem: "/store/user-cart/",
   addToCart: "/store/user-cart/",
+  getCategoryList: "/store/categories/",
+  getProducts: "/store/products/",
+  getProductByCategory: "/store/products/category/",
 };
 
 export async function getEndpoint(key: keyof EndpointType, pathname?: string) {

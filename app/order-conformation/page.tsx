@@ -34,6 +34,8 @@ export default function OrderConfirmationPage() {
     retry: 1,
   });
 
+  console.log("order data------------", orderData);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -59,19 +61,25 @@ export default function OrderConfirmationPage() {
   // Type assertion for orderData
   const order = orderData as {
     id?: string | number;
+    order_id?: string;
     created_at?: string;
     status?: string;
     address?: string;
     payment_method?: string;
-    total_amount?: number;
+    total_amount?: number | string;
+    delivery_charge?: number | string;
+    order_notes?: string;
+    user?: string;
     items?: Array<{
-      product_id?: string | number;
-      product_name?: string;
-      name?: string;
       id?: string | number;
-      image?: string;
       quantity?: number;
       price?: number;
+      product?: {
+        id?: string | number;
+        name?: string;
+        image?: string;
+        price?: number;
+      };
     }>;
   };
 
@@ -176,14 +184,14 @@ export default function OrderConfirmationPage() {
           <CardContent>
             <div className="space-y-4">
               {order.items && order.items.length > 0 ? (
-                order.items.map((item, idx) => (
+                order.items?.map((item, idx) => (
                   <div
-                    key={item.product_id || item.id || idx}
+                    key={item.id || idx}
                     className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
                   >
                     <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.product_name || item.name || "Product"}
+                      src={item.product?.image || "/placeholder.svg"}
+                      alt={item.product?.name || "Product"}
                       width={64}
                       height={64}
                       className="w-16 h-16 object-cover rounded-md border"
@@ -191,10 +199,10 @@ export default function OrderConfirmationPage() {
                     />
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-900">
-                        {item.product_name || item.name}
+                        {item.product?.name}
                       </h4>
                       <p className="text-sm text-gray-500">
-                        ID: {item.product_id || item.id}
+                        ID: {item.product?.id}
                       </p>
                       <p className="text-sm text-gray-600">
                         Quantity: {item.quantity}
@@ -202,7 +210,7 @@ export default function OrderConfirmationPage() {
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">
-                        ৳{item.price?.toFixed(2) || "0.00"}
+                        ৳{(item.product?.price ?? item.price ?? 0).toFixed(2)}
                       </p>
                     </div>
                   </div>

@@ -46,14 +46,12 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
           ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
         },
-        // withCredentials: true,
       });
       const data = res.data;
-      console.log("Order created successfully:", data);
-      // Clear cart after successful order using updateCart to sync context and localStorage
-      updateCart({});
-      // Use router.replace directly for instant navigation
+      // Navigate immediately after order success
       router.replace(`/order-conformation?page=success&id=${data.order_id}`);
+      // Clear cart after navigation (not blocking user)
+      setTimeout(() => updateCart({}), 0);
     } catch (err) {
       toast.error("Order failed. Please try again or check your login.");
       console.error(err);

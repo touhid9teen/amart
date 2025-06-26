@@ -136,6 +136,7 @@ export default function ProductItem({
       <ProductDetails
         product={product}
         quantity={quantity}
+        loading={false}
         handleAddToCart={handleAddToCart}
         incrementQuantity={incrementQuantity}
         decrementQuantity={decrementQuantity}

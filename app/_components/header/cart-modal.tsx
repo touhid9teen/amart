@@ -2,6 +2,7 @@
 
 import { useCart } from "@/contexts/cart-context";
 import { X, Clock } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import ProductItem from "../product/productItem";
@@ -17,6 +18,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const { cartItems, cartCount, totalAmount } = useCart();
   const { authState, showLoginModal } = useAuth();
   const router = useRouter();
+  const [proceeding, setProceeding] = useState(false);
 
   const deliveryCharge = 25;
   const handlingCharge = 2;
@@ -27,8 +29,10 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     if (authState !== "authenticated") {
       showLoginModal();
     } else {
+      setProceeding(true);
       router.push("/order-the-cart-items");
       onClose();
+      setTimeout(() => setProceeding(false), 1000); // Reset after navigation
     }
   };
 
@@ -137,13 +141,18 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           <Button
             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold text-base shadow"
             onClick={handleProceed}
+            disabled={proceeding}
           >
             <div className="flex items-center justify-between w-full">
               <span>৳{grandTotal}</span>
               <span>
-                {authState !== "authenticated"
-                  ? "Login to Proceed →"
-                  : "Complete Order →"}
+                {proceeding ? (
+                  <span className="animate-pulse">Processing...</span>
+                ) : authState !== "authenticated" ? (
+                  "Login to Proceed →"
+                ) : (
+                  "Complete Order →"
+                )}
               </span>
             </div>
           </Button>

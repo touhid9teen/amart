@@ -1,28 +1,6 @@
-type EndpointType = {
-  // Cart Endpoints
-  removeAllCartItems: string;
-  getCartItems: string;
-  removeCartItem: string;
-  addToCart: string;
-
-  // Add other endpoints as neede
-};
-
 type AuthToken = string;
 
-type AnyType = unknown;
-
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  mrp: string;
-  sellingPice: string;
-  ItemQuantityType: string;
-  image: string | null;
-  categories: string[];
-  is_featured: boolean;
-};
+type AnyType = any;
 
 type ProductItemProps = {
   product: Product;
@@ -79,10 +57,39 @@ type CheckoutComponentProps = {
   onOrderSubmit: (formData: typeof initialFormData) => void;
 };
 
-type Category = {
+type EndpointType = {
+  // Cart Endpoints
+  removeAllCartItems: string;
+  getCartItems: string;
+  removeCartItem: string;
+  addToCart: string;
+  getProducts: string;
+  getCategoryList: string;
+  getProductByCategory: string;
+  // Add other endpoints as needed
+};
+
+type QueryParamType = {
+  pathname?: string;
+  params?: unknown;
+};
+
+type Product = {
   id: number;
   name: string;
-  slug: string;
-  image: string;
-  image_alt: string;
+  description: string;
+  mrp: string;
+  sellingPice: string;
+  ItemQuantityType: string;
+  image: string | null;
+  categories: any[];
+  is_featured: boolean;
+};
+
+type Category = {
+  id?: string | number;
+  slug?: string;
+  name?: string;
+  image?: string;
+  image_alt?: string;
 };

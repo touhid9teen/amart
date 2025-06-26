@@ -10,7 +10,6 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { useAuth } from "./auth-context";
 
 type CartContextType = {
   cartCount: number;
@@ -36,7 +35,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartCount, setCartCount] = useState(0);
   const [cartItems, setCartItems] = useState<{ [key: string]: AnyType }>({});
   const [totalAmount, setTotalAmount] = useState(0);
-  const { authToken } = useAuth();
 
   // Load from localStorage initially
   useEffect(() => {
@@ -58,7 +56,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setTotalAmount(total);
   }, []);
 
-  const safeItem = (item: AnyType) => ({
+  const saveItem = (item: AnyType) => ({
     id: item.id,
     name: item.name,
     sellingPice: item.sellingPice,
@@ -70,22 +68,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     let count = 0;
     let total = 0;
 
-    const safeItems: { [key: string]: AnyType } = {};
+    const saveItems: { [key: string]: AnyType } = {};
 
     for (const id in updatedItems) {
       const item = updatedItems[id];
-      const clean = safeItem(item);
-      safeItems[id] = clean;
+      const clean = saveItem(item);
+      saveItems[id] = clean;
 
       count += clean.quantity;
       total += clean.quantity * clean.sellingPice;
     }
 
-    setCartItems(safeItems);
+    setCartItems(saveItems);
     setCartCount(count);
     setTotalAmount(total);
 
-    localStorage.setItem("items", JSON.stringify(safeItems));
+    localStorage.setItem("items", JSON.stringify(saveItems));
     localStorage.setItem("count", String(count));
     localStorage.setItem("total", String(total));
   };

@@ -1,5 +1,7 @@
+import { useAuth } from "@/contexts/auth-context";
 import Image from "next/image";
 import Link from "next/link";
+import { SkeletonCategoryItem } from "./SkeletonCategoryItem";
 
 type Category = {
   id: number;
@@ -19,6 +21,7 @@ type TopCategoriesProps = {
 };
 
 export default function TopCategories({ categoryList }: TopCategoriesProps) {
+  const { isLoading } = useAuth();
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
   const categories = categoryList;
 
@@ -30,7 +33,11 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
         </h1> */}
 
         <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 lg:grid-cols-10 xl:grid-cols-10 gap-2 md:gap-3">
-          {Array.isArray(categories) && categories.length > 0 ? (
+          {isLoading && (!categories || categories.length === 0) ? (
+            Array.from({ length: 10 }).map((_, i) => (
+              <SkeletonCategoryItem key={i} />
+            ))
+          ) : Array.isArray(categories) && categories.length > 0 ? (
             categories.map((category) => {
               const imgUrl =
                 category.image && category.image.startsWith("http")

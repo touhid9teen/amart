@@ -1,6 +1,4 @@
-"use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AnyType, EndpointType } from "./types";
 import { getRequest } from "./requests";
 
 export { useMutation, useQuery, useQueryClient };
