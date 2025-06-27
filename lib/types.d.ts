@@ -64,6 +64,7 @@ type EndpointType = {
   getProducts: string;
   getCategoryList: string;
   getProductByCategory: string;
+  getOrders: string;
   // Add other endpoints as needed
 };
 
@@ -119,4 +120,23 @@ type CheckoutFormData = {
   address: string;
   postalCode: string;
   orderNotes: string;
+};
+
+type OrderItem = {
+  id: number;
+  product: Product;
+  quantity: number;
+};
+
+type Order = {
+  id: number;
+  order_id: string;
+  user: string;
+  created_at: string;
+  address: string;
+  total_amount: string;
+  delivery_charge: string;
+  status: string;
+  order_notes: string;
+  items: OrderItem[];
 };

@@ -7,10 +7,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
-import { ChevronDown, User, LogOut, Settings } from "lucide-react";
+import { ChevronDown, User, LogOut, Settings, ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LoginLogout() {
   const { authState, showLoginModal, logout, phoneNumber } = useAuth();
+  const router = useRouter();
+
+  const handleOrdersClick = () => {
+    router.push("/orders");
+  };
 
   if (authState === "authenticated") {
     return (
@@ -30,8 +36,6 @@ export default function LoginLogout() {
               <User className="h-4 w-4 text-primary" />
             </div>
 
-            
-
             <ChevronDown className="h-3 w-3 opacity-60 hidden sm:block" />
           </button>
         </DropdownMenuTrigger>
@@ -48,11 +52,15 @@ export default function LoginLogout() {
           </div>
 
           <div className="py-1">
-            <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer">
-              <Settings className="h-4 w-4" />
-              <span>Account Settings</span>
+            <DropdownMenuItem
+              onClick={handleOrdersClick}
+              className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span>My Orders</span>
             </DropdownMenuItem>
 
+            
             <DropdownMenuSeparator />
 
             <DropdownMenuItem

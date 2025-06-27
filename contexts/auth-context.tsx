@@ -6,7 +6,6 @@ import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { jwtDecode as jwt_decode } from "jwt-decode";
-import { useRehydrateAuth } from "./useRehydrateAuth";
 import {
   loginWithPhone,
   verifyOtpServer,
@@ -36,6 +35,7 @@ interface AuthContextType {
   isLoading: boolean;
   categoryList: Category[];
   productList: Product[];
+  getValidAuthToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -64,8 +64,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Use only the query loading state for UI loading
   const isLoading = isCategoryLoading || isProductLoading;
 
-  // Rehydrate auth state from cookies on mount
-  useRehydrateAuth(setAuthState, setAuthToken, setAuthId);
+  // Rehydrate auth state from cookies/localStorage on mount
+  useEffect(() => {
+    // --- Rehydrate auth state from cookies ---
+    function getCookieValue(name: string): string | null {
+      if (typeof document === "undefined") return null;
+      const match = document.cookie.match(
+        new RegExp("(^| )" + name + "=([^;]+)")
+      );
+      return match ? decodeURIComponent(match[2]) : null;
+    }
+    const token = getCookieValue("authToken");
+    const id = getCookieValue("authId");
+    if (token) {
+      setAuthState("authenticated");
+      setAuthToken(token);
+      setAuthId(id || null);
+    }
+    // --- Rehydrate phone number from localStorage ---
+    const storedPhone =
+      typeof window !== "undefined"
+        ? localStorage.getItem("phoneNumber")
+        : null;
+    if (storedPhone) setPhoneNumber(storedPhone);
+  }, []);
+
+  // Persist phone number to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (phoneNumber) {
+        localStorage.setItem("phoneNumber", phoneNumber);
+      } else {
+        localStorage.removeItem("phoneNumber");
+      }
+    }
+  }, [phoneNumber]);
 
   const showLoginModal = () => {
     setAuthState("login");
@@ -91,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!result.success) {
         throw new Error(result.message || "Failed to send OTP");
       }
-      setPhoneNumber(phone);
+      setPhoneNumber(phone); // Persist phone number
       setAuthState("verifying");
       toast("OTP Sent", {
         description: "Please check your phone for the verification code",
@@ -164,6 +197,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!result.success) {
         throw new Error(result.message || "Failed to verify OTP");
       }
+      // Set tokens in state after successful verification
+      if (result.data?.access_token) {
+        await setTokens(
+          result.data.access_token,
+          result.data.refresh_token || ""
+        );
+      }
+      if (result.data?.user_id) {
+        setAuthId(result.data.user_id);
+      }
+      // Set phone number if present in response
+      if (result.data?.phone_number) {
+        setPhoneNumber(result.data.phone_number);
+      }
       setAuthState("authenticated");
       toast("Success", {
         description: "Phone number verified successfully",
@@ -175,9 +222,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Utility to get a valid token, refreshing if needed
+  const getValidAuthToken = async (): Promise<string | null> => {
+    let token = authToken;
+    if (!token || isTokenExpired(token)) {
+      token = await refreshAuthToken();
+      if (!token) return null;
+    }
+    return token;
+  };
+
   const logout = async () => {
     setAuthState("unauthenticated");
-    setPhoneNumber("");
+    setPhoneNumber(""); // This will also clear from localStorage
     setAuthToken(null);
     setAuthId(null);
     try {
@@ -204,6 +261,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         categoryList,
         productList,
+        getValidAuthToken, // Expose utility
       }}
     >
       {children}

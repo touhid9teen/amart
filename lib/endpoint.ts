@@ -1,7 +1,5 @@
 "use server";
 
-import { EndpointType } from "./types";
-
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 const endpoints: EndpointType = {
   // cart
@@ -12,6 +10,7 @@ const endpoints: EndpointType = {
   getCategoryList: "/store/categories/",
   getProducts: "/store/products/",
   getProductByCategory: "/store/products/category/",
+  getOrders: "/detail/orders/user/all/",
 };
 
 export async function getEndpoint(key: keyof EndpointType, pathname?: string) {

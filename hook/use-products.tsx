@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { GetQuery } from "@/lib/queries";
-import type { Product } from "@/lib/types";
 
 export const useProducts = () => {
   const {

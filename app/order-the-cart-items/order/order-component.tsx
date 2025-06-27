@@ -16,7 +16,7 @@ import { BASE_URL } from "@/lib/variables";
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, totalAmount, updateCart } = useCart();
-  const { authToken } = useAuth();
+  const { getValidAuthToken } = useAuth();
   const [loading, setLoading] = useState(false);
 
   // Build the order payload from cart and checkout form data
@@ -40,10 +40,14 @@ export default function CheckoutPage() {
         order_notes: formData.orderNotes,
         items,
       };
+      // Get a valid token before submitting order
+      const validToken = await getValidAuthToken();
+      if (!validToken)
+        throw new Error("Authentication required. Please login again.");
       const res = await axios.post(`${BASE_URL}/detail/orders/`, orderData, {
         headers: {
           "Content-Type": "application/json",
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+          Authorization: `Bearer ${validToken}`,
         },
       });
       const data = res.data;
