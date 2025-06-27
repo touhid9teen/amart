@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/cart-context";
 import { useAuth } from "@/contexts/auth-context";
 import ProcessIndicator from "@/app/_components/other/process-indicator";
-import type { CheckoutFormData } from "./checkout-component";
 import { toast } from "sonner";
 import { useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "@/lib/variables";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -25,14 +25,14 @@ export default function CheckoutPage() {
     try {
       const delivery_charge = 40;
       const address = `${formData.address}, ${formData.area}, ${formData.city}, ${formData.postalCode}`;
-      const items = Object.values(cartItems).map((item) => ({
+      const items: OrderItem[] = Object.values(cartItems).map((item) => ({
         product_name: item.name,
         product_id: item.id,
         quantity: item.quantity,
         price: item.sellingPice,
         image: item.image || "",
       }));
-      const orderData = {
+      const orderData: OrderData = {
         address,
         total_amount: totalAmount + delivery_charge,
         delivery_charge,
@@ -40,8 +40,7 @@ export default function CheckoutPage() {
         order_notes: formData.orderNotes,
         items,
       };
-      const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
-      const res = await axios.post(`${baseUrl}/detail/orders/`, orderData, {
+      const res = await axios.post(`${BASE_URL}/detail/orders/`, orderData, {
         headers: {
           "Content-Type": "application/json",
           ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),

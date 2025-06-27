@@ -1,4 +1,3 @@
-
 type AuthToken = string;
 
 type ProductItemProps = {
@@ -91,4 +90,33 @@ type Category = {
   name?: string;
   image?: string;
   image_alt?: string;
+};
+
+type OrderItem = {
+  product_name: string;
+  product_id: number;
+  quantity: number;
+  price: number;
+  image?: string;
+};
+
+type OrderData = {
+  address: string;
+  total_amount: number;
+  delivery_charge: number;
+  status: string;
+  order_notes: string;
+  items: OrderItem[];
+};
+
+type CheckoutFormData = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  city: string;
+  area: string;
+  address: string;
+  postalCode: string;
+  orderNotes: string;
 };

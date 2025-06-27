@@ -145,28 +145,11 @@ export default function CheckoutComponent({
           formattedAddress || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
       });
 
-      // Find best matching area
-      let bestArea = "";
-      if (detectedArea) {
-        bestArea =
-          areas.find((area: string) =>
-            area.toLowerCase().includes(detectedArea.toLowerCase())
-          ) || "";
-        if (!bestArea) {
-          bestArea =
-            areas.find((area: string) =>
-              detectedArea
-                .toLowerCase()
-                .includes(area.split(",")[0].toLowerCase())
-            ) || "";
-        }
-      }
-
-      // Auto-fill form with detected location data
+      // Only set area to detectedArea or fallback, do not try to find best match
       setFormData((prev) => ({
         ...prev,
         city: city,
-        area: bestArea || (areas.length > 0 ? areas[0] : ""),
+        area: detectedArea || "",
         address:
           [detectedRoad, detectedArea, locality].filter(Boolean).join(", ") ||
           formattedAddress,

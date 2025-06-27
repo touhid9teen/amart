@@ -11,7 +11,7 @@ export default function SearchBar() {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [placeholder, setPlaceholder] = useState(searchItems[0]);
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ export default function SearchBar() {
       setSuggestions(result.slice(0, 5));
       setLoading(false);
     }, 500);
-  }, [input, searchProducts]);
+  }, [input, searchProducts, suggestions.length]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
