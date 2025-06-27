@@ -16,7 +16,7 @@ export default function OrderConfirmationPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id") || "";
   const { authToken } = useAuth();
-
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
   // Use TanStack Query for order details
   const {
     data: orderData,
@@ -190,7 +190,13 @@ export default function OrderConfirmationPage() {
                     className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
                   >
                     <Image
-                      src={item.product?.image || "/placeholder.svg"}
+                      src={
+                        item.product?.image
+                          ? item.product.image.startsWith("http")
+                            ? item.product.image
+                            : `${baseUrl}${item.product.image}`
+                          : "/placeholder.svg"
+                      }
                       alt={item.product?.name || "Product"}
                       width={64}
                       height={64}

@@ -45,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
+
   const { data: categoryList = [], isLoading: isCategoryLoading } = GetQuery(
     "getCategoryList",
     {},

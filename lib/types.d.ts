@@ -1,3 +1,4 @@
+
 type AuthToken = string;
 
 type ProductItemProps = {

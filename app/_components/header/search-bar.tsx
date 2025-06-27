@@ -22,19 +22,18 @@ export default function SearchBar() {
   useEffect(() => {
     if (input.trim()) return;
 
+    let index = searchItems.indexOf(placeholder);
     const interval = setInterval(() => {
-      setPlaceholder((prev) => {
-        const nextIndex = (searchItems.indexOf(prev) + 1) % searchItems.length;
-        return searchItems[nextIndex];
-      });
+      index = (index + 1) % searchItems.length;
+      setPlaceholder(searchItems[index]);
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [input]);
+  }, [input, placeholder]);
 
   useEffect(() => {
     if (!input.trim()) {
-      setSuggestions([]);
+      if (suggestions.length !== 0) setSuggestions([]);
       return;
     }
 

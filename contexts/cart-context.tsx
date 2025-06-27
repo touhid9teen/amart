@@ -1,8 +1,5 @@
 "use client";
 
-import { getEndpoint } from "@/lib/endpoint";
-import { handleError, handleSuccess } from "@/lib/request";
-import axios from "axios";
 import {
   createContext,
   useContext,
@@ -18,7 +15,6 @@ type CartContextType = {
   setCartItems: (items: { [key: string]: AnyType }) => void;
   totalAmount: number;
   updateCart: (updatedItems: { [key: string]: AnyType }) => void;
-  removeAllItemsFromCart: (authToken: AuthToken) => Promise<unknown>;
 };
 
 const CartContext = createContext<CartContextType>({
@@ -28,7 +24,6 @@ const CartContext = createContext<CartContextType>({
   setCartItems: () => {},
   totalAmount: 0,
   updateCart: () => {},
-  removeAllItemsFromCart: async () => {},
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -56,22 +51,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setTotalAmount(total);
   }, []);
 
-  const saveItem = (item: AnyType) => ({
+  const saveItem = (item: CartItem) => ({
     id: item.id,
     name: item.name,
     sellingPice: item.sellingPice,
     quantity: item.quantity,
-    image: item.image || null,
+    image: item.image || undefined,
   });
 
-  const updateCart = (updatedItems: { [key: string]: AnyType }) => {
+  const updateCart = (updatedItems: { [key: string]: CartItem }) => {
     let count = 0;
     let total = 0;
 
-    const saveItems: { [key: string]: AnyType } = {};
+    const saveItems: { [key: string]: CartItem } = {};
 
     for (const id in updatedItems) {
       const item = updatedItems[id];
+
       const clean = saveItem(item);
       saveItems[id] = clean;
 
@@ -88,29 +84,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("total", String(total));
   };
 
-  const removeAllItemsFromCart = async (authToken: AuthToken) => {
-    try {
-      const endpoint = await getEndpoint("removeAllCartItems");
-
-      const response = await axios.delete(endpoint, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-
-      setCartItems({});
-      setCartCount(0);
-      setTotalAmount(0);
-      localStorage.removeItem("items");
-      localStorage.removeItem("count");
-      localStorage.removeItem("total");
-
-      return handleSuccess(response);
-    } catch (error) {
-      return handleError(error);
-    }
-  };
-
   return (
     <CartContext.Provider
       value={{
@@ -120,7 +93,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCartItems,
         totalAmount,
         updateCart,
-        removeAllItemsFromCart,
       }}
     >
       {children}

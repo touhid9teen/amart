@@ -17,21 +17,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// Add a default list of areas for autofill logic
-const areas = [
-  "Dhanmondi",
-  "Gulshan",
-  "Banani",
-  "Uttara",
-  "Mirpur",
-  "Mohammadpur",
-  "Bashundhara",
-  "Baridhara",
-  "Motijheel",
-  "Farmgate",
-  // Add more as needed
-];
-
 // Define the type for the checkout form data
 export interface CheckoutFormData {
   firstName: string;
