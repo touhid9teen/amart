@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import axios from "axios";
 // import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { getEndpoint } from "@/lib/endpoint";
-import { AnyType, EndpointType, QueryParamType } from "@/lib/types";
 // import { logout, setCookies } from "@/app/(auth)/actions"; // Uncomment and implement if needed
 
 const api = axios.create();

@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/hook/use-products";
 import { searchItems } from "@/lib/variables";
-import type { Product } from "@/lib/types";
 
 let debounceTimer: NodeJS.Timeout;
 
@@ -12,7 +11,7 @@ export default function SearchBar() {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [placeholder, setPlaceholder] = useState(searchItems[0]);
-  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -47,7 +46,7 @@ export default function SearchBar() {
       setSuggestions(result.slice(0, 5));
       setLoading(false);
     }, 500);
-  }, [input]);
+  }, [input, searchProducts]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

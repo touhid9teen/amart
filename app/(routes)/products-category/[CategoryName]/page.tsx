@@ -1,4 +1,3 @@
-import BackButton from "@/app/_components/back-button";
 import dynamic from "next/dynamic";
 
 const ProductsByCategoryClient = dynamic(

@@ -411,6 +411,8 @@ export default function AddressModal({
       setAvailableAreas(areaMapping.dhaka); // Default to Dhaka areas
     }
   }, [isOpen]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableAreas.length]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

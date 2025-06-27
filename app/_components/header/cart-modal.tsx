@@ -2,8 +2,7 @@
 
 import { useCart } from "@/contexts/cart-context";
 import { X, Clock } from "lucide-react";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ProductItem from "../product/productItem";
 import { useRouter } from "next/navigation";
@@ -24,7 +23,20 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const handlingCharge = 2;
   const grandTotal = Math.floor(totalAmount + deliveryCharge + handlingCharge);
 
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
   const handleProceed = () => {
     if (authState !== "authenticated") {
       showLoginModal();
@@ -32,7 +44,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       setProceeding(true);
       router.push("/order-the-cart-items");
       onClose();
-      setTimeout(() => setProceeding(false), 1000); // Reset after navigation
+      setTimeout(() => setProceeding(false), 1000);
     }
   };
 
@@ -40,13 +52,14 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 z-40 transition-opacity overflow-y-auto"
+        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-sm bg-white z-50 flex flex-col shadow-lg">
+      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white z-50 flex flex-col shadow-lg overflow-hidden">
         <h2 className="sr-only">My Cart</h2>
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-extrabold text-gray-900">My Cart</h2>
@@ -59,8 +72,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           </button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 bg-gray-100 px-4 py-3 space-y-4 pb-36 overflow-y-auto">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto bg-gray-100 px-4 py-3 space-y-4">
           <div className="rounded-2xl bg-white">
             {/* Delivery Info */}
             <div className="p-4 border-b border-gray-100">
@@ -86,15 +99,13 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <p className="text-gray-400 text-lg">Your cart is empty</p>
                 </div>
               ) : (
-                Object.values(cartItems).map((item: AnyType, indx) => {
-                  return (
-                    <ProductItem
-                      key={indx}
-                      product={item as Product}
-                      isFeatured={false}
-                    />
-                  );
-                })
+                Object.values(cartItems).map((item: AnyType, indx) => (
+                  <ProductItem
+                    key={indx}
+                    product={item as Product}
+                    isFeatured={false}
+                  />
+                ))
               )}
             </div>
           </div>
@@ -136,8 +147,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           </div>
         </div>
 
-        {/* Bottom Button */}
-        <div className="fixed bottom-0 right-0 max-w-sm w-full mx-auto bg-white p-4 border-t border-gray-200 z-50">
+        {/* Fixed Bottom Button */}
+        <div className="sticky bottom-0 bg-white p-4 border-t border-gray-200 z-50">
           <Button
             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold text-base shadow"
             onClick={handleProceed}

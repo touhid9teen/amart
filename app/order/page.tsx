@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Eye, Download } from "lucide-react"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Filter, Eye, Download } from "lucide-react";
+import Link from "next/link";
 
 interface Order {
-  id: string
-  status: string
-  customerName: string
-  customerEmail: string
-  date: string
-  total: number
-  paymentMethod: string
-  vendor: string
-  outlet: string
+  id: string;
+  status: string;
+  customerName: string;
+  customerEmail: string;
+  date: string;
+  total: number;
+  paymentMethod: string;
+  vendor: string;
+  outlet: string;
 }
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([
+  const [orders] = useState<Order[]>([
     {
       id: "452671",
       status: "Open",
@@ -34,47 +40,51 @@ export default function OrdersPage() {
       vendor: "RFL Exclusive",
       outlet: "",
     },
-  ])
-
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  ]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    let filtered = orders
+    let filtered = orders;
 
     if (searchTerm) {
       filtered = filtered.filter(
         (order) =>
           order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+          order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter((order) => order.status.toLowerCase() === statusFilter.toLowerCase())
+      filtered = filtered.filter(
+        (order) => order.status.toLowerCase() === statusFilter.toLowerCase()
+      );
     }
 
-    setFilteredOrders(filtered)
-  }, [searchTerm, statusFilter, orders])
+    setFilteredOrders(filtered);
+  }, [searchTerm, statusFilter, orders]);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "open":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-100 text-blue-800";
       case "completed":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 text-green-800";
       case "cancelled":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800";
       case "pending":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
-  const totalAmount = filteredOrders.reduce((sum, order) => sum + order.total, 0)
+  const totalAmount = filteredOrders.reduce(
+    (sum, order) => sum + order.total,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -138,15 +148,33 @@ export default function OrdersPage() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Order ID</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Status</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">User Data</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Date</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Order Total</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Payment Method</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Vendor</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Outlet</th>
-                    <th className="text-left py-4 px-6 font-medium text-gray-900">Actions</th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Order ID
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Status
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      User Data
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Date
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Order Total
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Payment Method
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Vendor
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Outlet
+                    </th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-900">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -161,21 +189,38 @@ export default function OrdersPage() {
                         </Link>
                       </td>
                       <td className="py-4 px-6">
-                        <Badge variant="secondary" className={getStatusColor(order.status)}>
+                        <Badge
+                          variant="secondary"
+                          className={getStatusColor(order.status)}
+                        >
                           {order.status}
                         </Badge>
                       </td>
                       <td className="py-4 px-6">
                         <div>
-                          <p className="font-medium text-gray-900">{order.customerName}</p>
-                          <p className="text-sm text-gray-500">{order.customerEmail}</p>
+                          <p className="font-medium text-gray-900">
+                            {order.customerName}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {order.customerEmail}
+                          </p>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-sm text-gray-600">{order.date}</td>
-                      <td className="py-4 px-6 font-medium">৳{order.total.toFixed(2)}</td>
-                      <td className="py-4 px-6 text-sm text-gray-600">{order.paymentMethod}</td>
-                      <td className="py-4 px-6 text-sm text-gray-600">{order.vendor}</td>
-                      <td className="py-4 px-6 text-sm text-gray-600">{order.outlet || "-"}</td>
+                      <td className="py-4 px-6 text-sm text-gray-600">
+                        {order.date}
+                      </td>
+                      <td className="py-4 px-6 font-medium">
+                        ৳{order.total.toFixed(2)}
+                      </td>
+                      <td className="py-4 px-6 text-sm text-gray-600">
+                        {order.paymentMethod}
+                      </td>
+                      <td className="py-4 px-6 text-sm text-gray-600">
+                        {order.vendor}
+                      </td>
+                      <td className="py-4 px-6 text-sm text-gray-600">
+                        {order.outlet || "-"}
+                      </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
                           <Button size="sm" variant="outline" asChild>
@@ -196,7 +241,9 @@ export default function OrdersPage() {
 
             {filteredOrders.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500">No orders found matching your criteria.</p>
+                <p className="text-gray-500">
+                  No orders found matching your criteria.
+                </p>
               </div>
             )}
 
@@ -205,9 +252,12 @@ export default function OrdersPage() {
               <div className="border-t bg-gray-50 px-6 py-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">
-                    Showing {filteredOrders.length} order{filteredOrders.length !== 1 ? "s" : ""}
+                    Showing {filteredOrders.length} order
+                    {filteredOrders.length !== 1 ? "s" : ""}
                   </span>
-                  <span className="font-medium text-gray-900">Total: ৳{totalAmount.toFixed(2)}</span>
+                  <span className="font-medium text-gray-900">
+                    Total: ৳{totalAmount.toFixed(2)}
+                  </span>
                 </div>
               </div>
             )}
@@ -215,5 +265,5 @@ export default function OrdersPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

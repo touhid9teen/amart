@@ -1,7 +1,5 @@
 type AuthToken = string;
 
-type AnyType = any;
-
 type ProductItemProps = {
   product: Product;
   onQuickView?: () => void;
@@ -82,7 +80,7 @@ type Product = {
   sellingPice: string;
   ItemQuantityType: string;
   image: string | null;
-  categories: any[];
+  categories: unknown[];
   is_featured: boolean;
 };
 
