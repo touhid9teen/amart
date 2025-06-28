@@ -70,7 +70,10 @@ type EndpointType = {
 
 type QueryParamType = {
   pathname?: string;
-  params?: unknown;
+  params?: {
+    slug?: string;
+    [key: string]: any;
+  };
 };
 
 type Product = {

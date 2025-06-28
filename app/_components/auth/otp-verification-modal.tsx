@@ -63,15 +63,6 @@ export function OtpVerificationModal() {
       <DialogContent className="w-[90vw] max-w-sm border-0 p-0">
         <DialogTitle className="sr-only">OTP Verification</DialogTitle>
         <div className="bg-white rounded-xl p-4 sm:p-6 relative">
-          {/* Back Arrow */}
-          <button
-            onClick={hideModals}
-            className="absolute top-4 left-4 p-1 rounded-full text-gray-500 hover:text-gray-700 transition-colors"
-            aria-label="Close"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-
           {/* Title */}
           <div className="text-center mb-5 sm:mb-6 mt-6 sm:mt-4">
             <h1 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">

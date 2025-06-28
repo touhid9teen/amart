@@ -3,9 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import axios from "axios";
-// import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { getEndpoint } from "@/lib/endpoint";
-// import { logout, setCookies } from "@/app/(auth)/actions"; // Uncomment and implement if needed
 
 const api = axios.create();
 
@@ -18,15 +16,7 @@ api.interceptors.request.use(async (request) => {
   return request;
 });
 
-// const refreshAuthLogic = async () => {
-//   // Implement refresh logic if needed
-//   // await setCookies(response) and update failedRequest headers
-//   // await logout() on error
-// };
-
-// createAuthRefreshInterceptor(api, refreshAuthLogic);
-
-const queryParamDefaultValue = {
+const queryParamDefaultValue: QueryParamType = {
   pathname: "",
   params: {},
 };
@@ -35,7 +25,9 @@ export async function getRequest(
   url: keyof EndpointType,
   query: QueryParamType = queryParamDefaultValue
 ) {
-  const endpoint = await getEndpoint(url, query.pathname);
+  const pathname = query.pathname || (query.params?.slug as string);
+  const endpoint = await getEndpoint(url, pathname);
+
   const time = new Date().getTime();
   return await api
     .get(endpoint, {
@@ -43,14 +35,18 @@ export async function getRequest(
         ...(query?.params || {}),
         time,
       },
-      // headers: { 'Accept-Language': locale },
     })
-    .then((response) => response?.data)
+    .then((response) => {
+      if (response && response.data !== undefined) {
+        return response.data;
+      }
+      return [];
+    })
     .catch(async (error) => {
       if (error?.status === 401) {
         redirect("/");
       }
-      return Promise.reject(error?.response?.data);
+      return [];
     });
 }
 

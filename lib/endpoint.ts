@@ -16,8 +16,15 @@ const endpoints: EndpointType = {
 export async function getEndpoint(key: keyof EndpointType, pathname?: string) {
   let endpoint = `${baseUrl}${endpoints[key]}`;
 
+ // Ensure single slash between base path and pathname
   if (pathname) {
+    if (!endpoint.endsWith("/")) {
+      endpoint += "/";
+    }
     endpoint += pathname;
+    if (!endpoint.endsWith("/")) {
+      endpoint += "/";
+    }
   }
 
   return endpoint;

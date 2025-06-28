@@ -1,14 +1,11 @@
-import dynamic from "next/dynamic";
+import ProductsByCategoryClient from "./products-by-category-client";
 
-const ProductsByCategoryClient = dynamic(
-  () => import("./products-by-category-client"),
-  { ssr: false }
-);
+interface Props {
+  params: Promise<{ CategoryName: string }>;
+}
 
-export default function ProductsByCategory({
-  params,
-}: {
-  params: { CategoryName: string };
-}) {
-  return <ProductsByCategoryClient categoryName={params.CategoryName} />;
+export default async function ProductsByCategory({ params }: Props) {
+  const { CategoryName } = await params;
+
+  return <ProductsByCategoryClient categoryName={CategoryName} />;
 }
