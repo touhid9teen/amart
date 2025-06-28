@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import {
   InputOTP,

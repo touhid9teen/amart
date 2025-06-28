@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
-import { ChevronDown, User, LogOut, Settings, ShoppingBag } from "lucide-react";
+import { ChevronDown, User, LogOut, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LoginLogout() {
@@ -60,7 +60,6 @@ export default function LoginLogout() {
               <span>My Orders</span>
             </DropdownMenuItem>
 
-            
             <DropdownMenuSeparator />
 
             <DropdownMenuItem

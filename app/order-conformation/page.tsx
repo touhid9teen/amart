@@ -317,7 +317,9 @@ export default function OrderConfirmationPage() {
                 Order Notes
               </h3>
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <p className="text-gray-600 italic">"{order.order_notes}"</p>
+                <p className="text-gray-600 italic">
+                  &quot;{order.order_notes}&quot;
+                </p>
               </div>
             </div>
           </div>

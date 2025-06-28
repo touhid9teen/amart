@@ -7,6 +7,26 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-8">
+      {/* Toast/banner at the top */}
+      <div className="w-full max-w-md mx-auto mb-6">
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3 flex items-center gap-2 shadow-sm animate-fade-in">
+          <svg
+            className="w-5 h-5 text-red-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+            />
+          </svg>
+          <span className="font-semibold">Page not found</span>
+        </div>
+      </div>
+
       <div className="max-w-md mx-auto text-center space-y-8">
         {/* 404 Number */}
         <div className="space-y-4">
@@ -22,7 +42,8 @@ export default function NotFound() {
             Page Not Found
           </h2>
           <p className="text-gray-600 leading-relaxed">
-            The page you're looking for doesn't exist or has been moved.
+            The page you&apos;re looking for doesn&apos;t exist or has been
+            moved.
           </p>
         </div>
 

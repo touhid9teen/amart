@@ -73,7 +73,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto bg-gray-100 px-4 py-3 space-y-4">
+        <div className="flex-1 overflow-y-auto bg-gray-100 px-4 py-3 space-y-4 pb-32">
           <div className="rounded-2xl bg-white">
             {/* Delivery Info */}
             <div className="p-4 border-b border-gray-100">
@@ -148,26 +148,42 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
         </div>
 
         {/* Fixed Bottom Button */}
-        <div className="sticky bottom-0 bg-white p-4 border-t border-gray-200 z-50">
-          <Button
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold text-base shadow"
-            onClick={handleProceed}
-            disabled={proceeding}
-          >
-            <div className="flex items-center justify-between w-full">
-              <span>৳{grandTotal}</span>
-              <span>
-                {proceeding ? (
-                  <span className="animate-pulse">Processing...</span>
-                ) : authState !== "authenticated" ? (
-                  "Login to Proceed →"
-                ) : (
-                  "Complete Order →"
-                )}
-              </span>
+        {Object.keys(cartItems).length > 0 && (
+          <div className="fixed left-0 right-0 bottom-0 z-[100] px-2 pb-2 sm:px-4 sm:pb-4 pointer-events-none">
+            <div className="max-w-sm mx-auto pointer-events-auto">
+              <Button
+                className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white py-3 rounded-full font-bold text-base shadow-lg flex items-center justify-between gap-2 transition-all duration-200 focus:ring-2 focus:ring-green-400 focus:outline-none"
+                style={{ minHeight: 56 }}
+                onClick={handleProceed}
+                disabled={proceeding}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-lg font-extrabold">৳{grandTotal}</span>
+                  <span className="hidden xs:inline text-xs font-medium text-white/80">
+                    Total
+                  </span>
+                </span>
+                <span className="flex items-center gap-2">
+                  {proceeding ? (
+                    <span className="animate-pulse">Processing...</span>
+                  ) : authState !== "authenticated" ? (
+                    <>
+                      <span className="hidden xs:inline">Login to Proceed</span>
+                      <span className="inline xs:hidden">Login</span>
+                      <span aria-hidden>→</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="hidden xs:inline">Complete Order</span>
+                      <span className="inline xs:hidden">Order</span>
+                      <span aria-hidden>→</span>
+                    </>
+                  )}
+                </span>
+              </Button>
             </div>
-          </Button>
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

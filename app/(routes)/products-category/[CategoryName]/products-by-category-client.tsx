@@ -127,7 +127,7 @@ function EmptyState({ categoryName }: { categoryName: string }) {
         No products found
       </h3>
       <p className="text-sm sm:text-base text-gray-600 max-w-md">
-        We couldn't find any products in the{" "}
+        We couldn&apos;t find any products in the{" "}
         <span className="font-medium">{categoryName}</span> category. Try
         browsing other categories or check back later.
       </p>

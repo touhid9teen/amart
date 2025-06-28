@@ -22,6 +22,7 @@ import {
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useOrders } from "@/hook/use-orders";
+import type { Order, OrderItem } from "@/lib/types";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -41,7 +42,7 @@ const getStatusColor = (status: string) => {
 };
 
 // Mobile Card Component
-function MobileOrderCard({ order }: { order: any }) {
+function MobileOrderCard({ order }: { order: Order }) {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-3">
@@ -87,7 +88,7 @@ function MobileOrderCard({ order }: { order: any }) {
           <div className="pt-2 border-t">
             <p className="text-xs text-gray-500 mb-2">Items:</p>
             <div className="flex flex-wrap gap-1">
-              {order.items.map((item: any) => (
+              {order.items.map((item: OrderItem) => (
                 <span
                   key={item.id}
                   className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700"
@@ -104,7 +105,7 @@ function MobileOrderCard({ order }: { order: any }) {
 }
 
 // Tablet Card Component
-function TabletOrderCard({ order }: { order: any }) {
+function TabletOrderCard({ order }: { order: Order }) {
   return (
     <Card className="mb-4 hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -150,7 +151,7 @@ function TabletOrderCard({ order }: { order: any }) {
 
         <div className="pt-3 border-t">
           <div className="flex flex-wrap gap-1">
-            {order.items.map((item: any) => (
+            {order.items.map((item: OrderItem) => (
               <span
                 key={item.id}
                 className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700"
@@ -311,7 +312,7 @@ export default function OrdersPage() {
                               </div>
                               <div className="text-gray-500 text-xs max-w-[200px] py-1">
                                 <div className="space-y-1">
-                                  {order.items.map((item, index) => (
+                                  {order.items.map((item) => (
                                     <div
                                       key={item.id}
                                       className="leading-relaxed"

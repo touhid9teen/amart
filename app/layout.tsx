@@ -32,7 +32,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <AuthProvider>
             <CartProvider>
-              <Toaster />
+              <Toaster position="top-center" />
               <AuthModalsProvider />
               <Header />
               {children}

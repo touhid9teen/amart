@@ -72,7 +72,7 @@ type QueryParamType = {
   pathname?: string;
   params?: {
     slug?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 };
 
