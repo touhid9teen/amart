@@ -16,7 +16,7 @@ import { useCart } from "@/contexts/cart-context";
 import CartActionButton from "../cart-action-button";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
-import type { Product } from "@/types/product"; // Import Product type
+import type { Product } from "@/lib/types";
 
 interface ProductModalProps {
   product: Product;

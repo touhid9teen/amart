@@ -2,18 +2,19 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
-
 import {
   MapPin,
   CreditCard,
   Navigation,
   Loader2,
   CheckCircle,
+  Zap,
+  StickyNote,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,6 +35,13 @@ export interface CheckoutFormData {
 interface CheckoutComponentProps {
   onOrderSubmit: (formData: CheckoutFormData) => void;
   loading?: boolean;
+}
+
+interface LocationState {
+  loading: boolean;
+  error: string | null;
+  coordinates: { lat: number; lng: number } | null;
+  address: string;
 }
 
 const initialFormData: CheckoutFormData = {
@@ -69,12 +77,10 @@ export default function CheckoutComponent({
     setLocation((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      // Check if geolocation is supported
       if (!navigator.geolocation) {
         throw new Error("Geolocation is not supported by this browser");
       }
 
-      // Get current position
       const position = await new Promise<GeolocationPosition>(
         (resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -87,7 +93,6 @@ export default function CheckoutComponent({
 
       const { latitude, longitude } = position.coords;
 
-      // Reverse geocoding using BigDataCloud's free API
       const response = await fetch(
         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
       );
@@ -97,28 +102,22 @@ export default function CheckoutComponent({
       }
 
       const data = await response.json();
-
-      // Extract comprehensive address information
       const city = data.city || data.locality || "Dhaka";
       const locality = data.locality || "";
       const principalSubdivision = data.principalSubdivision || "";
       const countryName = data.countryName || "";
 
-      // Try to extract more detailed address components
       const administrative = data.localityInfo?.administrative || [];
       const informative = data.localityInfo?.informative || [];
 
-      // Build detailed address components
       let detectedArea = "";
       let detectedRoad = "";
 
-      // Extract area information
       if (administrative.length > 0) {
         detectedArea =
           administrative[2]?.name || administrative[3]?.name || locality;
       }
 
-      // Extract road/street information from informative data
       if (informative.length > 0) {
         const roadInfo = informative.find(
           (info: { description?: string; name?: string }) =>
@@ -145,7 +144,6 @@ export default function CheckoutComponent({
           formattedAddress || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
       });
 
-      // Only set area to detectedArea or fallback, do not try to find best match
       setFormData((prev) => ({
         ...prev,
         city: city,
@@ -159,8 +157,8 @@ export default function CheckoutComponent({
       toast.success("Location detected and form auto-filled!");
     } catch (error) {
       console.error("Error detecting location:", error);
-
       let errorMessage = "Failed to detect location";
+
       if (error instanceof GeolocationPositionError) {
         switch (error.code) {
           case error.PERMISSION_DENIED:
@@ -186,15 +184,58 @@ export default function CheckoutComponent({
     }
   };
 
+  const handleFastOrder = () => {
+    if (!formData.address.trim()) {
+      toast.error("Please enter your delivery address first");
+      return;
+    }
+    onOrderSubmit(formData);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Fast Order Button */}
+      <Card className="shadow-sm border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex items-center gap-2 flex-1">
+              <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                <Zap className="w-4 h-4 text-amber-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-amber-800 text-sm">
+                  Quick Order
+                </p>
+                <p className="text-xs text-amber-600">
+                  Skip details, order with just your address
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={handleFastOrder}
+              disabled={loading || !formData.address.trim()}
+              className="bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm px-4 py-2 h-9 w-full sm:w-auto"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Zap className="w-4 h-4 mr-2" />
+              )}
+              {loading ? "Processing..." : "Order Now"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Delivery Address */}
-      <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
-          <div className="flex items-center justify-between">
+      <Card className="shadow-sm border border-gray-100 overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              <CardTitle className="text-lg font-bold">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-blue-600" />
+              </div>
+              <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
                 Delivery Address
               </CardTitle>
             </div>
@@ -203,28 +244,29 @@ export default function CheckoutComponent({
               size="sm"
               onClick={detectLocation}
               disabled={location.loading}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-sm h-9 w-full sm:w-auto bg-transparent"
             >
               {location.loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Navigation className="w-4 h-4" />
               )}
-              {location.loading ? "Detecting..." : "Detect Location"}
+              {location.loading ? "Detecting..." : "Auto-detect"}
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-6 space-y-4">
+
+        <CardContent className="p-4 sm:p-6 space-y-4">
           {/* Location Status */}
           {location.coordinates && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
               <div className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-green-800">
+                <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-emerald-800">
                     Location detected successfully
                   </p>
-                  <p className="text-xs text-green-700 mt-1">
+                  <p className="text-xs text-emerald-700 mt-1 break-words">
                     {location.address}
                   </p>
                 </div>
@@ -234,81 +276,106 @@ export default function CheckoutComponent({
 
           {location.error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-700">{location.error}</p>
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-700">{location.error}</p>
+              </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="address" className="text-sm font-medium">
+            <Label
+              htmlFor="address"
+              className="text-sm font-medium text-gray-700"
+            >
               Full Address *
             </Label>
             <Textarea
               id="address"
-              placeholder="Enter your complete address"
-              className="min-h-[80px] resize-none"
+              placeholder="Enter your complete delivery address including house number, street, area, and city"
+              className="min-h-[80px] resize-none text-sm"
               value={formData.address}
               onChange={(e) => handleInputChange("address", e.target.value)}
             />
+            <p className="text-xs text-gray-500">
+              Please provide a detailed address for accurate delivery
+            </p>
           </div>
         </CardContent>
       </Card>
 
       {/* Order Notes */}
-      <Card className="shadow-lg border-0">
-        <CardHeader className="border-b">
-          <CardTitle className="text-lg font-bold">
-            Order Notes (Optional)
-          </CardTitle>
+      <Card className="shadow-sm border border-gray-100">
+        <CardHeader className="border-b border-gray-100 p-4 sm:p-6">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+              <StickyNote className="w-4 h-4 text-gray-600" />
+            </div>
+            <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
+              Order Notes
+            </CardTitle>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+              Optional
+            </span>
+          </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <Textarea
-            placeholder="Any special instructions for your order..."
-            className="min-h-[80px] resize-none"
+            placeholder="Any special instructions for your order (e.g., call before delivery, gate code, etc.)"
+            className="min-h-[80px] resize-none text-sm"
             value={formData.orderNotes}
             onChange={(e) => handleInputChange("orderNotes", e.target.value)}
           />
         </CardContent>
       </Card>
+
       {/* Payment Method */}
-      <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b">
+      <Card className="shadow-sm border border-gray-100 overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-100 p-4 sm:p-6">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-purple-600" />
-            <CardTitle className="text-lg font-bold">Payment Method</CardTitle>
+            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+              <CreditCard className="w-4 h-4 text-purple-600" />
+            </div>
+            <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
+              Payment Method
+            </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+
+        <CardContent className="p-4 sm:p-6">
           <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                 <RadioGroupItem value="cod" id="cod" />
                 <div className="flex-1">
-                  <Label htmlFor="cod" className="font-medium cursor-pointer">
+                  <Label
+                    htmlFor="cod"
+                    className="font-medium cursor-pointer text-sm"
+                  >
                     Cash on Delivery (COD)
                   </Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-gray-600 mt-1">
                     Pay when you receive your order
                   </p>
                 </div>
-                <span className="text-sm text-green-600 font-medium">
+                <span className="text-xs text-emerald-600 font-medium bg-emerald-100 px-2 py-1 rounded-full">
                   Recommended
                 </span>
               </div>
 
-              <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors opacity-50">
+              <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg opacity-50 cursor-not-allowed">
                 <RadioGroupItem value="online" id="online" disabled />
                 <div className="flex-1">
-                  <Label
-                    htmlFor="online"
-                    className="font-medium cursor-pointer"
-                  >
+                  <Label htmlFor="online" className="font-medium text-sm">
                     Online Payment
                   </Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-gray-600 mt-1">
                     Pay now with card or mobile banking
                   </p>
                 </div>
-                <span className="text-sm text-gray-500">Coming Soon</span>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  Coming Soon
+                </span>
               </div>
             </div>
           </RadioGroup>
@@ -316,14 +383,22 @@ export default function CheckoutComponent({
       </Card>
 
       {/* Submit Button */}
-      <Button
-        className="w-full bg-gradient-to-r from-primary to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 text-sm h-12 shadow-lg hover:shadow-xl transition-all duration-200"
-        onClick={() => onOrderSubmit(formData)}
-        disabled={loading}
-      >
-        {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-        {loading ? "Placing Order..." : "Complete Order →"}
-      </Button>
+      <div className="sticky bottom-0 bg-white p-4 border-t border-gray-200 -mx-4 sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:static">
+        <Button
+          className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 text-sm h-12 shadow-lg hover:shadow-xl transition-all duration-200"
+          onClick={() => onOrderSubmit(formData)}
+          disabled={loading || !formData.address.trim()}
+        >
+          {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+          {loading ? "Placing Order..." : "Complete Order →"}
+        </Button>
+
+        {!formData.address.trim() && (
+          <p className="text-xs text-red-500 mt-2 text-center">
+            Please enter your delivery address to continue
+          </p>
+        )}
+      </div>
     </div>
   );
 }

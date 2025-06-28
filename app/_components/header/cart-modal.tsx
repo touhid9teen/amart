@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import ProductItem from "../product/productItem";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
+import type { Product } from "@/lib/types";
 
 interface CartModalProps {
   isOpen: boolean;
@@ -99,7 +100,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <p className="text-gray-400 text-lg">Your cart is empty</p>
                 </div>
               ) : (
-                Object.values(cartItems).map((item: AnyType, indx) => (
+                Object.values(cartItems).map((item: unknown, indx) => (
                   <ProductItem
                     key={indx}
                     product={item as Product}

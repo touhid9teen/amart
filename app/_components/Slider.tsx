@@ -11,6 +11,7 @@ export default function HeroSlider() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [textVisible, setTextVisible] = useState(true);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isAutoPlaying) {
@@ -49,8 +50,22 @@ export default function HeroSlider() {
   const handleMouseEnter = () => setIsAutoPlaying(false);
   const handleMouseLeave = () => setIsAutoPlaying(true);
 
+  // Scroll to next section below slider
+  const handleShopNowClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (sliderRef.current) {
+      const sliderBottom =
+        sliderRef.current.getBoundingClientRect().bottom + window.scrollY;
+      window.scrollTo({
+        top: sliderBottom,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div
+      ref={sliderRef}
       className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[calc(100vh-80px)] overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -139,7 +154,8 @@ export default function HeroSlider() {
                               }}
                             >
                               <Link
-                                href="/collections"
+                                href="#"
+                                onClick={handleShopNowClick}
                                 className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg text-xs sm:text-sm md:text-base"
                               >
                                 Shop Now

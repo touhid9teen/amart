@@ -7,14 +7,15 @@ import {
   useState,
   ReactNode,
 } from "react";
+import type { CartItem } from "@/lib/types";
 
 type CartContextType = {
   cartCount: number;
   setCartCount: (count: number) => void;
-  cartItems: { [key: string]: AnyType };
-  setCartItems: (items: { [key: string]: AnyType }) => void;
+  cartItems: { [key: string]: unknown };
+  setCartItems: (items: { [key: string]: unknown }) => void;
   totalAmount: number;
-  updateCart: (updatedItems: { [key: string]: AnyType }) => void;
+  updateCart: (updatedItems: { [key: string]: unknown }) => void;
 };
 
 const CartContext = createContext<CartContextType>({
@@ -28,7 +29,7 @@ const CartContext = createContext<CartContextType>({
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartCount, setCartCount] = useState(0);
-  const [cartItems, setCartItems] = useState<{ [key: string]: AnyType }>({});
+  const [cartItems, setCartItems] = useState<{ [key: string]: unknown }>({});
   const [totalAmount, setTotalAmount] = useState(0);
 
   // Load from localStorage initially

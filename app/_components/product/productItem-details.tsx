@@ -1,6 +1,7 @@
 "use client";
 
 import CartActionButton from "../cart-action-button";
+import type { ProductDetailsProps } from "@/lib/types";
 
 export default function ProductDetails({
   product,
@@ -10,8 +11,6 @@ export default function ProductDetails({
   incrementQuantity,
   decrementQuantity,
 }: ProductDetailsProps) {
- 
-
   return (
     <div className="p-3 sm:p-4 space-y-3">
       {/* Product Name */}

@@ -7,6 +7,7 @@ import ProductItem from "./productItem";
 import ProductModal from "./product-modal";
 import { slugify } from "@/app/_utils/slugify";
 import Link from "next/link";
+import type { Product } from "@/lib/types";
 
 interface ProductsProps {
   productList: Product[];
