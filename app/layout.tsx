@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/auth-context";
 import { AuthModalsProvider } from "@/providers/auth-modal-provider";
 import { CartProvider } from "@/contexts/cart-context";
 import ReactQueryProvider from "@/providers/react-query-provider";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
+        <NextTopLoader height={3} showSpinner={false} /> 
         <ReactQueryProvider>
           <AuthProvider>
             <CartProvider>
