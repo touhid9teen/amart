@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import OrderConfirmation from "./order-conformation";
 
 export default function OrderConfirmationPage() {
   return (
@@ -9,7 +10,7 @@ export default function OrderConfirmationPage() {
         </div>
       }
     >
-      <OrderConfirmationPage />
+      <OrderConfirmation />
     </Suspense>
   );
 }
