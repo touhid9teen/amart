@@ -27,6 +27,8 @@ export async function getRequest(
 ) {
   const pathname = query.pathname || (query.params?.slug as string);
   const endpoint = await getEndpoint(url, pathname);
+  console.log('======================',pathname)
+  console.log('------------------',endpoint)
 
   const time = new Date().getTime();
   return await api

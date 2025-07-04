@@ -61,6 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     Infinity
   );
 
+  console.log("category-------------------------------------", categoryList);
+
   // Use only the query loading state for UI loading
   const isLoading = isCategoryLoading || isProductLoading;
 
