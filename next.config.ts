@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -12,9 +11,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
   reactStrictMode: false,
+
   typescript: {
     ignoreBuildErrors: true,
+  },
+
+  // ✅ Add this block to expose env variables
+  env: {
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    API_BASE_URL: process.env.API_BASE_URL,
   },
 };
 
