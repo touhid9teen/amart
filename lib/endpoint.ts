@@ -1,6 +1,6 @@
 "use server";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const baseUrl = process.env.API_BASE_URL;
 const endpoints: EndpointType = {
   // cart
   removeAllCartItems: "/store/user-cart/",
