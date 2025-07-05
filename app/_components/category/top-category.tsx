@@ -26,7 +26,7 @@ type TopCategoriesProps = {
 
 export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const { isLoading } = useAuth();
-  const baseUrl = process.env.API_BASE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const categories = categoryList;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 

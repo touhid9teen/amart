@@ -29,7 +29,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { cartItems, updateCart } = useCart();
 
-  const baseUrl = process.env.API_BASE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const imgUrl = product.image
     ? baseUrl + product.image
     : "/placeholder.svg?height=600&width=600";

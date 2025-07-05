@@ -73,7 +73,7 @@ export async function addToCart(data: AnyType, jwt: string) {
 // 1. Login with phone (send OTP)
 export async function loginWithPhone(phone: string, countryCode: string) {
   try {
-    const endpoint = `${process.env.API_BASE_URL}/auth/phone-login/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/phone-login/`;
     const response = await axios.post(endpoint, {
       country_code: countryCode,
       phone_number: phone,
@@ -91,7 +91,7 @@ export async function verifyOtpServer(
   otp: string
 ) {
   try {
-    const endpoint = `${process.env.API_BASE_URL}/auth/verify-otp/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify-otp/`;
     const response = await axios.post(endpoint, {
       country_code: countryCode,
       phone_number: phone,
@@ -120,7 +120,7 @@ export async function refreshAuthTokenServer() {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get("refreshToken")?.value;
     if (!refreshToken) throw new Error("No refresh token");
-    const endpoint = `${process.env.API_BASE_URL}/auth/refresh-token/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token/`;
     const response = await axios.post(endpoint, { refresh: refreshToken });
     if (response.data.access) {
       await setCookie("authToken", response.data.access);
@@ -159,7 +159,7 @@ export async function logoutUserServer() {
 
 // Get order by ID
 export async function getOrderById(orderId: string, authToken: string) {
-  const baseUrl = process.env.API_BASE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const headers: Record<string, string> = {};
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
   const res = await axios.get(`${baseUrl}/detail/orders/${orderId}/`, {

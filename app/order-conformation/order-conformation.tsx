@@ -70,7 +70,7 @@ export default function OrderConfirmation() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id") || "";
   const { authToken } = useAuth();
-  const baseUrl = process.env.API_BASE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
   // Use TanStack Query for order details
   const {

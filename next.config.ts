@@ -11,14 +11,14 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "127.0.0.1",
+        hostname: "tapi.amart.com.bd",
         port: "1337",
         pathname: "/uploads/**",
       },
       {
         protocol: "https",
         hostname: "www.amart.com.bd",
-        pathname: "/media/products/**",
+        pathname: "/media/**",
       },
     ],
   },

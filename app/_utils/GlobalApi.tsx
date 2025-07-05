@@ -1,8 +1,10 @@
 import axios from "axios";
 
-const Base_URL = process.env.API_BASE_URL;
+const Base_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 if (!Base_URL) {
-  throw new Error("API_BASE_URL is not defined in the environment variables");
+  throw new Error(
+    "NEXT_PUBLIC_API_BASE_URL is not defined in the environment variables"
+  );
 }
 
 const axiosClient = axios.create({
