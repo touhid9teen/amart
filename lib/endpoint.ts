@@ -1,5 +1,7 @@
 "use server";
 
+import { EndpointType } from "./types";
+
 const baseUrl = process.env.API_BASE_URL;
 const endpoints: EndpointType = {
   // cart
@@ -9,7 +11,7 @@ const endpoints: EndpointType = {
   addToCart: "store/user-cart/",
   getCategoryList: "store/categories/",
   getProducts: "store/products/",
-  getProductByCategory: "/store/products/category/",
+  getProductByCategory: "store/products/category/",
   getOrders: "detail/orders/user/all/",
 };
 

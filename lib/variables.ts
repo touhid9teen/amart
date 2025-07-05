@@ -28,4 +28,4 @@ export const countryCodes = [
   { code: "+880", country: "BD", name: "Bangladesh" },
 ];
 
-export const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+export const BASE_URL = process.env.API_BASE_URL || "";

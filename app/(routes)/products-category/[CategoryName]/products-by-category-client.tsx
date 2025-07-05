@@ -14,9 +14,9 @@ export default function ProductsByCategoryClient({
     "getProductByCategory",
     { params: { slug: categoryName } },
     true,
-    null,
-    Number.POSITIVE_INFINITY
+    null
   );
+
 
   // Format category name for display
   const formattedCategoryName = categoryName

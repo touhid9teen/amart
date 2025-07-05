@@ -26,7 +26,7 @@ type TopCategoriesProps = {
 
 export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const { isLoading } = useAuth();
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+  const baseUrl = process.env.API_BASE_URL || "";
   const categories = categoryList;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -88,8 +88,6 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             Shop by Category
           </h2>
-
-          
         </div>
 
         {/* Categories Container */}

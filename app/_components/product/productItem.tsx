@@ -17,7 +17,7 @@ export default function ProductItem({
   const [isHovered, setIsHovered] = useState(false);
   const { cartItems, updateCart } = useCart();
 
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+  const baseUrl = process.env.API_BASE_URL || "";
   const imgUrl = product.image
     ? baseUrl + product.image
     : "/placeholder.svg?height=300&width=300";

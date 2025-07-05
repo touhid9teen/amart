@@ -20,7 +20,7 @@ export default function CartItems() {
   const items = Object.values(cartItems) as CartItem[];
   const deliveryCharge = 40;
   const grandTotal = totalAmount + deliveryCharge;
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "";
+  const baseUrl = process.env.API_BASE_URL || "";
 
   return (
     <div className="space-y-4">
