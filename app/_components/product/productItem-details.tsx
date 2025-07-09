@@ -16,24 +16,24 @@ export default function ProductDetails({
       {/* Product Name */}
       <div className="space-y-1">
         <h3 className="font-semibold text-sm sm:text-base line-clamp-2 text-gray-900 leading-tight">
-          {product.name}
+          {product?.name}
         </h3>
       </div>
 
       {/* Weight/Unit */}
       <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md inline-block">
-        1 kg
+       1 {product?.ItemQuantityType}
       </div>
 
       {/* Price Section */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
-            ৳{product.sellingPice}
+            ৳{product?.sellingPice}
           </span>
           {product.mrp && (
             <span className="text-sm text-gray-500 line-through">
-              ৳{product.mrp}
+              ৳{product?.mrp}
             </span>
           )}
         </div>

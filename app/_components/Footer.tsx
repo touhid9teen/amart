@@ -379,7 +379,7 @@ export default function Footer() {
                   </svg>
 
                   <address className="-mt-0.5 flex-1 text-gray-700 not-italic">
-                    213 Lane, London, United Kingdom
+                    Mirpur DOHS, Dhaka, Bangladesh
                   </address>
                 </li>
               </ul>

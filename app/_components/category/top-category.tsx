@@ -84,11 +84,6 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
     <div className="bg-white py-6 sm:py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Shop by Category
-          </h2>
-        </div>
 
         {/* Categories Container */}
         <div className="relative">
@@ -110,6 +105,11 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
             </>
           ) : Array.isArray(categories) && categories.length > 0 ? (
             <>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Shop by Category
+                </h2>
+              </div>
               {/* Mobile View - Horizontal Scroll with Navigation Buttons */}
               <div className="relative sm:hidden">
                 {/* Left Scroll Button */}
