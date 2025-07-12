@@ -131,7 +131,7 @@ export default function Products({
           {/* Category Header - Responsive */}
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold lg:font-bold text-gray-900 truncate pr-4">
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold lg:font-bold text-gray-900  pr-4 line-clamp-2">
                 {category}
               </h2>
               <Link
@@ -150,7 +150,7 @@ export default function Products({
               {scrollStates[category]?.showLeft && (
                 <button
                   type="button"
-                  className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-200 rounded-full p-2 sm:p-3 opacity-100 transition-opacity duration-200 hover:bg-gray-50 hover:shadow-xl"
+                  className="hidden sm:block absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-200 rounded-full p-2 sm:p-3 opacity-100 transition-opacity duration-200 hover:bg-gray-50 hover:shadow-xl"
                   onClick={() => handleScroll(category, "left")}
                   aria-label="Scroll Left"
                   tabIndex={0}
@@ -159,11 +159,10 @@ export default function Products({
                 </button>
               )}
 
-              {/* Right Navigation Button - Only show if can scroll right */}
               {scrollStates[category]?.showRight && (
                 <button
                   type="button"
-                  className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-200 rounded-full p-2 sm:p-3 opacity-100 transition-opacity duration-200 hover:bg-gray-50 hover:shadow-xl"
+                  className="hidden sm:block absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-200 rounded-full p-2 sm:p-3 opacity-100 transition-opacity duration-200 hover:bg-gray-50 hover:shadow-xl"
                   onClick={() => handleScroll(category, "right")}
                   aria-label="Scroll Right"
                   tabIndex={0}

@@ -67,11 +67,12 @@ export default function SearchBar() {
       setSuggestions([]);
       setShowDropdown(false);
       router.push(`/search?q=${encodeURIComponent(query)}`);
+      setInput("");
     }
   };
 
   const handleSelectSuggestion = (name: string) => {
-    setInput(name);
+    setInput("");
     setSuggestions([]);
     setShowDropdown(false);
     router.push(`/search?q=${encodeURIComponent(name)}`);

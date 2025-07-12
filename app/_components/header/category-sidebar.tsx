@@ -74,18 +74,20 @@ export default function CategorySidebar({
                     key={cat.id}
                     href={`/products-category/${cat.slug}`}
                     onClick={onClose}
-                    tabIndex={0}
                     className="
-                      group flex items-center gap-2 px-4 py-2.5 rounded-lg
-                      text-sm font-medium text-gray-700
-                      bg-gray-50 border border-gray-200
-                      hover:bg-gray-100 hover:text-primary
-                      focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-                      transition-all duration-200
-                      whitespace-nowrap
-                    "
+    group flex items-start gap-2 px-4 py-2.5 rounded-lg
+    text-sm font-medium text-gray-700
+    bg-gray-50 border border-gray-200
+    hover:bg-gray-100 hover:text-primary
+    focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+    transition-all duration-200 whitespace-normal
+  "
                   >
-                    <span className="flex-1 truncate">{cat.name}</span>
+                    <div className="flex-1">
+                      <p className="line-clamp-4 text-sm text-gray-700 break-words font-semibold">
+                        {cat.name}
+                      </p>
+                    </div>
                     <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition" />
                   </Link>
                 ))}

@@ -154,7 +154,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                         key={category.id}
                         className="group flex-shrink-0"
                       >
-                        <div className="w-20 bg-white rounded-xl border border-gray-100 p-3 transition-all duration-300 hover:border-gray-200 hover:shadow-md hover:-translate-y-1">
+                        <div className="w-20 h-60 bg-white rounded-xl border border-gray-100 p-3 transition-all duration-300 hover:border-gray-200 hover:shadow-md hover:-translate-y-1">
                           {/* Image Container */}
                           <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-lg bg-gray-50">
                             <Image
@@ -168,7 +168,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                           </div>
 
                           {/* Category Name */}
-                          <h3 className="text-xs font-medium text-gray-700 text-center leading-tight group-hover:text-gray-900 transition-colors duration-200 line-clamp-2">
+                          <h3 className="text-xs font-medium text-gray-700 text-center leading-tight group-hover:text-gray-900 transition-colors duration-200 line-clamp-10">
                             {category.name}
                           </h3>
                         </div>
@@ -194,7 +194,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                       key={category.id}
                       className="group"
                     >
-                      <div className="bg-white rounded-xl border border-gray-100 p-4 transition-all duration-300 hover:border-gray-200 hover:shadow-lg hover:-translate-y-1">
+                      <div className="bg-white h-68 rounded-xl border border-gray-100 p-4 transition-all duration-300 hover:border-gray-200 hover:shadow-lg hover:-translate-y-1">
                         {/* Image Container */}
                         <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-lg bg-gray-50">
                           <Image
@@ -208,7 +208,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                         </div>
 
                         {/* Category Name */}
-                        <h3 className="text-sm font-semibold text-gray-700 text-center leading-tight group-hover:text-gray-900 transition-colors duration-200 line-clamp-2">
+                        <h3 className="text-sm font-semibold text-gray-700 text-center leading-tight group-hover:text-gray-900 transition-colors duration-200 line-clamp-10">
                           {category.name}
                         </h3>
                       </div>

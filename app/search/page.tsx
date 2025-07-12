@@ -51,8 +51,16 @@ function SearchResults() {
 
   return (
     <div className="min-h-screen">
-      <BackButton />
-
+      {/* Header Section */}
+      <div className="bg-white sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-4 sm:py-6">
+            <div className="flex items-center space-x-4">
+              <BackButton />
+            </div>
+          </div>
+        </div>
+      </div>
       {query ? (
         <div className="px-4 md:px-10 max-w-7xl mx-auto">
           <h1 className="font-extrabold text-gray-800 mb-4">

@@ -12,8 +12,6 @@ import Link from "next/link";
 export default function CategoryDropdown() {
   const { categoryList } = useAuth();
 
-
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,13 +32,24 @@ export default function CategoryDropdown() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-64 " align="start" sideOffset={8}>
-        <div className="max-h-120 overflow-y-auto border-t-3 border-primary">
+      <DropdownMenuContent
+        className="
+    w-[90vw]                // mobile phones
+    sm:w-[80vw]             // small tablets
+    md:w-[600px]            // medium tablets
+    lg:w-[800px]            // desktops
+    xl:w-[900px]            // large screens
+    max-w-screen-xl
+  "
+        align="start"
+        sideOffset={8}
+      >
+        <div className="max-h-120 overflow-y-auto ">
           {categoryList?.length > 0 ? (
             categoryList.map((cat: Category) => (
               <DropdownMenuItem
                 key={cat?.id ?? cat?.slug ?? cat?.name}
-                className="font-medium cursor-pointer hover:bg-gray-100 focus:bg-gray-100 py-2.5"
+                className="font-semibold cursor-pointer hover:bg-gray-100 focus:bg-gray-100 py-2.5"
                 asChild
               >
                 <Link
