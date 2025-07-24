@@ -118,10 +118,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (phone: string) => {
     try {
       const result = await loginWithPhone(
-        phone,
-        countryCodes[0].code as string
+        countryCodes[0].code as string,
+        phone
       );
-      if (!result.success) {
+      if (result.message !== "success") {
         throw new Error(result.message || "Failed to send OTP");
       }
       setPhoneNumber(phone); // Persist phone number
@@ -194,7 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         countryCodes[0].code as string,
         otp
       );
-      if (!result.success) {
+      if (result.message !== "OTP verified successfully") {
         throw new Error(result.message || "Failed to verify OTP");
       }
       // Set tokens in state after successful verification

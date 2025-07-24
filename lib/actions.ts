@@ -71,14 +71,14 @@ export async function addToCart(data: AnyType, jwt: string) {
 // AUTH SERVER ACTIONS
 
 // 1. Login with phone (send OTP)
-export async function loginWithPhone(phone: string, countryCode: string) {
+export async function loginWithPhone(countryCode: string, phone: string) {
   try {
     const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/phone-login/`;
     const response = await axios.post(endpoint, {
       country_code: countryCode,
       phone_number: phone,
     });
-    return handleSuccess(response);
+    return response.data;
   } catch (error) {
     return handleError(error);
   }
