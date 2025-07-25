@@ -73,42 +73,44 @@ export async function addToCart(data: AnyType, jwt: string) {
 // 1. Login with phone (send OTP)
 export async function loginWithPhone(countryCode: string, phone: string) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/phone-login/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/phone-login/`;
     const response = await axios.post(endpoint, {
       country_code: countryCode,
       phone_number: phone,
     });
-    return response.data;
+    return response.data; // will contain { success, message, data }
   } catch (error) {
-    return handleError(error);
+    return handleError(error); // make sure this returns { success: false, message, ... }
   }
 }
 
 // 2. Verify OTP
 export async function verifyOtpServer(
-  phone: string,
   countryCode: string,
+  phone: string,
   otp: string
 ) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify-otp/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/verify-otp/`;
     const response = await axios.post(endpoint, {
       country_code: countryCode,
       phone_number: phone,
       otp,
     });
-    // Set cookies for access and refresh tokens
-    if (response.data.access_token) {
-      await setCookie("authToken", response.data.access_token);
-      if (response.data.refresh_token) {
-        await setCookie("refreshToken", response.data.refresh_token);
+
+    const { data } = response;
+
+    if (data.success && data.data?.access_token) {
+      await setCookie("authToken", data.data.access_token);
+      if (data.data.refresh_token) {
+        await setCookie("refreshToken", data.data.refresh_token);
+      }
+      if (data.data.user_id) {
+        await setCookie("authId", data.data.user_id);
       }
     }
-    // Set user id in cookie if present
-    if (response.data.user_id) {
-      await setCookie("authId", response.data.user_id);
-    }
-    return handleSuccess(response);
+
+    return data;
   } catch (error) {
     return handleError(error);
   }
@@ -120,15 +122,15 @@ export async function refreshAuthTokenServer() {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get("refreshToken")?.value;
     if (!refreshToken) throw new Error("No refresh token");
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/refresh-token/`;
     const response = await axios.post(endpoint, { refresh: refreshToken });
-    if (response.data.access) {
-      await setCookie("authToken", response.data.access);
-      if (response.data.refresh) {
-        await setCookie("refreshToken", response.data.refresh);
+    if (response.data.access_token) {
+      await setCookie("authToken", response.data.access_token);
+      if (response.data.refresh_token) {
+        await setCookie("refreshToken", response.data.refresh_token);
       }
     }
-    return handleSuccess(response);
+    return response;
   } catch (error) {
     return handleError(error);
   }
@@ -162,7 +164,7 @@ export async function getOrderById(orderId: string, authToken: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const headers: Record<string, string> = {};
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
-  const res = await axios.get(`${baseUrl}/detail/orders/${orderId}/`, {
+  const res = await axios.get(`${baseUrl}detail/orders/${orderId}/`, {
     headers,
   });
   return res.data;

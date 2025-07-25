@@ -121,8 +121,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         countryCodes[0].code as string,
         phone
       );
-      if (result.message !== "success") {
-        throw new Error(result.message || "Failed to send OTP");
+      
+      if (!result.success) {
+        throw new Error(result.message || "Something went wrong");
       }
       setPhoneNumber(phone); // Persist phone number
       setAuthState("verifying");
@@ -162,12 +163,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshAuthToken = async () => {
     try {
       const result = await refreshAuthTokenServer();
-      if (!result.success || !result.data?.access) {
+      if (!result.success || !result.data?.access_token) {
         logout();
         return null;
       }
-      setTokens(result.data.access, result.data.refresh || "");
-      return result.data.access;
+      setTokens(result.data.access, result.data.refresh_token || "");
+      return result.data.access_token;
     } catch {
       logout();
       return null;
@@ -190,12 +191,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyOtp = async (otp: string) => {
     try {
       const result = await verifyOtpServer(
-        phoneNumber,
         countryCodes[0].code as string,
+        phoneNumber,
         otp
       );
-      if (result.message !== "OTP verified successfully") {
-        throw new Error(result.message || "Failed to verify OTP");
+
+      if (!result.success) {
+        throw new Error(result.message || "Something went wrong");
       }
       // Set tokens in state after successful verification
       if (result.data?.access_token) {
