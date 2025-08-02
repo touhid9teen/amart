@@ -154,9 +154,9 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                         key={category.id}
                         className="group flex-shrink-0"
                       >
-                        <div className="w-20 h-60 bg-white rounded-xl border border-gray-100 p-3 transition-all duration-300 hover:border-gray-200 hover:shadow-md hover:-translate-y-1">
+                        <div className="w-30 h-38 bg-white rounded-xl border border-gray-100 transition-all duration-300 hover:border-gray-200 hover:shadow-md hover:-translate-y-1">
                           {/* Image Container */}
-                          <div className="relative w-14 h-14 mx-auto mb-2 overflow-hidden rounded-lg bg-gray-50">
+                          <div className="relative w-full h-26 mx-auto mb-2 overflow-hidden rounded-lg bg-[#edf5fe]">
                             <Image
                               src={imgUrl || "/placeholder.svg"}
                               alt={category.image_alt || category.name}
@@ -194,9 +194,9 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                       key={category.id}
                       className="group"
                     >
-                      <div className="bg-white h-68 rounded-xl border border-gray-100 p-4 transition-all duration-300 hover:border-gray-200 hover:shadow-lg hover:-translate-y-1">
+                      <div className="bg-white h-48 rounded-xl border border-gray-100 transition-all duration-300 hover:border-gray-200 hover:shadow-lg hover:-translate-y-1">
                         {/* Image Container */}
-                        <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-lg bg-gray-50">
+                        <div className="relative w-full aspect-square mb-3 overflow-hidden rounded-lg bg-[#edf5fe]">
                           <Image
                             src={imgUrl || "/placeholder.svg"}
                             alt={category.image_alt || category.name}
@@ -218,7 +218,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
               </div>
             </>
           ) : (
-            <div className="flex flex-col justify-center items-center min-h-[200px] bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex flex-col justify-center items-center min-h-[200px] bg-gray-50 rounded-xl border border-gray-100 ">
               <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
                 <svg
                   className="w-8 h-8 text-gray-400"

@@ -173,18 +173,18 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
                     {product.name}
                   </h1>
-                  <div className="flex gap-2 shrink-0">
+                  {/* <div className="flex gap-2 shrink-0">
                     <Button variant="ghost" size="sm" className="p-2">
                       <Heart className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="sm" className="p-2">
                       <Share2 className="h-4 w-4" />
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -196,7 +196,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <span className="text-xs sm:text-sm text-gray-600">
                     (4.8) • 124 reviews
                   </span>
-                </div>
+                </div> */}
               </div>
 
               {/* Price */}
@@ -205,15 +205,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <span className="text-xl sm:text-2xl font-bold text-gray-900">
                     ৳{product.sellingPice}
                   </span>
-                  {product.mrp && (
+                  {/* {product.mrp && (
                     <span className="text-base sm:text-lg text-gray-500 line-through">
                       ৳{product.mrp}
                     </span>
-                  )}
+                  )} */}
                 </div>
-                <p className="text-xs sm:text-sm text-green-600 font-medium">
+                {/* <p className="text-xs sm:text-sm text-green-600 font-medium">
                   Free delivery on orders over ৳500
-                </p>
+                </p> */}
               </div>
 
               {/* Description */}

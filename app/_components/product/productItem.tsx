@@ -139,13 +139,13 @@ export default function ProductItem({
           >
             <Eye className="w-3 h-3 text-gray-700" />
           </Button>
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-white p-2 rounded-full"
           >
             <Heart className="w-3 h-3 text-gray-700" />
-          </Button>
+          </Button> */}
         </div>
 
         {/* Product Image */}
