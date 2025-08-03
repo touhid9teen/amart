@@ -1,11 +1,4 @@
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Facebook,
-  Instagram,
-  Twitter,
-} from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -24,9 +17,9 @@ export default function Footer() {
             </div>
 
             <p className="mt-6 max-w-md text-center leading-relaxed text-gray-600 sm:max-w-xs sm:text-left">
-              Welcome to Amart! We're dedicated to bringing you a smart, simple,
-              and satisfying shopping experience—where quality products meet
-              convenience, and your satisfaction is our top priority.
+              Welcome to Amart! We are dedicated to bringing you a smart,
+              simple, and satisfying shopping experience—where quality products
+              meet convenience, and your satisfaction is our top priority.
             </p>
 
             {/* Social Media Links */}
