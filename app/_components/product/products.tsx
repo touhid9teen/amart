@@ -14,9 +14,7 @@ interface ProductsProps {
   isLoading?: boolean;
 }
 
-function groupProductsByCategory(
-  products: Product[]
-): Record<string, Product[]> {
+function groupProductsByCategory(products: Product[]): [string, Product[]][] {
   const grouped: Record<string, Product[]> = {};
 
   products.forEach((product) => {
@@ -28,7 +26,15 @@ function groupProductsByCategory(
     });
   });
 
-  return grouped;
+  // Convert object to array and sort categories alphabetically
+  return Object.entries(grouped)
+    .sort(([a], [b]) => a.localeCompare(b)) // 🅰️ Sort category names
+    .map(([category, items]) => [
+      category,
+      items.sort(
+        (a, b) => a.name.localeCompare(b.name) // 🅱️ Sort products inside category
+      ),
+    ]);
 }
 
 export default function Products({
@@ -48,7 +54,7 @@ export default function Products({
   useEffect(() => {
     if (productList && productList.length > 0) {
       const grouped = groupProductsByCategory(productList);
-      setGroupedProducts(Object.entries(grouped));
+      setGroupedProducts(grouped); 
     }
   }, [productList]);
 

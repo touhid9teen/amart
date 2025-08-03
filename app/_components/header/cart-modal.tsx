@@ -20,7 +20,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const router = useRouter();
   const [proceeding, setProceeding] = useState(false);
 
-  const deliveryCharge = 25;
+  const deliveryCharge = 40;
   const handlingCharge = 2;
   const grandTotal = Math.floor(totalAmount + deliveryCharge + handlingCharge);
 

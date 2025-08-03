@@ -58,6 +58,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     sellingPice: item.sellingPice,
     quantity: item.quantity,
     image: item.image || undefined,
+    // weight: item?.ItemQuantityType,
+
   });
 
   const updateCart = (updatedItems: { [key: string]: CartItem }) => {

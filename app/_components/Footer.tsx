@@ -30,7 +30,7 @@ export default function Footer() {
             </p>
 
             {/* Social Media Links */}
-               <ul className="mt-8 flex justify-center gap-6 sm:justify-start md:gap-8">
+            <ul className="mt-8 flex justify-center gap-6 sm:justify-start md:gap-8">
               <li>
                 <a
                   href="#"
@@ -158,7 +158,7 @@ export default function Footer() {
                   >
                     <Mail className="h-5 w-5 text-teal-600 group-hover:text-teal-700" />
                     <span className="text-gray-600 group-hover:text-gray-900 transition">
-                      support@amart.com
+                      mahfuza0423@gmail.com
                     </span>
                   </a>
                 </li>
@@ -169,7 +169,7 @@ export default function Footer() {
                   >
                     <Phone className="h-5 w-5 text-teal-600 group-hover:text-teal-700" />
                     <span className="text-gray-600 group-hover:text-gray-900 transition">
-                      +880 123 456 7890
+                      01577-119901
                     </span>
                   </a>
                 </li>
@@ -221,85 +221,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-// export default function Footer() {
-//   return (
-//     <footer className="bg-white text-gray-700 border-t border-gray-200">
-//       <div className="max-w-screen-xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-//         <div className="grid gap-12 lg:grid-cols-3">
-//           {/* Company Info & Social */}
-//           <div>
-//             <h2 className="text-2xl font-semibold text-gray-900">Amart</h2>
-//             <p className="mt-4 max-w-sm text-sm leading-relaxed">
-//               Welcome to Amart! We're dedicated to bringing you a smart, simple,
-//               and satisfying shopping experience—where quality products meet
-//               convenience, and your satisfaction is our top priority.
-//             </p>
-
-//             <div className="mt-6 flex gap-4">
-//               {/* Social Icons */}
-//               {[
-//                 { name: "Facebook", href: "#", icon: "facebook" },
-//                 { name: "Instagram", href: "#", icon: "instagram" },
-//                 { name: "Twitter", href: "#", icon: "twitter" },
-//               ].map((item) => (
-//                 <a
-//                   key={item.name}
-//                   href={item.href}
-//                   aria-label={item.name}
-//                   className="text-gray-600 hover:text-teal-600 transition"
-//                 >
-//                   <i className={`fab fa-${item.icon} text-xl`}></i>
-//                 </a>
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* Useful Links */}
-//           <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 md:grid-cols-2">
-//             <div>
-//               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-//                 Useful Links
-//               </h3>
-//               <ul className="mt-4 space-y-2 text-sm">
-//                 <li><a href="#" className="hover:text-teal-600">About Us</a></li>
-//                 <li><a href="#" className="hover:text-teal-600">Our Services</a></li>
-//                 <li><a href="#" className="hover:text-teal-600">FAQs</a></li>
-//               </ul>
-//             </div>
-
-//             {/* Contact Info */}
-//             <div>
-//               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-//                 Contact Us
-//               </h3>
-//               <ul className="mt-4 space-y-3 text-sm">
-//                 <li className="flex items-center gap-2">
-//                   <i className="fas fa-envelope text-gray-500"></i>
-//                   <a href="mailto:john@doe.com">john@doe.com</a>
-//                 </li>
-//                 <li className="flex items-center gap-2">
-//                   <i className="fas fa-phone text-gray-500"></i>
-//                   <a href="tel:0123456789">0123456789</a>
-//                 </li>
-//                 <li className="flex items-start gap-2">
-//                   <i className="fas fa-map-marker-alt text-gray-500 mt-1"></i>
-//                   <address className="not-italic">Mirpur DOHS, Dhaka, Bangladesh</address>
-//                 </li>
-//               </ul>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Bottom Bar */}
-//         <div className="mt-12 border-t pt-6 text-center text-sm text-gray-500 sm:flex sm:justify-between sm:text-left">
-//           <p className="mb-4 sm:mb-0">&copy; 2025 Amart. All rights reserved.</p>
-//           <div className="space-x-4">
-//             <a href="#" className="hover:text-teal-600 underline">Terms & Conditions</a>
-//             <a href="#" className="hover:text-teal-600 underline">Privacy Policy</a>
-//           </div>
-//         </div>
-//       </div>
-//     </footer>
-//   );
-// }

@@ -6,25 +6,25 @@ export default function FeaturesSection() {
       icon: Truck,
       title: "Affordable Grocery Delivery",
       description:
-        "Enjoy doorstep delivery starting at just ৳40. For orders over 10kg, a minimal charge of ৳10 per extra kg applies.",
+        "Doorstep delivery starting at ৳40 for orders up to 2 kg. For orders between 2 and 10 kg, a flat charge of ৳60 applies. Orders over 10 kg incur a delivery fee of ৳100.",
     },
     {
       icon: DollarSign,
       title: "Transparent Shipping Costs",
       description:
-        "No hidden fees—just a flat ৳40 for up to 10kg. Add more, and pay only ৳10 per kg after that.",
+        "No hidden fees — simple, fixed delivery charges based on your order weight, so you always know what you pay.",
     },
     {
       icon: Headphones,
-      title: "Always Here to Help",
+      title: "Dedicated Customer Support",
       description:
-        "Our support team is available 24/7 to assist with your orders, shipping questions, and more.",
+        "Our support team is available 24/7 to assist you with orders, delivery inquiries, and any questions you may have.",
     },
     {
       icon: Gift,
-      title: "Earn Rewards on Every Order",
+      title: "Rewards Program Coming Soon",
       description:
-        "Get points with each delivery and redeem for discounts or free shipping on your next grocery run.",
+        "Stay tuned and follow us for updates on exciting rewards and promotions.",
     },
   ];
 

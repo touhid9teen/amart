@@ -28,6 +28,7 @@ export default function ProductItem({
     sellingPice: product?.sellingPice,
     quantity: 1,
     image: product?.image,
+    // weight: product?.ItemQuantityType,
   });
 
   useEffect(() => {
