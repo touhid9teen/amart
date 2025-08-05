@@ -100,7 +100,7 @@ export default function Footer() {
                 <li>
                   <a
                     className="text-gray-600 transition hover:text-gray-900"
-                    href="#"
+                    href="/about-us"
                   >
                     About Us
                   </a>
@@ -108,7 +108,7 @@ export default function Footer() {
                 <li>
                   <a
                     className="text-gray-600 transition hover:text-gray-900"
-                    href="#"
+                    href="/our-services"
                   >
                     Our Services
                   </a>
@@ -116,7 +116,7 @@ export default function Footer() {
                 <li>
                   <a
                     className="text-gray-600 transition hover:text-gray-900"
-                    href="#"
+                    href="/orders"
                   >
                     Track Your Order
                   </a>
@@ -124,7 +124,7 @@ export default function Footer() {
                 <li>
                   <a
                     className="text-gray-600 transition hover:text-gray-900"
-                    href="#"
+                    href="help&support"
                   >
                     Help & Support
                   </a>
@@ -132,7 +132,7 @@ export default function Footer() {
                 <li>
                   <a
                     className="text-gray-600 transition hover:text-gray-900"
-                    href="#"
+                    href="faqs"
                   >
                     FAQs
                   </a>
@@ -189,14 +189,14 @@ export default function Footer() {
               <div className="mt-2 flex items-center space-x-1 text-sm text-gray-500">
                 <a
                   className="text-teal-600 underline transition hover:text-teal-700"
-                  href="#"
+                  href="/terms&condition"
                 >
                   Terms & Conditions
                 </a>
                 <span>•</span>
                 <a
                   className="text-teal-600 underline transition hover:text-teal-700"
-                  href="#"
+                  href="/privacy-policy"
                 >
                   Privacy Policy
                 </a>
