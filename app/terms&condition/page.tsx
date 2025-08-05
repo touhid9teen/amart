@@ -59,10 +59,10 @@ export default function TermsConditions() {
           </h1>
           <div className="max-w-3xl mx-auto">
             <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Please read the following Terms and Conditions ("Terms") carefully
+              {`Please read the following Terms and Conditions ("Terms") carefully
               before placing any order from Amart. By accessing this Website or
               placing an order via phone, our Website, or mobile applications,
-              you agree to be bound by these Terms.
+              you agree to be bound by these Terms.`}
             </p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function TermsConditions() {
                         className="flex gap-4 p-4 bg-gray-50 rounded-lg"
                       >
                         <div className="text-sm font-semibold text-gray-900 min-w-0 flex-shrink-0">
-                          2.{index + 1}. "{item.term}"
+                          {`2.${index + 1}. "${item.term}"`}
                         </div>
                         <div className="text-sm text-gray-700">
                           {item.definition}

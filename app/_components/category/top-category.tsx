@@ -3,8 +3,8 @@
 import { useAuth } from "@/contexts/auth-context";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Grid3X3, Sparkles } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { ChevronRight, Grid3X3, Sparkles } from "lucide-react";
+import { useRef } from "react";
 
 type Category = {
   id: number;
@@ -30,44 +30,44 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // State for scroll button visibility
-  const [showLeftButton, setShowLeftButton] = useState(false);
-  const [showRightButton, setShowRightButton] = useState(false);
+  // const [showLeftButton, setShowLeftButton] = useState(false);
+  // const [showRightButton, setShowRightButton] = useState(false);
 
   // Check scroll position and update button visibility
-  const checkScrollButtons = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } =
-        scrollContainerRef.current;
-      setShowLeftButton(scrollLeft > 0);
-      setShowRightButton(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  };
+  // const checkScrollButtons = () => {
+  //   if (scrollContainerRef.current) {
+  //     const { scrollLeft, scrollWidth, clientWidth } =
+  //       scrollContainerRef.current;
+  //     setShowLeftButton(scrollLeft > 0);
+  //     setShowRightButton(scrollLeft < scrollWidth - clientWidth - 1);
+  //   }
+  // };
 
   // Initialize scroll buttons on mount and when categories change
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      checkScrollButtons();
-      container.addEventListener("scroll", checkScrollButtons);
-      window.addEventListener("resize", checkScrollButtons);
-      return () => {
-        container.removeEventListener("scroll", checkScrollButtons);
-        window.removeEventListener("resize", checkScrollButtons);
-      };
-    }
-  }, [categories]);
+  // useEffect(() => {
+  //   const container = scrollContainerRef.current;
+  //   if (container) {
+  //     checkScrollButtons();
+  //     container.addEventListener("scroll", checkScrollButtons);
+  //     window.addEventListener("resize", checkScrollButtons);
+  //     return () => {
+  //       container.removeEventListener("scroll", checkScrollButtons);
+  //       window.removeEventListener("resize", checkScrollButtons);
+  //     };
+  //   }
+  // }, [categories]);
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -280, behavior: "smooth" });
-    }
-  };
+  // const scrollLeft = () => {
+  //   if (scrollContainerRef.current) {
+  //     scrollContainerRef.current.scrollBy({ left: -280, behavior: "smooth" });
+  //   }
+  // };
 
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 280, behavior: "smooth" });
-    }
-  };
+  // const scrollRight = () => {
+  //   if (scrollContainerRef.current) {
+  //     scrollContainerRef.current.scrollBy({ left: 280, behavior: "smooth" });
+  //   }
+  // };
 
   return (
     <section className="bg-gradient-to-b from-gray-50 to-white py-12 sm:py-16">
@@ -278,8 +278,8 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
                 No Categories Available
               </h3>
               <p className="text-gray-500 text-center max-w-md leading-relaxed">
-                We're working on adding amazing product categories for you.
-                Check back soon for fresh updates!
+                {`We're working on adding amazing product categories for you.
+                Check back soon for fresh updates!`}
               </p>
               <div className="mt-6">
                 <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors duration-300">

@@ -91,8 +91,8 @@ export default function FeaturesSection() {
             Experience the Best in Grocery Delivery
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We're committed to providing exceptional service with transparent
-            pricing, reliable delivery, and outstanding customer support.
+            {` We're committed to providing exceptional service with transparent
+            pricing, reliable delivery, and outstanding customer support.`}
           </p>
         </div>
 

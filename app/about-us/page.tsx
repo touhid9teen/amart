@@ -45,29 +45,29 @@ export default function AboutUs() {
     { number: "99%", label: "Customer Satisfaction" },
   ];
 
-  const team = [
-    {
-      name: "Ahmed Rahman",
-      role: "Founder & CEO",
-      image: "/placeholder.svg?height=200&width=200",
-      description:
-        "Passionate about bringing fresh groceries to every household in Bangladesh.",
-    },
-    {
-      name: "Fatima Khan",
-      role: "Head of Operations",
-      image: "/placeholder.svg?height=200&width=200",
-      description:
-        "Ensures smooth operations and quality control across all our services.",
-    },
-    {
-      name: "Mohammad Ali",
-      role: "Technology Director",
-      image: "/placeholder.svg?height=200&width=200",
-      description:
-        "Leading our digital transformation and platform development.",
-    },
-  ];
+  // const team = [
+  //   {
+  //     name: "Ahmed Rahman",
+  //     role: "Founder & CEO",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     description:
+  //       "Passionate about bringing fresh groceries to every household in Bangladesh.",
+  //   },
+  //   {
+  //     name: "Fatima Khan",
+  //     role: "Head of Operations",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     description:
+  //       "Ensures smooth operations and quality control across all our services.",
+  //   },
+  //   {
+  //     name: "Mohammad Ali",
+  //     role: "Technology Director",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     description:
+  //       "Leading our digital transformation and platform development.",
+  //   },
+  // ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,11 +118,11 @@ export default function AboutUs() {
                 </p>
               </div>
               <div className="relative">
-                <img
+                {/* <img
                   src="/placeholder.svg?height=400&width=500"
                   alt="Amart warehouse"
                   className="rounded-lg shadow-lg"
-                />
+                /> */}
                 <div className="absolute -bottom-4 -right-4 bg-green-500 text-white p-4 rounded-lg">
                   <div className="text-2xl font-bold">2020</div>
                   <div className="text-sm">Founded</div>
