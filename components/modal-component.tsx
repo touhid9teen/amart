@@ -31,40 +31,102 @@ export function ModalComponent({
   onOpenChange,
 }: ModalComponentProps) {
   const isMobile = useIsMobile();
-  const [isReady, setIsReady] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
-  // Preload transitions
   useEffect(() => {
-    setIsReady(true);
+    setIsClient(true);
   }, []);
 
+  useEffect(() => {
+    if (!open && isClosing) {
+      const timer = setTimeout(() => {
+        setIsClosing(false);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [open, isClosing]);
+
   const handleOpenChange = (newOpen: boolean) => {
-    if (!isReady) return;
-    onOpenChange?.(newOpen);
+    if (!isClient) return;
+
+    if (!newOpen) {
+      setIsClosing(true);
+    }
+
+    // Prevent event bubbling
+    const handler = (e: Event) => {
+      e.stopPropagation();
+      if (onOpenChange) {
+        onOpenChange(newOpen);
+      }
+    };
+
+    if (newOpen) {
+      handler(new Event("open"));
+    } else {
+      setTimeout(() => {
+        handler(new Event("close"));
+      }, 50);
+    }
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={handleOpenChange}>
-        {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        <DrawerContent className="will-change-transform transition-transform duration-200">
+      <Drawer
+        open={open}
+        onOpenChange={handleOpenChange}
+      >
+        {trigger && (
+          <DrawerTrigger asChild onClick={(e) => e.stopPropagation()}>
+            {trigger}
+          </DrawerTrigger>
+        )}
+        <DrawerContent
+          className={`will-change-transform transition-all duration-200 ease-out ${
+            isClosing ? "animate-out" : "animate-in"
+          }`}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <VisuallyHidden.Root>
             <DrawerTitle>Modal</DrawerTitle>
           </VisuallyHidden.Root>
-          <div className="p-4">{children}</div>
+          <div className="p-4" onClick={(e) => e.stopPropagation()}>
+            {children}
+          </div>
         </DrawerContent>
       </Drawer>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="max-h-screen p-0 will-change-transform transition-transform duration-200">
+    <Dialog
+      open={open}
+      onOpenChange={handleOpenChange}
+    >
+      {trigger && (
+        <DialogTrigger asChild onClick={(e) => e.stopPropagation()}>
+          {trigger}
+        </DialogTrigger>
+      )}
+      <DialogContent
+        className={`max-h-screen p-0 will-change-transform transition-all duration-200 ease-out ${
+          isClosing ? "animate-out" : "animate-in"
+        }`}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <VisuallyHidden.Root>
           <DialogTitle>Modal</DialogTitle>
         </VisuallyHidden.Root>
-        <div className="p-6 pt-0">{children}</div>
+        <div className="p-6 pt-0" onClick={(e) => e.stopPropagation()}>
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   );
