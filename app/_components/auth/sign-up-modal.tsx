@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react"; // 👁️ icons
+import { Eye, EyeOff } from "lucide-react"; // 👁️ import icons
 import { useAuth } from "@/contexts/auth-context";
 import Logo from "../header/logo";
 import Link from "next/link";
@@ -11,9 +11,8 @@ import { ModalComponent } from "@/components/modal-component";
 
 type LoginState = "initial" | "success";
 
-export function LoginModal() {
-  const { authState, login, hideModals, isLoading, showSignUpModal } =
-    useAuth();
+export function SingUpModal() {
+  const { authState, signup, hideModals, isLoading, showLoginModal } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,10 +21,15 @@ export function LoginModal() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ""); // Remove non-digits
 
-    if (value.length >= 10) setLoginState("success");
-    else setLoginState("initial");
+    if (value.length >= 10) {
+      setLoginState("success");
+    } else {
+      setLoginState("initial");
+    }
 
-    if (value.length <= 11) setPhoneNumber(value);
+    if (value.length <= 11) {
+      setPhoneNumber(value);
+    }
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,29 +47,30 @@ export function LoginModal() {
       return;
 
     try {
-      await login(phoneNumber, password);
+      await signup(phoneNumber, password);
       setPhoneNumber("");
       setPassword("");
     } catch (error) {
       console.error("Login failed:", error);
+      // Optional: show toast or error message to user
     }
   };
 
   const handleClickSignup = () => {
-    showSignUpModal();
+    showLoginModal();
   };
 
   return (
-    <ModalComponent open={authState === "login"} onOpenChange={hideModals}>
+    <ModalComponent open={authState === "signup"} onOpenChange={hideModals}>
       <div className="bg-white rounded-xl w-full px-4 py-6 sm:px-6 sm:py-8">
-        {/* Top text */}
+        {/* Top link */}
         <div className="flex justify-start">
-          <p>Don&apos;t have an account?</p>
+          <p>Have an account?</p>
           <p
             className="pl-2 font-semibold text-primary underline cursor-pointer"
             onClick={handleClickSignup}
           >
-            Sign Up!
+            Login!
           </p>
         </div>
 
@@ -78,12 +83,12 @@ export function LoginModal() {
 
         {/* Title */}
         <div className="text-center mb-6">
-          <h1 className="text-lg sm:text-xl font-extrabold text-gray-900 mb-1 leading-snug">
-            Need it now? Amart delivers.
-          </h1>
-          <p className="text-primary text-sm font-semibold">
-            Login into your account
+          <p className="text-lg sm:text-xl font-extrabold text-gray-900 leading-snug">
+            Join Amart and start shopping smarter
           </p>
+          <h1 className="text-sm font-medium text-primary mb-1">
+            Create Your Account
+          </h1>
         </div>
 
         {/* Form */}
@@ -93,6 +98,7 @@ export function LoginModal() {
             <div className="flex items-center justify-center w-14 bg-gray-100 py-3">
               <span className="font-extrabold text-sm text-gray-600">+880</span>
             </div>
+
             <input
               value={phoneNumber}
               onChange={handleInputChange}
@@ -103,7 +109,7 @@ export function LoginModal() {
             />
           </div>
 
-          {/* Password Input */}
+          {/* Password Input (eye icon on the left) */}
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
             <button
               type="button"
@@ -117,6 +123,7 @@ export function LoginModal() {
                 <Eye size={18} strokeWidth={2} />
               )}
             </button>
+
             <input
               value={password}
               onChange={handlePasswordChange}

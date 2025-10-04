@@ -12,11 +12,14 @@ import {
   refreshAuthTokenServer,
   setCookie,
   logoutUserServer,
+  signupWithPhone,
 } from "@/lib/actions";
+import { Category, Product } from "@/lib/types";
 
 export type AuthState =
   | "unauthenticated"
   | "login"
+  | "signup"
   | "verifying"
   | "authenticated";
 
@@ -27,9 +30,11 @@ interface AuthContextType {
   phoneNumber: string;
   setPhoneNumber: (phone: string) => void;
   showLoginModal: () => void;
+  showSignUpModal: () => void;
   showVerificationModal: () => void;
   hideModals: () => void;
-  login: (phone: string) => Promise<void>;
+  signup: (phone: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
   verifyOtp: (otp: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
@@ -104,6 +109,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthState("login");
   };
 
+  const showSignUpModal = () => {
+    setAuthState("signup");
+  };
+
   const showVerificationModal = () => {
     setAuthState("verifying");
   };
@@ -115,18 +124,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (phone: string) => {
+  const signup = async (phone: string, password: string) => {
     try {
-      const result = await loginWithPhone(
+      const result = await signupWithPhone(
         countryCodes[0].code as string,
-        phone
+        phone,
+        password
       );
-      
+
       if (!result.success) {
         throw new Error(result.message || "Something went wrong");
       }
       setPhoneNumber(phone); // Persist phone number
       setAuthState("verifying");
+      toast("OTP Sent", {
+        description: "Please check your phone for the verification code",
+      });
+    } catch {
+      toast.error("Error", {
+        description: "Failed to send OTP",
+      });
+    }
+  };
+
+  const login = async (phone: string, password: string) => {
+    try {
+      const result = await loginWithPhone(
+        countryCodes[0].code as string,
+        phone,
+        password
+      );
+
+      if (!result.success) {
+        throw new Error(result.message || "Something went wrong");
+      }
+      setPhoneNumber(phone); // Persist phone number
+      setAuthState("authenticated");
       toast("OTP Sent", {
         description: "Please check your phone for the verification code",
       });
@@ -213,7 +246,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (result.data?.phone_number) {
         setPhoneNumber(result.data.phone_number);
       }
-      setAuthState("authenticated");
+      setAuthState("login");
       toast("Success", {
         description: "Phone number verified successfully",
       });
@@ -255,8 +288,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         phoneNumber,
         setPhoneNumber,
         showLoginModal,
+        showSignUpModal,
         showVerificationModal,
         hideModals,
+        signup,
         login,
         verifyOtp,
         logout,
