@@ -132,6 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password
       );
 
+      console.log("result-------------------------------", result);
+
       if (!result.success) {
         throw new Error(result.message || "Something went wrong");
       }
@@ -160,8 +162,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setPhoneNumber(phone); // Persist phone number
       setAuthState("authenticated");
-      toast("OTP Sent", {
-        description: "Please check your phone for the verification code",
+
+      toast("Welcome Back!", {
+        description: "You’ve logged in successfully.",
       });
     } catch {
       toast.error("Error", {
@@ -247,8 +250,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setPhoneNumber(result.data.phone_number);
       }
       setAuthState("login");
-      toast("Success", {
-        description: "Phone number verified successfully",
+      toast("Welcome!", {
+        description: "Signup completed successfully.",
       });
     } catch {
       toast.error("Error", {
