@@ -1,12 +1,11 @@
 "use client";
 
 import { useIsMobile } from "@/hook/use-mobile";
-
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -14,19 +13,13 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Separator } from "./ui/separator";
+
 type ModalComponentProps = {
   children: React.ReactNode;
   trigger?: React.ReactNode;
-  data?: {
-    title?: string;
-    description?: string;
-  };
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -34,29 +27,30 @@ type ModalComponentProps = {
 export function ModalComponent({
   children,
   trigger,
-  data,
   open,
   onOpenChange,
 }: ModalComponentProps) {
   const isMobile = useIsMobile();
+  const [isReady, setIsReady] = useState(false);
+
+  // Preload transitions
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!isReady) return;
+    onOpenChange?.(newOpen);
+  };
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={onOpenChange}>
+      <Drawer open={open} onOpenChange={handleOpenChange}>
         {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        <DrawerContent>
-          {data && (
-            <>
-              <DrawerHeader className="text-left">
-                <DrawerTitle>{data?.title}</DrawerTitle>
-                {data?.description && (
-                  <DrawerDescription>{data?.description}</DrawerDescription>
-                )}
-              </DrawerHeader>
-              <Separator />
-            </>
-          )}
-
+        <DrawerContent className="will-change-transform transition-transform duration-200">
+          <VisuallyHidden.Root>
+            <DrawerTitle>Modal</DrawerTitle>
+          </VisuallyHidden.Root>
           <div className="p-4">{children}</div>
         </DrawerContent>
       </Drawer>
@@ -64,21 +58,12 @@ export function ModalComponent({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="max-h-screen p-0">
-        {data && (
-          <>
-            <DialogHeader className="p-6 pb-0">
-              <DialogTitle>{data?.title}</DialogTitle>
-              {data?.description && (
-                <DialogDescription>{data?.description}</DialogDescription>
-              )}
-            </DialogHeader>
-            <Separator />
-          </>
-        )}
-
+      <DialogContent className="max-h-screen p-0 will-change-transform transition-transform duration-200">
+        <VisuallyHidden.Root>
+          <DialogTitle>Modal</DialogTitle>
+        </VisuallyHidden.Root>
         <div className="p-6 pt-0">{children}</div>
       </DialogContent>
     </Dialog>

@@ -145,7 +145,7 @@ export function LoginModal() {
 
         {/* Terms */}
         <div className="text-center mt-6">
-          <p className="text-xs text-gray-500 leading-snug">
+          <div className="text-xs text-gray-500 leading-snug">
             <div>By continuing, you agree to our </div>
             <div>
               <span className="text-gray-700 underline cursor-pointer">
@@ -168,7 +168,7 @@ export function LoginModal() {
                 </Link>
               </span>
             </div>
-          </p>
+          </div>
         </div>
       </div>
     </ModalComponent>

@@ -12,7 +12,8 @@ import { ModalComponent } from "@/components/modal-component";
 type LoginState = "initial" | "success";
 
 export function SingUpModal() {
-  const { authState, signup, hideModals, isLoading, showLoginModal } = useAuth();
+  const { authState, signup, hideModals, isLoading, showLoginModal } =
+    useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -152,7 +153,7 @@ export function SingUpModal() {
 
         {/* Terms */}
         <div className="text-center mt-6">
-          <p className="text-xs text-gray-500 leading-snug">
+          <div className="text-xs text-gray-500 leading-snug">
             <div>By continuing, you agree to our </div>
             <div>
               <span className="text-gray-700 underline cursor-pointer">
@@ -175,7 +176,7 @@ export function SingUpModal() {
                 </Link>
               </span>
             </div>
-          </p>
+          </div>
         </div>
       </div>
     </ModalComponent>
