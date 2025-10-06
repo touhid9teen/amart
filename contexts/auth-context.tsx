@@ -160,6 +160,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!result.success) {
         throw new Error(result.message || "Something went wrong");
       }
+
+      // Set tokens in state after successful verification
+      if (result.data?.access_token) {
+        await setTokens(
+          result.data.access_token,
+          result.data.refresh_token || ""
+        );
+      }
+      if (result.data?.user_id) {
+        setAuthId(result.data.user_id);
+      }
+      // Set phone number if present in response
+      if (result.data?.phone_number) {
+        setPhoneNumber(result.data.phone_number);
+      }
       setPhoneNumber(phone); // Persist phone number
       setAuthState("authenticated");
 
@@ -226,30 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const verifyOtp = async (otp: string) => {
     try {
-      const result = await verifyOtpServer(
-        countryCodes[0].code as string,
-        phoneNumber,
-        otp
-      );
-
-      if (!result.success) {
-        throw new Error(result.message || "Something went wrong");
-      }
-      // Set tokens in state after successful verification
-      if (result.data?.access_token) {
-        await setTokens(
-          result.data.access_token,
-          result.data.refresh_token || ""
-        );
-      }
-      if (result.data?.user_id) {
-        setAuthId(result.data.user_id);
-      }
-      // Set phone number if present in response
-      if (result.data?.phone_number) {
-        setPhoneNumber(result.data.phone_number);
-      }
-      setAuthState("login");
+      await verifyOtpServer(countryCodes[0].code as string, phoneNumber, otp);
       toast("Welcome!", {
         description: "Signup completed successfully.",
       });
