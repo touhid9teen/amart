@@ -183,7 +183,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (phone: string, password: string) => {
+  const login = async (phone: string, password: string): Promise<void> => {
     try {
       const result = await loginWithPhone(
         countryCodes[0].code as string,
@@ -216,10 +216,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "You’ve logged in successfully.",
       });
     } catch {
-     toast.error("Error", {
-  description: "Something went wrong. Please try again.",
-});
-
+      toast.error("Error", {
+        description: "Something went wrong. Please try again.",
+      });
+    }
   };
 
   const setTokens = async (access: string, refresh: string) => {
