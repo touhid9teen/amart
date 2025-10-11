@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ProductDetails from "./productItem-details";
 import { Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { ProductItemProps, Product } from "@/lib/types";
 
 export default function ProductItem({
