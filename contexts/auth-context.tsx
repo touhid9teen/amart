@@ -50,58 +50,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
-  const [productList, setProductList] = useState<Product[]>([]);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [categoryList, setCategoryList] = useState<Category[]>([]);
+  // const [productList, setProductList] = useState<Product[]>([]);
 
-  // const { data: categoryList = [], isLoading: isCategoryLoading } = GetQuery(
-  //   "getCategoryList",
-  //   {},
-  //   true,
-  //   null,
-  //   Infinity
-  // );
-  // const { data: productList = [], isLoading: isProductLoading } = GetQuery(
-  //   "getProducts",
-  //   {},
-  //   true,
-  //   null,
-  //   Infinity
-  // );
+  const { data: categoryList = [], isLoading: isCategoryLoading } = GetQuery(
+    "getCategoryList",
+    {},
+    true,
+    null,
+    Infinity
+  );
+  const { data: productList = [], isLoading: isProductLoading } = GetQuery(
+    "getProducts",
+    {},
+    true,
+    null,
+    Infinity
+  );
 
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true); // start loading
+  const isLoading = isCategoryLoading || isProductLoading;
 
-      try {
-        const categoryResult = await GetQuery(
-          "getCategoryList",
-          {},
-          true,
-          null,
-          Infinity
-        );
-        const productResult = await GetQuery(
-          "getProducts",
-          {},
-          true,
-          null,
-          Infinity
-        );
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     setIsLoading(true); // start loading
 
-        setCategoryList(categoryResult?.data || []);
-        setProductList(productResult?.data || []);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setCategoryList([]);
-        setProductList([]);
-      } finally {
-        setIsLoading(false); // finish loading
-      }
-    }
+  //     try {
+  //       const categoryResult = await GetQuery(
+  //         "getCategoryList",
+  //         {},
+  //         true,
+  //         null,
+  //         Infinity
+  //       );
+  //       const productResult = await GetQuery(
+  //         "getProducts",
+  //         {},
+  //         true,
+  //         null,
+  //         Infinity
+  //       );
 
-    fetchData();
-  }, []);
+  //       setCategoryList(categoryResult.data ? categoryResult : []);
+  //       setProductList(productResult.data ? productResult : []);
+  //     } catch (err) {
+  //       console.error("Error fetching data:", err);
+  //       setCategoryList([]);
+  //       setProductList([]);
+  //     } finally {
+  //       setIsLoading(false); // finish loading
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, []);
 
   // Rehydrate auth state from cookies/localStorage on mount
   useEffect(() => {

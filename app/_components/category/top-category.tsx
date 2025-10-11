@@ -29,46 +29,6 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const categories = categoryList;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // State for scroll button visibility
-  // const [showLeftButton, setShowLeftButton] = useState(false);
-  // const [showRightButton, setShowRightButton] = useState(false);
-
-  // Check scroll position and update button visibility
-  // const checkScrollButtons = () => {
-  //   if (scrollContainerRef.current) {
-  //     const { scrollLeft, scrollWidth, clientWidth } =
-  //       scrollContainerRef.current;
-  //     setShowLeftButton(scrollLeft > 0);
-  //     setShowRightButton(scrollLeft < scrollWidth - clientWidth - 1);
-  //   }
-  // };
-
-  // Initialize scroll buttons on mount and when categories change
-  // useEffect(() => {
-  //   const container = scrollContainerRef.current;
-  //   if (container) {
-  //     checkScrollButtons();
-  //     container.addEventListener("scroll", checkScrollButtons);
-  //     window.addEventListener("resize", checkScrollButtons);
-  //     return () => {
-  //       container.removeEventListener("scroll", checkScrollButtons);
-  //       window.removeEventListener("resize", checkScrollButtons);
-  //     };
-  //   }
-  // }, [categories]);
-
-  // const scrollLeft = () => {
-  //   if (scrollContainerRef.current) {
-  //     scrollContainerRef.current.scrollBy({ left: -280, behavior: "smooth" });
-  //   }
-  // };
-
-  // const scrollRight = () => {
-  //   if (scrollContainerRef.current) {
-  //     scrollContainerRef.current.scrollBy({ left: 280, behavior: "smooth" });
-  //   }
-  // };
-
   return (
     <section className="bg-gradient-to-b from-gray-50 to-white py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
