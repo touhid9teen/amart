@@ -14,13 +14,12 @@ export default function ProductItem({
   isFeatured = false,
 }: ProductItemProps) {
   const [quantity, setQuantity] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const { cartItems, updateCart } = useCart();
 
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const imgUrl = product.image
     ? baseUrl + product.image
-    : "/placeholder.svg?height=300&width=300";
+    : "/placeholder.svg?height=200&width=200";
 
   const cleanProduct = (product: Product) => ({
     id: product?.id,
@@ -28,7 +27,6 @@ export default function ProductItem({
     sellingPice: product?.sellingPice,
     quantity: 1,
     image: product?.image,
-    // weight: product?.ItemQuantityType,
   });
 
   useEffect(() => {
@@ -85,13 +83,13 @@ export default function ProductItem({
 
   if (!isFeatured) {
     return (
-      <div className="flex items-center gap-4 p-4 bg-white rounded-lg border hover:shadow-md transition-shadow">
-        <div className="w-16 h-16 border rounded-md overflow-hidden bg-gray-50">
+      <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300">
+        <div className="w-14 h-14 border rounded overflow-hidden bg-gray-50">
           <Image
             src={imgUrl || "/placeholder.svg"}
             alt={product.name}
-            width={64}
-            height={64}
+            width={56}
+            height={56}
             className="w-full h-full object-contain p-1"
             unoptimized
           />
@@ -109,45 +107,27 @@ export default function ProductItem({
   }
 
   return (
-    <div
-      className="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 group"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-gray-300">
       {/* Image Container */}
-      <div className="relative aspect-square bg-gray-50 overflow-hidden">
+      <div className="relative aspect-square bg-gray-50">
         {/* Discount Badge */}
         {discountPercentage > 0 && (
-          <div className="absolute top-2 left-2 z-10 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+          <div className="absolute top-1 left-1 z-10 bg-red-500 text-white px-1.5 py-0.5 rounded text-xs font-semibold">
             -{discountPercentage}%
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div
-          className={`absolute top-2 right-2 z-10 flex flex-col gap-1 transition-opacity duration-200 ${
-            isHovered ? "opacity-100" : "opacity-0"
-          }`}
+        {/* Quick View Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onQuickView?.();
+          }}
+          className="absolute top-1 right-1 z-10 bg-white border border-gray-200 p-1 rounded hover:bg-gray-50"
+          aria-label="Quick view"
         >
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickView?.();
-            }}
-            className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-white p-2 rounded-full"
-          >
-            <Eye className="w-3 h-3 text-gray-700" />
-          </Button>
-          {/* <Button
-            variant="ghost"
-            size="sm"
-            className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-white p-2 rounded-full"
-          >
-            <Heart className="w-3 h-3 text-gray-700" />
-          </Button> */}
-        </div>
+          <Eye className="w-3 h-3 text-gray-700" />
+        </button>
 
         {/* Product Image */}
         <button
@@ -161,7 +141,7 @@ export default function ProductItem({
             src={imgUrl || "/placeholder.svg"}
             alt={product.name}
             fill
-            className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+            className="object-contain p-2"
             unoptimized
           />
         </button>

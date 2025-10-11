@@ -39,8 +39,8 @@ export default function AboutUs() {
   ];
 
   const stats = [
-    { number: "50,000+", label: "Happy Customers" },
-    { number: "10,000+", label: "Products Available" },
+    { number: "50,0+", label: "Happy Customers" },
+    { number: "10,00+", label: "Products Available" },
     { number: "1", label: "Delivery Areas" },
     { number: "99%", label: "Customer Satisfaction" },
   ];

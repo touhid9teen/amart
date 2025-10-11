@@ -175,9 +175,9 @@ export default function FeaturesSection() {
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
           {[
-            { number: "50K+", label: "Happy Customers" },
-            { number: "10K+", label: "Products Available" },
-            { number: "25+", label: "Delivery Areas" },
+            { number: "500+", label: "Happy Customers" },
+            { number: "1K+", label: "Products Available" },
+            { number: "1", label: "Delivery Areas" },
             { number: "99%", label: "On-time Delivery" },
           ].map((stat, index) => (
             <div key={index} className="text-center">
