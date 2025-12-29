@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/input-otp";
 
 export function OtpVerificationModal() {
-  const { authState, phoneNumber, verifyOtp, hideModals, isLoading, login } =
+  const { authState, email, verifyOtp, hideModals, isLoading, login } =
     useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
@@ -50,7 +50,7 @@ export function OtpVerificationModal() {
 
   const handleResendOTP = async () => {
     if (canResend) {
-      await login(phoneNumber);
+      await login(email, ""); // Email-based resend
       setCountdown(60);
       setCanResend(false);
       setOtp("");
@@ -71,7 +71,7 @@ export function OtpVerificationModal() {
               We have sent a verification code to
             </p>
             <p className="text-gray-900 font-semibold text-sm sm:text-base break-words">
-              {phoneNumber}
+              {email}
             </p>
           </div>
 

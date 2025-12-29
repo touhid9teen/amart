@@ -7,12 +7,12 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { jwtDecode as jwt_decode } from "jwt-decode";
 import {
-  loginWithPhone,
+  loginWithEmail,
   verifyOtpServer,
   refreshAuthTokenServer,
   setCookie,
   logoutUserServer,
-  signupWithPhone,
+  signupWithEmail,
 } from "@/lib/actions";
 import { Category, Product } from "@/lib/types";
 
@@ -27,14 +27,14 @@ interface AuthContextType {
   authState: AuthState;
   authToken: string | null;
   authId: string | null;
-  phoneNumber: string;
-  setPhoneNumber: (phone: string) => void;
+  email: string;
+  setEmail: (email: string) => void;
   showLoginModal: () => void;
   showSignUpModal: () => void;
   showVerificationModal: () => void;
   hideModals: () => void;
-  signup: (phone: string, password: string) => Promise<void>;
-  login: (phone: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   verifyOtp: (otp: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
   // const [categoryList, setCategoryList] = useState<Category[]>([]);
   // const [productList, setProductList] = useState<Product[]>([]);
@@ -122,24 +122,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthToken(token);
       setAuthId(id || null);
     }
-    // --- Rehydrate phone number from localStorage ---
-    const storedPhone =
-      typeof window !== "undefined"
-        ? localStorage.getItem("phoneNumber")
-        : null;
-    if (storedPhone) setPhoneNumber(storedPhone);
+    // --- Rehydrate email from localStorage ---
+    const storedEmail =
+      typeof window !== "undefined" ? localStorage.getItem("email") : null;
+    if (storedEmail) setEmail(storedEmail);
   }, []);
 
-  // Persist phone number to localStorage whenever it changes
+  // Persist email to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (phoneNumber) {
-        localStorage.setItem("phoneNumber", phoneNumber);
+      if (email) {
+        localStorage.setItem("email", email);
       } else {
-        localStorage.removeItem("phoneNumber");
+        localStorage.removeItem("email");
       }
     }
-  }, [phoneNumber]);
+  }, [email]);
 
   const showLoginModal = () => {
     setAuthState("login");
@@ -160,23 +158,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signup = async (phone: string, password: string) => {
+  const signup = async (email: string, password: string) => {
     try {
-      const result = await signupWithPhone(
-        countryCodes[0].code as string,
-        phone,
-        password
-      );
+      const result = await signupWithEmail(email, password);
 
       console.log("result-------------------------------", result);
 
       if (!result.success) {
         throw new Error(result.message || "Something went wrong");
       }
-      setPhoneNumber(phone); // Persist phone number
+      setEmail(email); // Persist email
       setAuthState("verifying");
       toast("OTP Sent", {
-        description: "Please check your phone for the verification code",
+        description: "Please check your email for the verification code",
       });
     } catch {
       toast.error("Error", {
@@ -185,13 +179,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (phone: string, password: string): Promise<void> => {
+  const login = async (email: string, password: string): Promise<void> => {
     try {
-      const result = await loginWithPhone(
-        countryCodes[0].code as string,
-        phone,
-        password
-      );
+      const result = await loginWithEmail(email, password);
 
       if (!result.success) {
         throw new Error(result.message || "Something went wrong");
@@ -207,15 +197,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (result.data?.user_id) {
         setAuthId(result.data.user_id);
       }
-      // Set phone number if present in response
-      if (result.data?.phone_number) {
-        setPhoneNumber(result.data.phone_number);
+      // Set email if present in response
+      if (result.data?.email) {
+        setEmail(result.data.email);
       }
-      setPhoneNumber(phone); // Persist phone number
+      setEmail(email); // Persist email
       setAuthState("authenticated");
 
       toast("Welcome Back!", {
-        description: "You’ve logged in successfully.",
+        description: "You've logged in successfully.",
       });
     } catch {
       toast.error("Error", {
@@ -277,7 +267,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const verifyOtp = async (otp: string) => {
     try {
-      await verifyOtpServer(countryCodes[0].code as string, phoneNumber, otp);
+      await verifyOtpServer(email, otp);
       toast("Welcome!", {
         description: "Signup completed successfully.",
       });
@@ -300,7 +290,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     setAuthState("unauthenticated");
-    setPhoneNumber(""); // This will also clear from localStorage
+    setEmail(""); // This will also clear from localStorage
     setAuthToken(null);
     setAuthId(null);
     try {
@@ -316,8 +306,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         authState,
         authToken,
         authId,
-        phoneNumber,
-        setPhoneNumber,
+        email,
+        setEmail,
         showLoginModal,
         showSignUpModal,
         showVerificationModal,

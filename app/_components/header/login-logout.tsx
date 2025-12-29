@@ -11,7 +11,7 @@ import { ChevronDown, User, LogOut, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LoginLogout() {
-  const { authState, showLoginModal, logout, phoneNumber } = useAuth();
+  const { authState, showLoginModal, logout, email } = useAuth();
   const router = useRouter();
 
   const handleOrdersClick = () => {
@@ -47,7 +47,7 @@ export default function LoginLogout() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900">Account</p>
-              <p className="text-xs text-gray-500 truncate">{phoneNumber}</p>
+              <p className="text-xs text-gray-500 truncate">{email}</p>
             </div>
           </div>
 

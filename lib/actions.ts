@@ -70,16 +70,11 @@ export async function addToCart(data: AnyType, jwt: string) {
 
 // AUTH SERVER ACTIONS
 
-export async function signupWithPhone(
-  countryCode: string,
-  phone: string,
-  password: string
-) {
+export async function signupWithEmail(email: string, password: string) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/phone-signup/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/email-signup/`;
     const response = await axios.post(endpoint, {
-      country_code: countryCode,
-      phone_number: phone,
+      email: email,
       password: password,
     });
     return response.data; // will contain { success, message, data }
@@ -88,17 +83,12 @@ export async function signupWithPhone(
   }
 }
 
-// 1. Login with phone (send OTP)
-export async function loginWithPhone(
-  countryCode: string,
-  phone: string,
-  password: string
-) {
+// 1. Login with email
+export async function loginWithEmail(email: string, password: string) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/phone-login/`;
+    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/email-login/`;
     const response = await axios.post(endpoint, {
-      country_code: countryCode,
-      phone_number: phone,
+      email: email,
       password: password,
     });
     return response.data; // will contain { success, message, data }
@@ -108,16 +98,11 @@ export async function loginWithPhone(
 }
 
 // 2. Verify OTP
-export async function verifyOtpServer(
-  countryCode: string,
-  phone: string,
-  otp: string
-) {
+export async function verifyOtpServer(email: string, otp: string) {
   try {
     const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/verify-otp/`;
     const response = await axios.post(endpoint, {
-      country_code: countryCode,
-      phone_number: phone,
+      email: email,
       otp,
     });
 

@@ -14,23 +14,22 @@ type LoginState = "initial" | "success";
 export function SingUpModal() {
   const { authState, signup, hideModals, isLoading, showLoginModal } =
     useAuth();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, setLoginState] = useState<LoginState>("initial");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+    const value = e.target.value;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-    if (value.length >= 10) {
+    if (isValidEmail) {
       setLoginState("success");
     } else {
       setLoginState("initial");
     }
 
-    if (value.length <= 11) {
-      setPhoneNumber(value);
-    }
+    setEmail(value);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,19 +39,15 @@ export function SingUpModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      loginState !== "success" ||
-      phoneNumber.length < 10 ||
-      password.length < 6
-    )
-      return;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail || password.length < 6) return;
 
     try {
-      await signup(phoneNumber, password);
-      setPhoneNumber("");
+      await signup(email, password);
+      setEmail("");
       setPassword("");
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Signup failed:", error);
       // Optional: show toast or error message to user
     }
   };
@@ -94,19 +89,15 @@ export function SingUpModal() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Phone Input */}
+          {/* Email Input */}
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-            <div className="flex items-center justify-center w-14 bg-gray-100 py-3">
-              <span className="font-extrabold text-sm text-gray-600">+880</span>
-            </div>
-
             <input
-              value={phoneNumber}
+              value={email}
               onChange={handleInputChange}
-              placeholder="Enter mobile number"
+              placeholder="Enter your email"
               className="flex-1 py-3 px-3 text-sm font-extrabold h-auto border-none text-gray-600 focus:outline-none bg-transparent"
-              type="tel"
-              inputMode="numeric"
+              type="email"
+              autoComplete="email"
             />
           </div>
 
@@ -144,7 +135,10 @@ export function SingUpModal() {
                 : "bg-gray-400 hover:bg-gray-500"
             } text-white py-3 rounded-lg text-sm font-medium transition-colors h-auto`}
             disabled={
-              isLoading || phoneNumber.length !== 11 || password.length < 6
+              (() => {
+                const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                return isLoading || !isValidEmail || password.length < 6;
+              })()
             }
           >
             {isLoading ? "Please wait..." : "Continue"}
