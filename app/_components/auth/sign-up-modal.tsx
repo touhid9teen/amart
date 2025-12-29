@@ -134,12 +134,10 @@ export function SingUpModal() {
                 ? "bg-primary"
                 : "bg-gray-400 hover:bg-gray-500"
             } text-white py-3 rounded-lg text-sm font-medium transition-colors h-auto`}
-            disabled={
-              (() => {
-                const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-                return isLoading || !isValidEmail || password.length < 6;
-              })()
-            }
+            disabled={(() => {
+              const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+              return isLoading || !isValidEmail || password.length < 6;
+            })()}
           >
             {isLoading ? "Please wait..." : "Continue"}
           </Button>
