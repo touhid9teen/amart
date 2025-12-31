@@ -1,5 +1,17 @@
 import type { NextConfig } from "next";
 
+const getBackendHostname = () => {
+  try {
+    const url = process.env.NEXT_PUBLIC_API_BASE_URL;
+    if (url) {
+      return new URL(url).hostname;
+    }
+  } catch (_) {
+    // Silently fail, use localhost
+  }
+  return "localhost";
+};
+
 const nextConfig: NextConfig = {
   reactStrictMode: false,
 
@@ -11,9 +23,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname:
-          new URL(process.env.NEXT_PUBLIC_API_BASE_URL || "").hostname ||
-          "localhost",
+        hostname: getBackendHostname(),
       },
     ],
   },
