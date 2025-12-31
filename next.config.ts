@@ -10,22 +10,17 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "tapi.amart.com.bd",
-        port: "1337",
-        pathname: "/uploads/**",
-      },
-      {
         protocol: "https",
-        hostname: "www.amart.com.bd",
-        pathname: "/media/**",
+        hostname:
+          new URL(process.env.NEXT_PUBLIC_API_BASE_URL || "").hostname ||
+          "localhost",
       },
     ],
   },
 
   env: {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    API_BASE_URL: process.env.API_BASE_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
 
   // Optional for server deployment
