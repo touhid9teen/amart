@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/auth-context";
+import { getImageUrl } from "@/lib/utils";
 import { Grid3X3 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +25,7 @@ type TopCategoriesProps = {
 
 export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const { isLoading } = useAuth();
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
   const categories = categoryList;
 
   return (
@@ -75,13 +76,8 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
               <div className="lg:hidden">
                 <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
                   {categories.map((category) => {
-                    const imgUrl =
-                      category.image && category.image.startsWith("http")
-                        ? category.image
-                        : category.image
-                        ? `${baseUrl}${category.image}`
-                        : "/placeholder.svg?height=80&width=80";
-
+                    const imgUrl = getImageUrl(category.image);
+                    console.log("hhhhhhhhhhhhhhhhhhhhhhhh", imgUrl);
                     return (
                       <Link
                         href={`/products-category/${category.slug}`}
@@ -113,12 +109,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
               <div className="hidden lg:block">
                 <div className="grid grid-cols-8 xl:grid-cols-10 gap-4 grid-rows-2 justify-items-center">
                   {categories.map((category) => {
-                    const imgUrl =
-                      category.image && category.image.startsWith("http")
-                        ? category.image
-                        : category.image
-                        ? `${baseUrl}${category.image}`
-                        : "/placeholder.svg?height=100&width=100";
+                    const imgUrl = getImageUrl(category.image);
 
                     return (
                       <Link

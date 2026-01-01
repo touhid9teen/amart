@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: getBackendHostname(),
+        pathname: "/media/**",
       },
     ],
   },

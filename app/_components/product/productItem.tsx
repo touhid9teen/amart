@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/contexts/cart-context";
+import { getImageUrl } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ProductDetails from "./productItem-details";
@@ -15,10 +16,7 @@ export default function ProductItem({
   const [quantity, setQuantity] = useState(0);
   const { cartItems, updateCart } = useCart();
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-  const imgUrl = product.image
-    ? baseUrl + product.image
-    : "/placeholder.svg?height=200&width=200";
+  const imgUrl = getImageUrl(product.image);
 
   const cleanProduct = (product: Product) => ({
     id: product?.id,
