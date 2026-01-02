@@ -27,6 +27,7 @@ export default function TopCategories({ categoryList }: TopCategoriesProps) {
   const { isLoading } = useAuth();
 
   const categories = categoryList;
+  console.log("categories", categories);
 
   return (
     <section className="bg-white py-8 sm:py-12">

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import axios from "axios";
 import { getEndpoint } from "@/lib/endpoint";
+import { EndpointType, QueryParamType } from "./types";
 
 const api = axios.create();
 

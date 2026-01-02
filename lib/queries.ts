@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRequest } from "./requests";
-import { AnyType, EndpointType } from "./types";
+import { AnyType, EndpointType, QueryParamType } from "./types";
 
 export { useMutation, useQuery, useQueryClient };
 
 export const GetQuery = (
   url: keyof EndpointType,
-  query: { pathname?: string; params?: unknown } = { pathname: "", params: {} },
+  query: QueryParamType = { pathname: "", params: {} },
   enabled: boolean = true,
   initialData: AnyType = null,
   gcTime: number = 0,
