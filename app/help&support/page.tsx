@@ -22,7 +22,7 @@ export default function HelpSupport() {
       icon: Phone,
       title: "Phone Support",
       description: "Speak directly with our support team",
-      contact: "01577-119901",
+      contact: "01785250717",
       availability: "24/7 Available",
       color: "green",
     },
@@ -322,7 +322,7 @@ export default function HelpSupport() {
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-red-600" />
                 <span className="font-semibold text-red-600">
-                  Emergency Hotline: 01577-119901
+                  Emergency Hotline: 01785250717
                 </span>
               </div>
               <div className="text-sm text-gray-600">

@@ -158,11 +158,11 @@ export default function Footer() {
                 <li>
                   <a
                     className="flex items-center justify-center gap-3 sm:justify-start group"
-                    href="tel:+8801234567890"
+                    href="tel:+8801785250717"
                   >
                     <Phone className="h-5 w-5 text-teal-400 group-hover:text-teal-300" />
                     <span className="text-gray-300 group-hover:text-white transition">
-                      01577-119901
+                      01785250717
                     </span>
                   </a>
                 </li>
