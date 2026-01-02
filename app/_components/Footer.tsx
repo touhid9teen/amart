@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-100">
+    <footer className="bg-black text-white border-t border-gray-800">
       <div className="mx-auto max-w-screen-xl px-4 pt-16 pb-6 sm:px-6 lg:px-8 lg:pt-20">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Company Info */}
@@ -12,11 +12,11 @@ export default function Footer() {
                 {/* <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">A</span>
                 </div> */}
-                <span className="text-2xl font-bold text-gray-900">Amart</span>
+                <span className="text-2xl font-bold text-white">Amart</span>
               </div>
             </div>
 
-            <p className="mt-6 max-w-md text-center leading-relaxed text-gray-600 sm:max-w-xs sm:text-left">
+            <p className="mt-6 max-w-md text-center leading-relaxed text-gray-300 sm:max-w-xs sm:text-left">
               Welcome to Amart! We are dedicated to bringing you a smart,
               simple, and satisfying shopping experience—where quality products
               meet convenience, and your satisfaction is our top priority.
@@ -29,7 +29,7 @@ export default function Footer() {
                   href="#"
                   rel="noreferrer"
                   target="_blank"
-                  className="text-teal-700 transition hover:text-teal-700/75"
+                  className="text-white transition hover:text-teal-400"
                 >
                   <span className="sr-only">Facebook</span>
                   <svg
@@ -52,7 +52,7 @@ export default function Footer() {
                   href="#"
                   rel="noreferrer"
                   target="_blank"
-                  className="text-teal-700 transition hover:text-teal-700/75"
+                  className="text-white transition hover:text-teal-400"
                 >
                   <span className="sr-only">Instagram</span>
                   <svg
@@ -75,7 +75,7 @@ export default function Footer() {
                   href="#"
                   rel="noreferrer"
                   target="_blank"
-                  className="text-teal-700 transition hover:text-teal-700/75"
+                  className="text-white transition hover:text-teal-400"
                 >
                   <span className="sr-only">Twitter</span>
                   <svg
@@ -95,11 +95,11 @@ export default function Footer() {
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2">
             {/* Useful Links */}
             <div className="text-center sm:text-left">
-              <p className="text-lg font-semibold text-gray-900">Quick Links</p>
+              <p className="text-lg font-semibold text-white">Quick Links</p>
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <a
-                    className="text-gray-600 transition hover:text-gray-900"
+                    className="text-gray-300 transition hover:text-white"
                     href="/about-us"
                   >
                     About Us
@@ -107,7 +107,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    className="text-gray-600 transition hover:text-gray-900"
+                    className="text-gray-300 transition hover:text-white"
                     href="/our-services"
                   >
                     Our Services
@@ -115,7 +115,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    className="text-gray-600 transition hover:text-gray-900"
+                    className="text-gray-300 transition hover:text-white"
                     href="/orders"
                   >
                     Track Your Order
@@ -123,7 +123,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    className="text-gray-600 transition hover:text-gray-900"
+                    className="text-gray-300 transition hover:text-white"
                     href="help&support"
                   >
                     Help & Support
@@ -131,7 +131,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    className="text-gray-600 transition hover:text-gray-900"
+                    className="text-gray-300 transition hover:text-white"
                     href="faqs"
                   >
                     FAQs
@@ -142,15 +142,15 @@ export default function Footer() {
 
             {/* Contact Information */}
             <div className="text-center sm:text-left">
-              <p className="text-lg font-semibold text-gray-900">Contact Us</p>
+              <p className="text-lg font-semibold text-white">Contact Us</p>
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <a
                     className="flex items-center justify-center gap-3 sm:justify-start group"
                     href="mailto:support@amart.com"
                   >
-                    <Mail className="h-5 w-5 text-teal-600 group-hover:text-teal-700" />
-                    <span className="text-gray-600 group-hover:text-gray-900 transition">
+                    <Mail className="h-5 w-5 text-teal-400 group-hover:text-teal-300" />
+                    <span className="text-gray-300 group-hover:text-white transition">
                       mahfuza0423@gmail.com
                     </span>
                   </a>
@@ -160,15 +160,15 @@ export default function Footer() {
                     className="flex items-center justify-center gap-3 sm:justify-start group"
                     href="tel:+8801234567890"
                   >
-                    <Phone className="h-5 w-5 text-teal-600 group-hover:text-teal-700" />
-                    <span className="text-gray-600 group-hover:text-gray-900 transition">
+                    <Phone className="h-5 w-5 text-teal-400 group-hover:text-teal-300" />
+                    <span className="text-gray-300 group-hover:text-white transition">
                       01577-119901
                     </span>
                   </a>
                 </li>
                 <li className="flex items-start justify-center gap-3 sm:justify-start">
-                  <MapPin className="h-5 w-5 text-teal-600 mt-0.5 flex-shrink-0" />
-                  <address className="text-gray-600 not-italic leading-relaxed">
+                  <MapPin className="h-5 w-5 text-teal-400 mt-0.5 flex-shrink-0" />
+                  <address className="text-gray-300 not-italic leading-relaxed">
                     Mirpur DOHS, Dhaka-1216
                     <br />
                     Bangladesh
@@ -180,22 +180,22 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-12 border-t border-gray-200 pt-6">
+        <div className="mt-12 border-t border-gray-800 pt-6">
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="flex flex-col items-center sm:items-start">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 © 2025 Amart. All rights reserved.
               </p>
-              <div className="mt-2 flex items-center space-x-1 text-sm text-gray-500">
+              <div className="mt-2 flex items-center space-x-1 text-sm text-gray-400">
                 <a
-                  className="text-teal-600 underline transition hover:text-teal-700"
+                  className="text-teal-400 underline transition hover:text-teal-300"
                   href="/terms&condition"
                 >
                   Terms & Conditions
                 </a>
                 <span>•</span>
                 <a
-                  className="text-teal-600 underline transition hover:text-teal-700"
+                  className="text-teal-400 underline transition hover:text-teal-300"
                   href="/privacy-policy"
                 >
                   Privacy Policy
@@ -204,7 +204,7 @@ export default function Footer() {
             </div>
 
             <div className="mt-4 sm:mt-0">
-              <p className="text-center text-sm text-gray-500 sm:text-right">
+              <p className="text-center text-sm text-gray-400 sm:text-right">
                 Trusted by thousands of customers
               </p>
             </div>
