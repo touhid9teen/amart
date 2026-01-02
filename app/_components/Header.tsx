@@ -18,7 +18,7 @@ export default function Header() {
     <>
       <header className="bg-white sticky top-0 z-50 w-full">
         {/* Main header border */}
-        <div className="border-b border-gray-300">
+        <div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {/* Single row layout */}
             <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20">

@@ -7,7 +7,7 @@ export default function Logo({ isHeader }: { isHeader?: boolean }) {
     <Link
       href="/"
       className={`flex items-center group transition-all duration-200  pr-4 sm:pr-6 lg:pr-8 h-16 sm:h-18 lg:h-20 ${
-        isHeader ? "border-r border-gray-300" : ""
+        isHeader ? "" : ""
       }`}
       aria-label="Go to homepage"
     >

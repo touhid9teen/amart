@@ -1,6 +1,7 @@
 "use client";
 
 import TopCategories from "./_components/category/top-category";
+import Navbar from "./_components/navbar";
 import FeaturesSection from "./_components/feature-section";
 import Products from "./_components/product/products";
 import Slider from "./_components/Slider";
@@ -12,6 +13,7 @@ export default function Home() {
 
   return (
     <div>
+      <Navbar />
       <Slider />
       <TopCategories categoryList={categoryList} isLoading={isLoading} />
       <Products productList={productList} isLoading={isLoading} />
