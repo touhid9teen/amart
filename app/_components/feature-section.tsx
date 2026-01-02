@@ -26,7 +26,7 @@ export default function FeaturesSection() {
   ];
 
   return (
-    <section className="relative w-full h-auto mt-16 lg:mt-24">
+    <section className="relative w-full h-auto">
       {/* Background Container */}
       <div className="absolute inset-0 w-full h-full">
         <Image
