@@ -5,6 +5,7 @@ import Navbar from "./_components/navbar";
 import FeaturesSection from "./_components/feature-section";
 import Products from "./_components/product/products";
 import HeroSection from "./_components/hero-section";
+import ArticleSection from "./_components/article-section";
 import CategorySidebar from "./_components/category/category-sidebar";
 
 import { useAuth } from "@/contexts/auth-context";
@@ -45,6 +46,7 @@ export default function Home() {
         </div>
       </div>
 
+      <ArticleSection />
       <FeaturesSection />
     </div>
   );

@@ -13,6 +13,7 @@ const navItems = [
   { label: "BAKERY", href: "/category/bakery" },
   { label: "CANNED FOODS", href: "/category/canned-foods" },
   { label: "DAIRY", href: "/category/dairy" },
+  { label: "ARTICLES", href: "/articles" },
 ];
 
 export default function Navbar() {
