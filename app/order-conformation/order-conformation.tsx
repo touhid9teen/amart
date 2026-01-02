@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { getOrderById } from "@/lib/actions";
 import OrderConfirmationSkeleton from "../_components/skeleton/order-conformation-skeleton";
+import { BASE_URL } from "@/lib/variables";
 
 // Professional Error Component
 function ProfessionalError({
@@ -70,7 +71,7 @@ export default function OrderConfirmation() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id") || "";
   const { authToken } = useAuth();
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  const baseUrl = BASE_URL;
 
   // Use TanStack Query for order details
   const {
@@ -260,11 +261,7 @@ export default function OrderConfirmation() {
                     <div className="relative w-16 h-16 bg-white rounded-lg border border-gray-200 overflow-hidden group-hover:border-gray-300 transition-colors">
                       <Image
                         src={
-                          item.product?.image
-                            ? item.product.image.startsWith("http")
-                              ? item.product.image
-                              : `${baseUrl}${item.product.image}`
-                            : "/placeholder.svg?height=64&width=64"
+                          item.product?.image || "/placeholder.svg?height=64&width=64"
                         }
                         alt={item.product?.name || "Product"}
                         fill

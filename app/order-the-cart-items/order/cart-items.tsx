@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Shield, Clock, Truck, Package } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
+import { BASE_URL } from "@/lib/variables";
 import Image from "next/image";
 
 interface CartItem {
@@ -20,7 +21,7 @@ export default function CartItems() {
   const items = Object.values(cartItems) as CartItem[];
   const deliveryCharge = 40;
   const grandTotal = totalAmount + deliveryCharge;
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  const baseUrl = BASE_URL;
 
   return (
     <div className="space-y-4">
@@ -73,9 +74,7 @@ export default function CartItems() {
 
               <div className="space-y-2">
                 {items.map((item) => {
-                  const imgUrl = item.image
-                    ? baseUrl + item.image
-                    : "/placeholder.svg?height=300&width=300";
+                  const imgUrl = item.image || "/placeholder.svg?height=300&width=300";
 
                   return (
                     <div

@@ -2,6 +2,8 @@
 
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
+import { BASE_URL } from "@/lib/variables";
+import { AnyType } from "@/lib/types";
 import axios from "axios";
 import { cookies } from "next/headers";
 
@@ -72,7 +74,7 @@ export async function addToCart(data: AnyType, jwt: string) {
 
 export async function signupWithEmail(email: string, password: string) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/email-signup/`;
+    const endpoint = `${BASE_URL}auth/email-signup/`;
     const response = await axios.post(endpoint, {
       email: email,
       password: password,
@@ -86,7 +88,7 @@ export async function signupWithEmail(email: string, password: string) {
 // 1. Login with email
 export async function loginWithEmail(email: string, password: string) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/email-login/`;
+    const endpoint = `${BASE_URL}auth/email-login/`;
     const response = await axios.post(endpoint, {
       email: email,
       password: password,
@@ -100,7 +102,7 @@ export async function loginWithEmail(email: string, password: string) {
 // 2. Verify OTP
 export async function verifyOtpServer(email: string, otp: string) {
   try {
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/verify-otp/`;
+    const endpoint = `${BASE_URL}auth/verify-otp/`;
     const response = await axios.post(endpoint, {
       email: email,
       otp,
@@ -130,7 +132,7 @@ export async function refreshAuthTokenServer() {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get("refreshToken")?.value;
     if (!refreshToken) throw new Error("No refresh token");
-    const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/refresh-token/`;
+    const endpoint = `${BASE_URL}auth/refresh-token/`;
     const response = await axios.post(endpoint, { refresh: refreshToken });
     if (response.data.access_token) {
       await setCookie("authToken", response.data.access_token);
@@ -169,7 +171,7 @@ export async function logoutUserServer() {
 
 // Get order by ID
 export async function getOrderById(orderId: string, authToken: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  const baseUrl = BASE_URL;
   const headers: Record<string, string> = {};
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
   const res = await axios.get(`${baseUrl}detail/orders/${orderId}/`, {

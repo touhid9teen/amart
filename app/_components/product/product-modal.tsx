@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X, Star, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "@/contexts/cart-context";
-import { getImageUrl } from "@/lib/utils";
 import CartActionButton from "../cart-action-button";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import type { Product } from "@/lib/types";
@@ -21,7 +20,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { cartItems, updateCart } = useCart();
 
-  const imgUrl = getImageUrl(product.image);
+  const imgUrl = product.image || "/placeholder.svg";
 
   // Mock multiple images for demo - replace with actual product images array
   const productImages = [imgUrl, imgUrl, imgUrl];

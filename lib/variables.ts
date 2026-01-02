@@ -28,4 +28,14 @@ export const countryCodes = [
   { code: "+880", country: "BD", name: "Bangladesh" },
 ];
 
-export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+let baseUrl = rawBaseUrl || "";
+
+if (baseUrl && (baseUrl.includes("\n") || baseUrl.startsWith("#"))) {
+  const match = baseUrl.match(/https?:\/\/[^\s"']+/);
+  if (match) {
+    baseUrl = match[0];
+  }
+}
+
+export const BASE_URL = baseUrl;

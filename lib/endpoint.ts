@@ -1,8 +1,8 @@
-"use server";
-
 import { EndpointType } from "./types";
+import { BASE_URL } from "./variables";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const baseUrl = BASE_URL;
+
 const endpoints: EndpointType = {
   // cart
   removeAllCartItems: "store/user-cart/",

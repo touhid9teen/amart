@@ -1,7 +1,6 @@
 "use client";
 
 import { useCart } from "@/contexts/cart-context";
-import { getImageUrl } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ProductDetails from "./productItem-details";
@@ -16,8 +15,6 @@ export default function ProductItem({
   const [quantity, setQuantity] = useState(0);
   const { cartItems, updateCart } = useCart();
 
-  const imgUrl = getImageUrl(product.image);
-
   const cleanProduct = (product: Product) => ({
     id: product?.id,
     name: product?.name,
@@ -26,64 +23,14 @@ export default function ProductItem({
     image: product?.image,
   });
 
-  useEffect(() => {
-    const existing = cartItems[product.id];
-    setQuantity(existing?.quantity || 0);
-  }, [cartItems, product.id]);
-
-  const handleAddToCart = (product: Product) => {
-    const clean = cleanProduct(product);
-    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
-    const updated = {
-      ...cartItems,
-      [clean.id]: {
-        ...clean,
-        quantity: existing.quantity + 1,
-      },
-    };
-    updateCart(updated);
-    setQuantity(existing.quantity + 1);
-  };
-
-  const incrementQuantity = (product: Product) => {
-    const clean = cleanProduct(product);
-    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
-    const updated = {
-      ...cartItems,
-      [clean.id]: {
-        ...clean,
-        quantity: existing.quantity + 1,
-      },
-    };
-    updateCart(updated);
-    setQuantity(existing.quantity + 1);
-  };
-
-  const decrementQuantity = (product: Product) => {
-    const existing = cartItems[product.id];
-    if (!existing) return;
-
-    const updated = { ...cartItems };
-    if (existing.quantity <= 1) {
-      delete updated[product.id];
-      setQuantity(0);
-    } else {
-      updated[product.id].quantity -= 1;
-      setQuantity(updated[product.id].quantity);
-    }
-    updateCart(updated);
-  };
-
-  const discountPercentage = product.mrp
-    ? Math.round(((product.mrp - product.sellingPice) / product.mrp) * 100)
-    : 0;
+  // ... (keep intermediate code) ...
 
   if (!isFeatured) {
     return (
       <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300">
         <div className="w-14 h-14 border rounded overflow-hidden bg-gray-50">
           <Image
-            src={imgUrl || "/placeholder.svg"}
+            src={product.image || "/placeholder.svg"}
             alt={product.name}
             width={56}
             height={56}
@@ -135,7 +82,7 @@ export default function ProductItem({
           className="w-full h-full"
         >
           <Image
-            src={imgUrl || "/placeholder.svg"}
+            src={product.image || "/placeholder.svg"}
             alt={product.name}
             fill
             className="object-contain p-2"
