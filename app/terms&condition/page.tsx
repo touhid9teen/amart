@@ -613,7 +613,7 @@ export default function TermsConditions() {
                         <Mail className="w-5 h-5 text-blue-600" />
                         <span className="font-medium">Email:</span>
                         <span className="text-gray-700">
-                          mahfuza0423@gmail.com
+                          touhid.ru66@gmail.com
                         </span>
                       </div>
                     </div>

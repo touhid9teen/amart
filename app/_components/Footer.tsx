@@ -151,7 +151,7 @@ export default function Footer() {
                   >
                     <Mail className="h-5 w-5 text-teal-400 group-hover:text-teal-300" />
                     <span className="text-gray-300 group-hover:text-white transition">
-                      mahfuza0423@gmail.com
+                      touhid.ru66@gmail.com
                     </span>
                   </a>
                 </li>
