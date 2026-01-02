@@ -44,6 +44,7 @@ export async function getRequest(
       return [];
     })
     .catch(async (error) => {
+      console.error(`Error fetching ${url}:`, error);
       if (error?.status === 401) {
         redirect("/");
       }

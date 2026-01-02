@@ -23,8 +23,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "amart-backend-wpqx.onrender.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: getBackendHostname(),
-        pathname: "/media/**",
+        pathname: "/**",
       },
     ],
   },

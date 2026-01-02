@@ -16,14 +16,22 @@ const endpoints: EndpointType = {
 };
 
 export async function getEndpoint(key: keyof EndpointType, pathname?: string) {
-  let endpoint = `${baseUrl}${endpoints[key]}`;
+  // Ensure baseUrl ends with a slash if it's not empty
+  const safeBaseUrl = baseUrl?.endsWith("/") ? baseUrl : `${baseUrl}/`;
+
+  let endpoint = `${safeBaseUrl}${endpoints[key]}`;
 
   // Ensure single slash between base path and pathname
   if (pathname) {
+     // Remove leading slash from pathname if present to avoid double slash
+    const safePathname = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+    
+    // Create the full endpoint
     if (!endpoint.endsWith("/")) {
       endpoint += "/";
     }
-    endpoint += pathname;
+    endpoint += safePathname;
+    
     if (!endpoint.endsWith("/")) {
       endpoint += "/";
     }
