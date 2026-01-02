@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-import { Search, List } from "lucide-react";
+import { Search, List, Bookmark } from "lucide-react";
 import Logo from "./header/logo";
 import CategoryDropdown from "./header/category-dropdown";
 import SearchBar from "./header/search-bar";
@@ -27,15 +27,16 @@ export default function Header() {
                 <Logo isHeader={true} />
               </div>
 
-              {/* Desktop: Category + Search (hidden on mobile) */}
-              <div className="hidden lg:flex items-center space-x-4 flex-1 justify-center max-w-3xl mx-8">
-                <CategoryDropdown />
-                <div className="w-px bg-gray-300" />
-                <SearchBar />
+              {/* Desktop: Category + Search Group */}
+              <div className="hidden lg:flex items-center flex-1 max-w-4xl mx-8">
+                <div className="flex items-center w-full border border-gray-200 rounded-md overflow-hidden bg-gray-100">
+                  <CategoryDropdown />
+                  <SearchBar />
+                </div>
               </div>
 
               {/* Right side actions */}
-              <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="flex items-center space-x-4">
                 {/* Mobile: Search Icon */}
                 <button
                   onClick={() => setShowMobileSearch(!showMobileSearch)}
@@ -54,10 +55,16 @@ export default function Header() {
                   <List className="h-5 w-5 text-gray-600" />
                 </button>
 
-                {/* Desktop login/logout */}
+                {/* Desktop login/logout (User Icon) */}
                 <div className="hidden sm:block">
                   <LoginLogout />
                 </div>
+
+                {/* Wishlist (Bookmark) */}
+                <button className="hidden sm:block p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-700">
+                   <Bookmark className="h-6 w-6" />
+                </button>
+
 
                 {/* Cart button - always visible */}
                 <CartButton />

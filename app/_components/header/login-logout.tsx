@@ -22,21 +22,8 @@ export default function LoginLogout() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button
-            className="
-            flex items-center gap-2 px-3 py-2 rounded-lg
-            text-sm font-medium text-gray-700 
-            hover:bg-gray-100 hover:text-gray-900
-            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-            transition-all duration-200
-            sm:px-4 sm:py-2.5
-          "
-          >
-            <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
-              <User className="h-4 w-4 text-primary" />
-            </div>
-
-            <ChevronDown className="h-3 w-3 opacity-60 hidden sm:block" />
+          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-700">
+            <User className="h-6 w-6" />
           </button>
         </DropdownMenuTrigger>
 
@@ -78,17 +65,9 @@ export default function LoginLogout() {
   return (
     <button
       onClick={showLoginModal}
-      className="
-        flex items-center gap-2 px-3 py-2 rounded-lg
-        text-xl font-extrabold text-gray-900 
-        hover:bg-primary/5 hover:text-primary
-        focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-        transition-all duration-200
-        sm:px-4 sm:py-2.5
-       
-      "
+      className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-700"
     >
-      <span className="hidden sm:inline">Login</span>
+      <User className="h-6 w-6" />
     </button>
   );
 }

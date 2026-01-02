@@ -10,26 +10,12 @@ let debounceTimer: NodeJS.Timeout;
 export default function SearchBar() {
   const router = useRouter();
   const [input, setInput] = useState("");
-  const [placeholder, setPlaceholder] = useState(searchItems[0]);
-  const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { searchProducts } = useProducts();
-
-  // Rotate placeholder every 2s when input is empty
-  useEffect(() => {
-    if (input.trim()) return;
-
-    let index = searchItems.indexOf(placeholder);
-    const interval = setInterval(() => {
-      index = (index + 1) % searchItems.length;
-      setPlaceholder(searchItems[index]);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [input, placeholder]);
 
   useEffect(() => {
     if (!input.trim()) {
@@ -79,10 +65,9 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative max-w-2xl w-full mx-auto" ref={dropdownRef}>
-      <form onSubmit={handleSubmit} className="w-full">
-        <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 px-4 py-2">
-          <Search className="mr-2" size={20} />
+    <div className="relative w-full" ref={dropdownRef}>
+      <form onSubmit={handleSubmit} className="w-full flex">
+        <div className="flex-1 flex items-center bg-gray-100 px-4">
           <input
             value={input}
             onChange={(e) => {
@@ -90,10 +75,16 @@ export default function SearchBar() {
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
-            placeholder={input.trim() ? "" : placeholder}
-            className="flex-1 outline-none text-sm bg-transparent p-1"
+            placeholder="Search for more than 6,000 products"
+            className="w-full bg-transparent outline-none text-sm text-gray-700 placeholder-gray-500 py-3"
           />
         </div>
+        <button
+          type="submit"
+          className="bg-[#7fad39] text-white px-8 py-3 font-bold text-sm tracking-wide hover:bg-[#7fad39]/90 transition-colors"
+        >
+          SEARCH
+        </button>
       </form>
 
       {showDropdown && (

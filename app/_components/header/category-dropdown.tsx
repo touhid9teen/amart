@@ -17,18 +17,16 @@ export default function CategoryDropdown() {
       <DropdownMenuTrigger asChild>
         <button
           className="
-          flex items-center gap-2 px-4 py-2.5 rounded-lg
-          text-md font-extrabold text-gray-700 
-          hover:bg-gray-100 hover:text-gray-900
-          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-          transition-all duration-200
+          flex items-center gap-2 px-4 py-3
+          text-sm font-bold text-gray-700 
+          bg-gray-100 hover:bg-gray-200
+          transition-colors duration-200
           whitespace-nowrap
-          bg-gray-50 border border-gray-100
+          h-full
         "
         >
-          <List className="h-4 w-4" />
-          <span>Shop by Category</span>
-          <ChevronDown className="h-3 w-3 opacity-60" />
+          <span>ALL CATEGORIES</span>
+          <ChevronDown className="h-4 w-4 text-gray-500" />
         </button>
       </DropdownMenuTrigger>
 
