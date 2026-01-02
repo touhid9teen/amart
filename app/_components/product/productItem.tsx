@@ -23,7 +23,57 @@ export default function ProductItem({
     image: product?.image,
   });
 
-  // ... (keep intermediate code) ...
+  useEffect(() => {
+    const existing = cartItems[product.id];
+    setQuantity(existing?.quantity || 0);
+  }, [cartItems, product.id]);
+
+  const handleAddToCart = (product: Product) => {
+    const clean = cleanProduct(product);
+    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+    const updated = {
+      ...cartItems,
+      [clean.id]: {
+        ...clean,
+        quantity: existing.quantity + 1,
+      },
+    };
+    updateCart(updated);
+    setQuantity(existing.quantity + 1);
+  };
+
+  const incrementQuantity = (product: Product) => {
+    const clean = cleanProduct(product);
+    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+    const updated = {
+      ...cartItems,
+      [clean.id]: {
+        ...clean,
+        quantity: existing.quantity + 1,
+      },
+    };
+    updateCart(updated);
+    setQuantity(existing.quantity + 1);
+  };
+
+  const decrementQuantity = (product: Product) => {
+    const existing = cartItems[product.id];
+    if (!existing) return;
+
+    const updated = { ...cartItems };
+    if (existing.quantity <= 1) {
+      delete updated[product.id];
+      setQuantity(0);
+    } else {
+      updated[product.id].quantity -= 1;
+      setQuantity(updated[product.id].quantity);
+    }
+    updateCart(updated);
+  };
+
+  const discountPercentage = product.mrp
+    ? Math.round(((product.mrp - product.sellingPice) / product.mrp) * 100)
+    : 0;
 
   if (!isFeatured) {
     return (
