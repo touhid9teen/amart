@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import {
   InputOTP,
@@ -113,12 +114,27 @@ export function OtpVerificationModal() {
             </InputOTP>
           </div>
 
-          {/* Loading Indicator (if verifying) */}
-          {isLoading && otp.length === 6 && (
-             <div className="mb-6 flex justify-center text-primary font-medium text-sm animate-pulse">
-               <Loader2 className="animate-spin mr-2" size={18} /> Verifying...
-             </div>
-          )}
+          {/* Verify Button */}
+          <div className="mb-6">
+            <Button
+              onClick={() => handleVerify(otp)}
+              className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
+                otp.length === 6 && !isLoading
+                  ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
+                  : "bg-primary/50 text-white shadow-none cursor-not-allowed"
+              }`}
+              disabled={otp.length !== 6 || isLoading}
+            >
+              {isLoading && otp.length === 6 ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="animate-spin text-white" size={20} />
+                  <span>Verifying...</span>
+                </div>
+              ) : (
+                "Verify"
+              )}
+            </Button>
+          </div>
 
           {/* Resend Code */}
           <div className="text-center space-y-4">
@@ -129,9 +145,10 @@ export function OtpVerificationModal() {
               <button
                 onClick={handleResendOTP}
                 disabled={isLoading}
-                className="text-primary font-semibold text-sm hover:text-primary/80 transition-colors hover:underline"
+                className="text-primary font-semibold text-sm hover:text-primary/80 transition-colors hover:underline flex items-center justify-center mx-auto gap-2"
               >
-                Resend Verification Code
+                {isLoading && otp.length !== 6 && <Loader2 className="animate-spin" size={16} />}
+                {isLoading && otp.length !== 6 ? "Resending..." : "Resend Verification Code"}
               </button>
             ) : (
               <p className="text-gray-500 text-sm font-medium">

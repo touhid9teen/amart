@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [authId, setAuthId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [isActionLoading, setIsActionLoading] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   // const [categoryList, setCategoryList] = useState<Category[]>([]);
   // const [productList, setProductList] = useState<Product[]>([]);
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     Infinity
   );
 
-  const isLoading = isCategoryLoading || isProductLoading;
+  const isLoading = isCategoryLoading || isProductLoading || isActionLoading;
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -159,6 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signup = async (email: string, password: string) => {
+    setIsActionLoading(true);
     try {
       const result = await signupWithEmail(email, password);
 
@@ -176,10 +178,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.error("Error", {
         description: "Failed to send OTP",
       });
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
   const login = async (email: string, password: string): Promise<void> => {
+    setIsActionLoading(true);
     try {
       const result = await loginWithEmail(email, password);
 
@@ -211,6 +216,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.error("Error", {
         description: "Something went wrong. Please try again.",
       });
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
@@ -266,15 +273,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [authToken]);
 
   const verifyOtp = async (otp: string) => {
+    setIsActionLoading(true);
     try {
-      await verifyOtpServer(email, otp);
-      toast("Welcome!", {
+      const response = await verifyOtpServer(email, otp);
+      console.log("response----------------", response);
+      if (!response.success) {
+        throw new Error(response.message || "Something went wrong");
+        
+      }
+      else {
+         toast("Welcome!", {
         description: "Signup completed successfully.",
       });
+      hideModals();
+      }
+     
     } catch {
       toast.error("Error", {
         description: "Failed to verify OTP",
       });
+    } finally {
+      setIsActionLoading(false);
     }
   };
 

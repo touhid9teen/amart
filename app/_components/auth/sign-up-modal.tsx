@@ -117,16 +117,16 @@ export function SingUpModal() {
           {/* Submit Button */}
           <Button
             type="submit"
-            className={`w-full py-6 text-base font-semibold shadow-lg shadow-primary/20 transition-all ${
+            className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
               isFormValid && !isLoading
-                ? "bg-primary hover:bg-primary/90 hover:scale-[1.01]"
-                : "bg-gray-100 text-gray-400 shadow-none cursor-not-allowed"
+                ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
+                : "bg-primary/50 text-white shadow-none cursor-not-allowed"
             }`}
             disabled={!isFormValid || isLoading}
           >
             {isLoading ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="animate-spin" size={20} />
+                <Loader2 className="animate-spin text-white" size={20} />
                 <span>Creating Account...</span>
               </div>
             ) : (
