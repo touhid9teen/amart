@@ -90,8 +90,7 @@ export function ModalComponent({
           className={`will-change-transform transition-all duration-200 ease-out ${
             isClosing ? "animate-out" : "animate-in"
           }`}
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
+
         >
           <VisuallyHidden.Root>
             <DrawerTitle>Modal</DrawerTitle>
@@ -118,8 +117,7 @@ export function ModalComponent({
         className={`max-h-screen p-0 will-change-transform transition-all duration-200 ease-out ${
           isClosing ? "animate-out" : "animate-in"
         }`}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
+
       >
         <VisuallyHidden.Root>
           <DialogTitle>Modal</DialogTitle>

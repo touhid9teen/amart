@@ -3,13 +3,11 @@
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react"; // 👁️ import icons
+import { Eye, EyeOff, Loader2, Lock, Mail, X } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import Logo from "../header/logo";
 import Link from "next/link";
 import { ModalComponent } from "@/components/modal-component";
-
-type LoginState = "initial" | "success";
 
 export function SingUpModal() {
   const { authState, signup, hideModals, isLoading, showLoginModal } =
@@ -17,19 +15,9 @@ export function SingUpModal() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loginState, setLoginState] = useState<LoginState>("initial");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
-    if (isValidEmail) {
-      setLoginState("success");
-    } else {
-      setLoginState("initial");
-    }
-
-    setEmail(value);
+    setEmail(e.target.value);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +26,6 @@ export function SingUpModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     if (!isValidEmail || password.length < 6) return;
 
@@ -48,127 +35,140 @@ export function SingUpModal() {
       setPassword("");
     } catch (error) {
       console.error("Signup failed:", error);
-      // Optional: show toast or error message to user
     }
   };
 
-  const handleClickSignup = () => {
-    showLoginModal();
-  };
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isFormValid = isValidEmail && password.length >= 6;
 
   return (
     <ModalComponent open={authState === "signup"} onOpenChange={hideModals}>
-      <div className="bg-white rounded-xl w-full px-4 py-6 sm:px-6 sm:py-8">
-        {/* Top link */}
-        <div className="flex justify-start">
-          <p>Have an account?</p>
-          <p
-            className="pl-2 font-semibold text-primary underline cursor-pointer"
-            onClick={handleClickSignup}
-          >
-            Login!
-          </p>
-        </div>
+      <div className="bg-white w-full max-w-md mx-auto relative px-6 py-8">
+        {/* Close Button */}
+        <button
+          onClick={hideModals}
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 transition-colors p-1 rounded-full hover:bg-gray-100 md:hidden"
+          aria-label="Close"
+        >
+          <X size={24} strokeWidth={3} />
+        </button>
 
-        {/* Logo */}
-        <div className="flex justify-center mb-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center">
+        {/* Header Section */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
             <Logo />
           </div>
-        </div>
-
-        {/* Title */}
-        <div className="text-center mb-6">
-          <p className="text-lg sm:text-xl font-extrabold text-gray-900 leading-snug">
-            Join Amart and start shopping smarter
-          </p>
-          <h1 className="text-sm font-medium text-primary mb-1">
-            Create Your Account
+          <h1 className="text-2xl font-bold text-gray-900 text-center">
+            Create Account
           </h1>
+          <p className="text-gray-600 text-center mt-1 text-sm">
+            Join Amart and start shopping smarter today
+          </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form Section */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email Input */}
-          <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-            <input
-              value={email}
-              onChange={handleInputChange}
-              placeholder="Enter your email"
-              className="flex-1 py-3 px-3 text-sm font-extrabold h-auto border-none text-gray-600 focus:outline-none bg-transparent"
-              type="email"
-              autoComplete="email"
-            />
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-900 ml-1">
+              Email Address
+            </label>
+            <div className="relative group">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">
+                <Mail size={18} />
+              </div>
+              <input
+                value={email}
+                onChange={handleInputChange}
+                placeholder="hello@example.com"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+                type="email"
+                autoComplete="email"
+              />
+            </div>
           </div>
 
-          {/* Password Input (eye icon on the left) */}
-          <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="flex items-center justify-center w-14 bg-gray-100 py-3 text-gray-500 hover:text-primary transition focus:outline-none"
-            >
-              {showPassword ? (
-                <EyeOff size={18} strokeWidth={2} />
-              ) : (
-                <Eye size={18} strokeWidth={2} />
-              )}
-            </button>
-
-            <input
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Enter your password"
-              className="flex-1 py-3 px-3 text-sm font-extrabold h-auto border-none text-gray-600 focus:outline-none bg-transparent"
-              type={showPassword ? "text" : "password"}
-              aria-label="Password"
-            />
+          {/* Password Input */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-900 ml-1">
+              Password
+            </label>
+            <div className="relative group">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">
+                <Lock size={18} />
+              </div>
+              <input
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="Create a password (min 6 chars)"
+                className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+                type={showPassword ? "text" : "password"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none p-1"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
-          {/* Continue Button */}
+          {/* Submit Button */}
           <Button
             type="submit"
-            className={`w-full ${
-              loginState === "success" && password.length >= 6
-                ? "bg-primary"
-                : "bg-gray-400 hover:bg-gray-500"
-            } text-white py-3 rounded-lg text-sm font-medium transition-colors h-auto`}
-            disabled={(() => {
-              const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-              return isLoading || !isValidEmail || password.length < 6;
-            })()}
+            className={`w-full py-6 text-base font-semibold shadow-lg shadow-primary/20 transition-all ${
+              isFormValid && !isLoading
+                ? "bg-primary hover:bg-primary/90 hover:scale-[1.01]"
+                : "bg-gray-100 text-gray-400 shadow-none cursor-not-allowed"
+            }`}
+            disabled={!isFormValid || isLoading}
           >
-            {isLoading ? "Please wait..." : "Continue"}
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="animate-spin" size={20} />
+                <span>Creating Account...</span>
+              </div>
+            ) : (
+              "Sign Up"
+            )}
           </Button>
         </form>
 
-        {/* Terms */}
-        <div className="text-center mt-6">
-          <div className="text-xs text-gray-500 leading-snug">
-            <div>By continuing, you agree to our </div>
-            <div>
-              <span className="text-gray-700 underline cursor-pointer">
-                <Link
-                  href="/terms&condition"
-                  target="_blank"
-                  className="text-primary"
-                >
-                  Terms of service
-                </Link>
-              </span>{" "}
-              &{" "}
-              <span className="text-gray-700 underline cursor-pointer">
-                <Link
-                  href="/privacy-policy"
-                  target="_blank"
-                  className="text-primary"
-                >
-                  Privacy policy
-                </Link>
+        {/* Footer / Switch Mode */}
+        <div className="mt-8 text-center space-y-4">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-100"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-500 font-medium">
+                Already have an account?
               </span>
             </div>
           </div>
+          
+          <button
+            onClick={showLoginModal}
+            className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors underline"
+          >
+            Login to your account
+          </button>
+        </div>
+
+        {/* Terms */}
+        <div className="text-center mt-6">
+          <p className="text-xs text-gray-400 leading-relaxed px-4">
+            By continuing, you agree to our{" "}
+            <Link href="/terms&condition" target="_blank" className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy-policy" target="_blank" className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2">
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </div>
       </div>
     </ModalComponent>

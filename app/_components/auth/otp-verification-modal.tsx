@@ -8,6 +8,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Loader2, Mail, X } from "lucide-react";
 
 export function OtpVerificationModal() {
   const { authState, email, verifyOtp, hideModals, isLoading, login } =
@@ -42,11 +43,18 @@ export function OtpVerificationModal() {
     return () => clearInterval(timer);
   }, [authState, canResend]);
 
-  const handleVerify = async () => {
-    if (otp.length === 6) {
-      await verifyOtp(otp);
+  const handleVerify = async (value: string) => {
+    if (value.length === 6) {
+      await verifyOtp(value);
     }
   };
+
+  const handleChange = (value: string) => {
+    setOtp(value);
+    if (value.length === 6) {
+      handleVerify(value);
+    }
+  }
 
   const handleResendOTP = async () => {
     if (canResend) {
@@ -59,55 +67,75 @@ export function OtpVerificationModal() {
 
   return (
     <Dialog open={authState === "verifying"} onOpenChange={hideModals}>
-      <DialogContent className="w-[90vw] max-w-sm border-0 p-0">
+      <DialogContent className="w-full max-w-md p-0 border-0 bg-transparent shadow-none">
         <DialogTitle className="sr-only">OTP Verification</DialogTitle>
-        <div className="bg-white rounded-xl p-4 sm:p-6 relative">
-          {/* Title */}
-          <div className="text-center mb-5 sm:mb-6 mt-6 sm:mt-4">
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
-              OTP Verification
+        <div className="bg-white rounded-2xl w-full px-6 py-8 relative shadow-2xl">
+          {/* Close Button */}
+          <button
+            onClick={hideModals}
+            className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 transition-colors p-1 rounded-full hover:bg-gray-100 md:hidden"
+            aria-label="Close"
+          >
+            <X size={24} strokeWidth={3} />
+          </button>
+
+          {/* Header */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
+              <Mail size={32} />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 text-center">
+              Verify Email
             </h1>
-            <p className="text-gray-600 text-sm mb-1">
-              We have sent a verification code to
-            </p>
-            <p className="text-gray-900 font-semibold text-sm sm:text-base break-words">
-              {email}
+            <p className="text-gray-600 text-center mt-2 text-sm max-w-[80%] leading-relaxed">
+              We have sent a verification code to <br />
+              <span className="font-semibold text-gray-900">{email}</span>
             </p>
           </div>
 
           {/* OTP Input */}
-          <div className="flex justify-center mb-5 sm:mb-6">
+          <div className="flex justify-center mb-8">
             <InputOTP
               maxLength={6}
               value={otp}
-              onChange={setOtp}
-              onComplete={handleVerify}
+              onChange={handleChange}
+              disabled={isLoading}
             >
               <InputOTPGroup className="gap-2 sm:gap-3">
                 {[...Array(6)].map((_, i) => (
                   <InputOTPSlot
                     key={i}
                     index={i}
-                    className="w-10 h-10 sm:w-12 sm:h-12 text-base sm:text-lg font-semibold border-2 border-gray-300 rounded-lg focus:border-orange-400 focus:ring-0 bg-white"
+                    className="w-10 h-10 sm:w-12 sm:h-12 text-lg font-bold border-gray-200 bg-gray-50 rounded-lg focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all text-gray-900"
                   />
                 ))}
               </InputOTPGroup>
             </InputOTP>
           </div>
 
+          {/* Loading Indicator (if verifying) */}
+          {isLoading && otp.length === 6 && (
+             <div className="mb-6 flex justify-center text-primary font-medium text-sm animate-pulse">
+               <Loader2 className="animate-spin mr-2" size={18} /> Verifying...
+             </div>
+          )}
+
           {/* Resend Code */}
-          <div className="text-center">
+          <div className="text-center space-y-4">
+            <p className="text-sm text-gray-600">
+              Didn&apos;t receive the code?
+            </p>
             {canResend ? (
               <button
                 onClick={handleResendOTP}
                 disabled={isLoading}
-                className="text-orange-500 font-medium text-sm hover:text-orange-600 transition-colors"
+                className="text-primary font-semibold text-sm hover:text-primary/80 transition-colors hover:underline"
               >
-                Resend Code
+                Resend Verification Code
               </button>
             ) : (
-              <p className="text-gray-500 text-sm">
-                Resend Code in {countdown} secs!
+              <p className="text-gray-500 text-sm font-medium">
+                Resend code in <span className="text-gray-700 shadow-sm border px-1.5 py-0.5 rounded bg-gray-50 ml-1">{countdown}s</span>
               </p>
             )}
           </div>
