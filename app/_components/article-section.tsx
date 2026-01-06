@@ -45,7 +45,7 @@ export default function ArticleSection() {
           </h2>
           <Link
             href="/articles"
-            className="bg-[#7fad39] hover:bg-[#7fad39]/90 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded uppercase transition-colors"
+            className="bg-primary hover:bg-primary/90 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded uppercase transition-colors"
           >
             VIEW ALL
           </Link>

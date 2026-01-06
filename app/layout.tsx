@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./_components/Header";
+import Navbar from "./_components/navbar";
 import Footer from "./_components/Footer";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/auth-context";
@@ -37,6 +38,7 @@ export default function RootLayout({
               <Toaster position="top-center" />
               <AuthModalsProvider />
               <Header />
+              <Navbar />
               {children}
               <Footer />
             </CartProvider>

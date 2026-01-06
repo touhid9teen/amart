@@ -81,7 +81,7 @@ export default function SearchBar() {
         </div>
         <button
           type="submit"
-          className="bg-[#7fad39] text-white px-8 py-3 font-bold text-sm tracking-wide hover:bg-[#7fad39]/90 transition-colors"
+          className="bg-primary text-white px-8 py-3 font-bold text-sm tracking-wide hover:bg-primary/90 transition-colors"
         >
           SEARCH
         </button>

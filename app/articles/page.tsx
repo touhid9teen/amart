@@ -1,11 +1,10 @@
 "use client";
 
-import Navbar from "../_components/navbar";
-import Footer from "../_components/Footer";
+import { Calendar, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Folder } from "lucide-react";
 import { articles } from "../_components/article-section"; // Import shared data
+import Footer from "../_components/Footer";
 
 export default function ArticlesPage() {
   // Using the same dummy data for now, but in a real app this would specific page content
@@ -14,7 +13,7 @@ export default function ArticlesPage() {
 
   return (
     <>
-      <Navbar />
+    
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-8 text-center uppercase">

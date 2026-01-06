@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "./_components/navbar";
 import FeaturesSection from "./_components/feature-section";
 import Products from "./_components/product/products";
 import HeroSection from "./_components/hero-section";
@@ -24,7 +23,6 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
       <HeroSection />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
