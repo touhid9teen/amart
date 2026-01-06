@@ -31,7 +31,7 @@ export default function Navbar() {
                 key={item.label} 
                 className={cn(
                   "shrink-0 flex-1 text-center border-r border-gray-200 last:border-r-0",
-                   isActive ? "bg-[#7fad39] border-[#7fad39]" : "bg-white"
+                   isActive ? "bg-primary border-primary" : "bg-white"
                 )}
               >
                 <Link
@@ -40,7 +40,7 @@ export default function Navbar() {
                     "block px-6 py-4 text-sm font-bold uppercase tracking-wide transition-colors duration-200 w-full h-full",
                      isActive
                       ? "text-white"
-                      : "text-gray-800 hover:text-[#7fad39]"
+                      : "text-gray-800 hover:text-primary"
                   )}
                 >
                   {item.label}
