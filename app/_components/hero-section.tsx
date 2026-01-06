@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+
 import Image from "next/image";
 
 export default function HeroSection() {
@@ -35,12 +35,14 @@ export default function HeroSection() {
           />
         </div>
 
-        <Link
-          href="/shop"
+        <button
+          onClick={() => {
+            document.getElementById("products-section")?.scrollIntoView({ behavior: "smooth" });
+          }}
           className="bg-primary hover:bg-primary/90 text-white font-bold text-sm sm:text-base px-8 py-3 sm:px-10 sm:py-4 rounded-md uppercase tracking-wider transition-all duration-300 transform hover:scale-105 shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300"
         >
           START SHOPPING
-        </Link>
+        </button>
       </div>
     </div>
   );

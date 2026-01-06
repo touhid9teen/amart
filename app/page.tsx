@@ -25,7 +25,7 @@ export default function Home() {
     <div>
       <HeroSection />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div id="products-section" className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Desktop Only for now, or could make responsive */}
           <aside className="w-full lg:w-1/4 shrink-0">
