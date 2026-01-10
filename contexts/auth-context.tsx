@@ -38,7 +38,6 @@ interface AuthContextType {
   verifyOtp: (otp: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
-  categoryList: Category[];
   productList: Product[];
   getValidAuthToken: () => Promise<string | null>;
 }
@@ -55,13 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // const [categoryList, setCategoryList] = useState<Category[]>([]);
   // const [productList, setProductList] = useState<Product[]>([]);
 
-  const { data: categoryList = [], isLoading: isCategoryLoading } = GetQuery(
-    "getCategoryList",
-    {},
-    true,
-    null,
-    Infinity
-  );
   const { data: productList = [], isLoading: isProductLoading } = GetQuery(
     "getProducts",
     {},
@@ -70,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     Infinity
   );
 
-  const isLoading = isCategoryLoading || isProductLoading || isActionLoading;
+  const isLoading = isProductLoading || isActionLoading;
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -336,7 +328,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyOtp,
         logout,
         isLoading,
-        categoryList,
         productList,
         getValidAuthToken, // Expose utility
       }}
