@@ -21,16 +21,14 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
-      
       {
         protocol: "https",
         hostname: getBackendHostname(),
         pathname: "/**",
       },
     ],
+    qualities: [75, 100],
   },
-
-
 
   // Optional for server deployment
   output: "standalone",

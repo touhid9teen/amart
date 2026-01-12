@@ -6,6 +6,7 @@ import ProductModal from "./product-modal";
 import { slugify } from "@/app/_utils/slugify";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
+import { log } from "console";
 
 interface ProductsProps {
   productList: Product[];
@@ -39,6 +40,9 @@ export default function Products({
   const [groupedProducts, setGroupedProducts] = useState<[string, Product[]][]>(
     []
   );
+
+
+  console.log("Product List in Products Component:", productList);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
