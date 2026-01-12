@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { SkeletonProductItem } from "@/app/_components/product/SkeletonProductItem";
 import ProductItem from "@/app/_components/product/productItem";
 import ProductModal from "@/app/_components/product/product-modal";
+import { Product } from "@/lib/types";
 
 export default function AllProducts({
   productList,

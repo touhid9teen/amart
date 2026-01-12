@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/auth-context";
 export default function Home() {
   const { productList, isLoading } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
+  
   // Filter products based on selected category
   const filteredProducts = selectedCategory
     ? productList.filter((product) =>

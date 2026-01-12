@@ -61,44 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     null,
     Infinity
   );
-
   const isLoading = isProductLoading || isActionLoading;
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     setIsLoading(true); // start loading
-
-  //     try {
-  //       const categoryResult = await GetQuery(
-  //         "getCategoryList",
-  //         {},
-  //         true,
-  //         null,
-  //         Infinity
-  //       );
-  //       const productResult = await GetQuery(
-  //         "getProducts",
-  //         {},
-  //         true,
-  //         null,
-  //         Infinity
-  //       );
-
-  //       setCategoryList(categoryResult.data ? categoryResult : []);
-  //       setProductList(productResult.data ? productResult : []);
-  //     } catch (err) {
-  //       console.error("Error fetching data:", err);
-  //       setCategoryList([]);
-  //       setProductList([]);
-  //     } finally {
-  //       setIsLoading(false); // finish loading
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-
-  // Rehydrate auth state from cookies/localStorage on mount
   useEffect(() => {
     // --- Rehydrate auth state from cookies ---
     function getCookieValue(name: string): string | null {
