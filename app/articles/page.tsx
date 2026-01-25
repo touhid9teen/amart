@@ -61,7 +61,7 @@ export default function ArticlesPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }
