@@ -24,7 +24,7 @@ export default function Header() {
             <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20">
               {/* Logo */}
               <div className="flex-shrink-0">
-                <Logo isHeader={true} />
+                <Logo />
               </div>
 
               {/* Desktop: Category + Search Group */}
@@ -62,9 +62,8 @@ export default function Header() {
 
                 {/* Wishlist (Bookmark) */}
                 <button className="hidden sm:block p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-700">
-                   <Bookmark className="h-6 w-6" />
+                  <Bookmark className="h-6 w-6" />
                 </button>
-
 
                 {/* Cart button - always visible */}
                 <CartButton />

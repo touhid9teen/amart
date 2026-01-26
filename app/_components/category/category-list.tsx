@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { categories } from "@/lib/variables";
+import { Button } from "@/components/ui/button";
 
 interface CategoryListProps {
   variant?: "sidebar" | "dropdown" | "modal";
   onCategoryClick?: () => void;
+  onSelectCategory?: (categoryName: string | null) => void;
+  selectedCategory?: string | null;
 }
 
-export default function CategoryList({ 
+export default function CategoryList({
   variant = "sidebar",
-  onCategoryClick 
+  onCategoryClick,
+  onSelectCategory,
+  selectedCategory,
 }: CategoryListProps) {
-  
   if (variant === "dropdown") {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -66,25 +70,27 @@ export default function CategoryList({
     <div className="flex flex-col">
       {categories.map((cat, index) => {
         const Icon = cat.icon;
+        const isSelected = selectedCategory && selectedCategory === cat.name;
+
         return (
-          <Link
+          <Button
             key={index}
-            href={`/products-category/${cat.slug}`}
-            onClick={onCategoryClick}
-            className="
-              group flex items-center gap-3 py-3 px-2
-              text-sm font-normal text-gray-600
-              transition-colors
-              border-b border-dashed border-gray-300 last:border-0
-              hover:text-primary
-            "
+            onClick={() => onSelectCategory?.(cat.name)}
+            className={`
+    group flex items-center gap-3 py-3 px-2
+    text-sm font-normal transition-colors
+    border-b border-dashed border-gray-300 last:border-0
+    text-gray-600 hover:text-primary
+    bg-transparent hover:bg-transparent
+    ${isSelected ? "text-primary" : ""}
+  `}
           >
             <div className="relative w-5 h-5 shrink-0 opacity-80 flex items-center justify-center">
               <Icon className="w-5 h-5" />
             </div>
-            <span className="flex-1">{cat.name}</span>
+            <span className="flex-1 text-left">{cat.name}</span>
             <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors opacity-0 group-hover:opacity-100" />
-          </Link>
+          </Button>
         );
       })}
     </div>

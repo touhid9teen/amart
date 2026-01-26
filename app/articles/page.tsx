@@ -4,11 +4,9 @@ import { Calendar, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { articles } from "../_components/article-section"; // Import shared data
-import Footer from "../_components/Footer";
 
 export default function ArticlesPage() {
-  // Using the same dummy data for now, but in a real app this would specific page content
-  // We can duplicate the array to show "all" articles (e.g. 6 items)
+ 
   const allArticles = [...articles, ...articles]; 
 
   return (
@@ -60,8 +58,6 @@ export default function ArticlesPage() {
           ))}
         </div>
       </main>
-
-      {/* <Footer /> */}
     </>
   );
 }

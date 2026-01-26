@@ -21,7 +21,7 @@ export default function CategorySidebar({
         </h3>
         
         {/* Category List */}
-        <CategoryList variant="sidebar" />
+        <CategoryList variant="sidebar" onSelectCategory={onSelectCategory} selectedCategory={selectedCategory} />
       </div>
 
       {/* Promo Banner */}
