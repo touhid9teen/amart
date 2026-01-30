@@ -21,6 +21,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Amart",
   description: "Your one-stop shop for premium organic products",
+  icons: {
+    icon: "/amart.png",
+  }
 };
 
 export default function RootLayout({
