@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: "Your one-stop shop for premium organic products",
   icons: {
     icon: "/amart.png",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <NextTopLoader height={3} showSpinner={false} /> 
+        <NextTopLoader height={3} showSpinner={false} />
         <ReactQueryProvider>
           <AuthProvider>
             <CartProvider>
