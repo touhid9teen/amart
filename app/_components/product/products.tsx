@@ -41,7 +41,6 @@ export default function Products({
     []
   );
 
-
   console.log("Product List in Products Component:", productList);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,29 +101,25 @@ export default function Products({
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900">{category}</h2>
-              <Link
+              {/* <Link
                 href={`/products-category/${slugify(category)}`}
                 className="text-sm text-primary hover:text-gray-900 font-semibold "
               >
                 See All
-              </Link>
+              </Link> */}
             </div>
           </div>
 
           {/* Products Container */}
           <div className="container mx-auto px-4">
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {products.map((product, index) => (
-                <div
+                <ProductItem
                   key={product.id || index}
-                  className="flex-shrink-0 w-[140px]"
-                >
-                  <ProductItem
-                    product={product}
-                    onQuickView={() => openModal(product)}
-                    isFeatured={true}
-                  />
-                </div>
+                  product={product}
+                  onQuickView={() => openModal(product)}
+                  isFeatured={true}
+                />
               ))}
             </div>
           </div>
