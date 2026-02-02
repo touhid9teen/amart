@@ -120,8 +120,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await signupWithEmail(email, password);
 
-      console.log("result-------------------------------", result);
-
       if (!result.success) {
         throw new Error(result.message || "Something went wrong");
       }
@@ -232,7 +230,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsActionLoading(true);
     try {
       const response = await verifyOtpServer(email, otp);
-      console.log("response----------------", response);
       if (!response.success) {
         throw new Error(response.message || "Something went wrong");
         

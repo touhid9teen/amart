@@ -1,12 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import ProductItem from "./productItem";
-import ProductModal from "./product-modal";
-import { slugify } from "@/app/_utils/slugify";
-import Link from "next/link";
 import type { Product } from "@/lib/types";
-import { log } from "console";
+import { useEffect, useState } from "react";
+import ProductModal from "./product-modal";
+import ProductItem from "./productItem";
 
 interface ProductsProps {
   productList: Product[];
@@ -41,7 +38,6 @@ export default function Products({
     []
   );
 
-  console.log("Product List in Products Component:", productList);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

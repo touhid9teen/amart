@@ -78,7 +78,7 @@ export default function CheckoutPage() {
       if (!validToken)
         throw new Error("Authentication required. Please login again.");
 
-      // console.log("orderData++++++++++++++++++", orderData);
+     
 
       const res = await axios.post(`${BASE_URL}detail/orders/`, orderData, {
         headers: {
@@ -89,7 +89,6 @@ export default function CheckoutPage() {
 
       const data = res.data;
 
-      // console.log("orde++++++++++++++++++", data);
       router.replace(`/order-conformation?page=success&id=${data.order_id}`);
       setTimeout(() => updateCart({}), 0);
     } catch (err) {

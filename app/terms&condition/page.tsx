@@ -112,7 +112,7 @@ export default function TermsConditions() {
                   <p className="text-gray-700 leading-relaxed">
                     We are Amart (
                     <a
-                      href="https://www.amart.com.bd"
+                      href="https://amart-seven.vercel.app/"
                       className="text-blue-600 hover:text-blue-800 font-medium"
                     >
                       www.amart.com.bd
