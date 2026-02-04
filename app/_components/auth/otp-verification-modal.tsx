@@ -55,7 +55,7 @@ export function OtpVerificationModal() {
     if (value.length === 6) {
       handleVerify(value);
     }
-  }
+  };
 
   const handleResendOTP = async () => {
     if (canResend) {
@@ -86,11 +86,16 @@ export function OtpVerificationModal() {
               <Mail size={32} />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 text-center">
-              Verify Email
+              Verify OTP
             </h1>
-            <p className="text-gray-600 text-center mt-2 text-sm max-w-[80%] leading-relaxed">
-              We have sent a verification code to <br />
-              <span className="font-semibold text-gray-900">{email}</span>
+            <p className="text-gray-800 text-center mt-2 text-sm max-w-[80%] leading-relaxed">
+              {/* We have sent a verification code to <br /> */}
+              For test purpose use this code ---{">"}{" "}
+              <span className="font-semibold text-primary text-lg font-bold">
+                123456
+              </span>{" "}
+              <br />
+              {/* <span className="font-semibold text-gray-900">{email}</span> */}
             </p>
           </div>
 
@@ -147,12 +152,19 @@ export function OtpVerificationModal() {
                 disabled={isLoading}
                 className="text-primary font-semibold text-sm hover:text-primary/80 transition-colors hover:underline flex items-center justify-center mx-auto gap-2"
               >
-                {isLoading && otp.length !== 6 && <Loader2 className="animate-spin" size={16} />}
-                {isLoading && otp.length !== 6 ? "Resending..." : "Resend Verification Code"}
+                {isLoading && otp.length !== 6 && (
+                  <Loader2 className="animate-spin" size={16} />
+                )}
+                {isLoading && otp.length !== 6
+                  ? "Resending..."
+                  : "Resend Verification Code"}
               </button>
             ) : (
               <p className="text-gray-500 text-sm font-medium">
-                Resend code in <span className="text-gray-700 shadow-sm border px-1.5 py-0.5 rounded bg-gray-50 ml-1">{countdown}s</span>
+                Resend code in{" "}
+                <span className="text-gray-700 shadow-sm border px-1.5 py-0.5 rounded bg-gray-50 ml-1">
+                  {countdown}s
+                </span>
               </p>
             )}
           </div>
