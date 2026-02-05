@@ -201,7 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshAuthToken = async () => {
     try {
       const result = await refreshAuthTokenServer();
-      if (!result.success || !result.data?.access_token) {
+      if (!result?.success || !result?.data?.access_token) {
         logout();
         return null;
       }

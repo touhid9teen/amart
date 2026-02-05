@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { categories } from "@/lib/variables";
-import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface CategoryListProps {
   variant?: "sidebar" | "dropdown" | "modal";
@@ -73,15 +72,15 @@ export default function CategoryList({
         const isSelected = selectedCategory && selectedCategory === cat.name;
 
         return (
-          <Button
+          <button
             key={index}
             onClick={() => onSelectCategory?.(cat.name)}
             className={`
     group flex items-center gap-3 py-3 px-2
     text-sm font-normal transition-colors
-    border-b border-dashed border-gray-300 last:border-0
+    border-b border-dashed border-gray-300   bg-transparent 
     text-gray-600 hover:text-primary
-    bg-transparent hover:bg-transparent
+   hover:bg-transparent
     ${isSelected ? "text-primary" : ""}
   `}
           >
@@ -90,7 +89,7 @@ export default function CategoryList({
             </div>
             <span className="flex-1 text-left">{cat.name}</span>
             <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors opacity-0 group-hover:opacity-100" />
-          </Button>
+          </button>
         );
       })}
     </div>
