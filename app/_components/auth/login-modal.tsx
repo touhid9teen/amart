@@ -10,7 +10,7 @@ import Link from "next/link";
 import { ModalComponent } from "@/components/modal-component";
 
 export function LoginModal() {
-  const { authState, login, hideModals, isLoading, showSignUpModal } =
+  const { authState, login, hideModals, isAuthLoading, showSignUpModal } =
     useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -113,7 +113,10 @@ export function LoginModal() {
               </button>
             </div>
             <div className="flex justify-end">
-              <a href="#" className="text-xs font-semibold text-primary hover:underline">
+              <a
+                href="#"
+                className="text-xs font-semibold text-primary hover:underline"
+              >
                 Forgot Password?
               </a>
             </div>
@@ -123,13 +126,13 @@ export function LoginModal() {
           <Button
             type="submit"
             className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
-              isFormValid && !isLoading
+              isFormValid && !isAuthLoading
                 ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
                 : "bg-primary/50 text-white shadow-none cursor-not-allowed"
             }`}
-            disabled={!isFormValid || isLoading}
+            disabled={!isFormValid || isAuthLoading}
           >
-            {isLoading ? (
+            {isAuthLoading ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="animate-spin text-white" size={20} />
                 <span>Signing In...</span>
@@ -152,7 +155,7 @@ export function LoginModal() {
               </span>
             </div>
           </div>
-          
+
           <button
             onClick={showSignUpModal}
             className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors underline"
@@ -165,11 +168,19 @@ export function LoginModal() {
         <div className="text-center mt-6">
           <p className="text-xs text-gray-400 leading-relaxed px-4">
             By continuing, you agree to our{" "}
-            <Link href="/terms&condition" target="_blank" className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2">
+            <Link
+              href="/terms&condition"
+              target="_blank"
+              className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2"
+            >
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy-policy" target="_blank" className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2">
+            <Link
+              href="/privacy-policy"
+              target="_blank"
+              className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2"
+            >
               Privacy Policy
             </Link>
             .

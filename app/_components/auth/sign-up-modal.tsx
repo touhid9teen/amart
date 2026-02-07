@@ -10,7 +10,7 @@ import Link from "next/link";
 import { ModalComponent } from "@/components/modal-component";
 
 export function SingUpModal() {
-  const { authState, signup, hideModals, isLoading, showLoginModal } =
+  const { authState, signup, hideModals, isAuthLoading, showLoginModal } =
     useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -118,13 +118,13 @@ export function SingUpModal() {
           <Button
             type="submit"
             className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
-              isFormValid && !isLoading
+              isFormValid && !isAuthLoading
                 ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
                 : "bg-primary/50 text-white shadow-none cursor-not-allowed"
             }`}
-            disabled={!isFormValid || isLoading}
+            disabled={!isFormValid || isAuthLoading}
           >
-            {isLoading ? (
+            {isAuthLoading ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="animate-spin text-white" size={20} />
                 <span>Creating Account...</span>

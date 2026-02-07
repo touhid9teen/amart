@@ -38,6 +38,7 @@ interface AuthContextType {
   verifyOtp: (otp: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  isAuthLoading: boolean;
   productList: Product[];
   getValidAuthToken: () => Promise<string | null>;
 }
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authId, setAuthId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
+
   // const [isLoading, setIsLoading] = useState(false);
   // const [categoryList, setCategoryList] = useState<Category[]>([]);
   // const [productList, setProductList] = useState<Product[]>([]);
@@ -59,16 +61,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     {},
     true,
     null,
-    Infinity
+    Infinity,
   );
-  const isLoading = isProductLoading || isActionLoading;
+  const isLoading = isProductLoading;
+  const isAuthLoading = isActionLoading;
 
   useEffect(() => {
     // --- Rehydrate auth state from cookies ---
     function getCookieValue(name: string): string | null {
       if (typeof document === "undefined") return null;
       const match = document.cookie.match(
-        new RegExp("(^| )" + name + "=([^;]+)")
+        new RegExp("(^| )" + name + "=([^;]+)"),
       );
       return match ? decodeURIComponent(match[2]) : null;
     }
@@ -150,7 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (result.data?.access_token) {
         await setTokens(
           result.data.access_token,
-          result.data.refresh_token || ""
+          result.data.refresh_token || "",
         );
       }
       if (result.data?.user_id) {
@@ -232,15 +235,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await verifyOtpServer(email, otp);
       if (!response.success) {
         throw new Error(response.message || "Something went wrong");
-        
+      } else {
+        toast("Welcome!", {
+          description: "Signup completed successfully.",
+        });
+        hideModals();
       }
-      else {
-         toast("Welcome!", {
-        description: "Signup completed successfully.",
-      });
-      hideModals();
-      }
-     
     } catch {
       toast.error("Error", {
         description: "Failed to verify OTP",
@@ -289,6 +289,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyOtp,
         logout,
         isLoading,
+        isAuthLoading,
         productList,
         getValidAuthToken, // Expose utility
       }}

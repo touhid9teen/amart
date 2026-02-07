@@ -12,7 +12,7 @@ import {
 import { Loader2, Mail, X } from "lucide-react";
 
 export function OtpVerificationModal() {
-  const { authState, email, verifyOtp, hideModals, isLoading, login } =
+  const { authState, email, verifyOtp, hideModals, isAuthLoading, login } =
     useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
@@ -105,7 +105,7 @@ export function OtpVerificationModal() {
               maxLength={6}
               value={otp}
               onChange={handleChange}
-              disabled={isLoading}
+              disabled={isAuthLoading}
             >
               <InputOTPGroup className="gap-2 sm:gap-3">
                 {[...Array(6)].map((_, i) => (
@@ -124,13 +124,13 @@ export function OtpVerificationModal() {
             <Button
               onClick={() => handleVerify(otp)}
               className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
-                otp.length === 6 && !isLoading
+                otp.length === 6 && !isAuthLoading
                   ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
                   : "bg-primary/50 text-white shadow-none cursor-not-allowed"
               }`}
-              disabled={otp.length !== 6 || isLoading}
+              disabled={otp.length !== 6 || isAuthLoading}
             >
-              {isLoading && otp.length === 6 ? (
+              {isAuthLoading && otp.length === 6 ? (
                 <div className="flex items-center gap-2">
                   <Loader2 className="animate-spin text-white" size={20} />
                   <span>Verifying...</span>
@@ -149,13 +149,13 @@ export function OtpVerificationModal() {
             {canResend ? (
               <button
                 onClick={handleResendOTP}
-                disabled={isLoading}
+                disabled={isAuthLoading}
                 className="text-primary font-semibold text-sm hover:text-primary/80 transition-colors hover:underline flex items-center justify-center mx-auto gap-2"
               >
-                {isLoading && otp.length !== 6 && (
+                {isAuthLoading && otp.length !== 6 && (
                   <Loader2 className="animate-spin" size={16} />
                 )}
-                {isLoading && otp.length !== 6
+                {isAuthLoading && otp.length !== 6
                   ? "Resending..."
                   : "Resend Verification Code"}
               </button>
