@@ -150,7 +150,7 @@ export async function refreshAuthTokenServer() {
 export async function setCookie(key: string, value: string) {
   const cookieStore = await cookies();
   cookieStore.set(key, value, {
-    httpOnly: false, // allow client-side JS to read
+    httpOnly: true, 
     secure: true,
     sameSite: "strict",
   });
