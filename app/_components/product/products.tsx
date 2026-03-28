@@ -1,9 +1,73 @@
 "use client";
 
 import type { Product } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProductModal from "./product-modal";
 import ProductItem from "./productItem";
+
+function LazyCategoryRow({ category, products, openModal }: { category: string, products: Product[], openModal: (product: Product) => void }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" } // Render when 300px near the viewport
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <div ref={ref} className="space-y-3 min-h-[250px] w-full">
+      {isVisible ? (
+        <>
+          {/* Category Header */}
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-900">{category}</h2>
+            </div>
+          </div>
+
+          {/* Products Container */}
+          <div className="container mx-auto px-4">
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {products.map((product, index) => (
+                <ProductItem
+                  key={product.id || index}
+                  product={product}
+                  onQuickView={() => openModal(product)}
+                  isFeatured={true}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="container mx-auto px-4 animate-pulse">
+          <div className="h-6 w-48 bg-gray-200 rounded mb-4" />
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+             <div className="h-[280px] bg-gray-100 rounded-lg"></div>
+             <div className="h-[280px] bg-gray-100 rounded-lg hidden sm:block"></div>
+             <div className="h-[280px] bg-gray-100 rounded-lg hidden md:block"></div>
+             <div className="h-[280px] bg-gray-100 rounded-lg hidden lg:block"></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface ProductsProps {
   productList: Product[];
@@ -92,34 +156,12 @@ export default function Products({
   return (
     <div className="space-y-6 bg-white py-6">
       {groupedProducts.map(([category, products]) => (
-        <div key={category} className="space-y-3">
-          {/* Category Header */}
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">{category}</h2>
-              {/* <Link
-                href={`/products-category/${slugify(category)}`}
-                className="text-sm text-primary hover:text-gray-900 font-semibold "
-              >
-                See All
-              </Link> */}
-            </div>
-          </div>
-
-          {/* Products Container */}
-          <div className="container mx-auto px-4">
-            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-              {products.map((product, index) => (
-                <ProductItem
-                  key={product.id || index}
-                  product={product}
-                  onQuickView={() => openModal(product)}
-                  isFeatured={true}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+        <LazyCategoryRow 
+          key={category} 
+          category={category} 
+          products={products} 
+          openModal={openModal} 
+        />
       ))}
 
       {/* Product Modal */}

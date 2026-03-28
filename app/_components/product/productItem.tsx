@@ -2,7 +2,6 @@
 
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import ProductDetails from "./productItem-details";
 import { Eye } from "lucide-react";
 import type { ProductItemProps, Product } from "@/lib/types";
@@ -12,8 +11,8 @@ export default function ProductItem({
   onQuickView,
   isFeatured = false,
 }: ProductItemProps) {
-  const [quantity, setQuantity] = useState(0);
   const { cartItems, updateCart } = useCart();
+  const quantity = (cartItems[product.id] as any)?.quantity || 0;
 
   const cleanProduct = (product: Product) => ({
     id: product?.id,
@@ -23,14 +22,9 @@ export default function ProductItem({
     image: product?.image,
   });
 
-  useEffect(() => {
-    const existing = cartItems[product.id];
-    setQuantity(existing?.quantity || 0);
-  }, [cartItems, product.id]);
-
   const handleAddToCart = (product: Product) => {
     const clean = cleanProduct(product);
-    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+    const existing = (cartItems[clean.id] as any) || { ...clean, quantity: 0 };
     const updated = {
       ...cartItems,
       [clean.id]: {
@@ -39,12 +33,11 @@ export default function ProductItem({
       },
     };
     updateCart(updated);
-    setQuantity(existing.quantity + 1);
   };
 
   const incrementQuantity = (product: Product) => {
     const clean = cleanProduct(product);
-    const existing = cartItems[clean.id] || { ...clean, quantity: 0 };
+    const existing = (cartItems[clean.id] as any) || { ...clean, quantity: 0 };
     const updated = {
       ...cartItems,
       [clean.id]: {
@@ -53,20 +46,17 @@ export default function ProductItem({
       },
     };
     updateCart(updated);
-    setQuantity(existing.quantity + 1);
   };
 
   const decrementQuantity = (product: Product) => {
-    const existing = cartItems[product.id];
+    const existing = cartItems[product.id] as any;
     if (!existing) return;
 
-    const updated = { ...cartItems };
+    const updated = { ...cartItems } as any;
     if (existing.quantity <= 1) {
       delete updated[product.id];
-      setQuantity(0);
     } else {
       updated[product.id].quantity -= 1;
-      setQuantity(updated[product.id].quantity);
     }
     updateCart(updated);
   };
