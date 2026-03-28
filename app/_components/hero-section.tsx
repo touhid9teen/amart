@@ -8,7 +8,7 @@ export default function HeroSection() {
     <div className="relative w-full h-[350px] sm:h-[450px] md:h-[550px] lg:h-[600px] bg-gray-100">
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src="/hero-bg.png"
+          src="/home-bg.png"
           alt="Fresh organic vegetables"
           fill
           className="object-cover object-center"
@@ -26,7 +26,7 @@ export default function HeroSection() {
         
         <div className="relative w-full max-w-4xl px-4 sm:px-0 mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
           <Image
-            src="/hero-text.png"
+            src="/home-text.png"
             alt="ALWAYS ORGANIC"
             width={800}
             height={300}
