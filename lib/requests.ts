@@ -22,10 +22,10 @@ const queryParamDefaultValue: QueryParamType = {
   params: {},
 };
 
-export async function getRequest(
+export async function getRequest<T = unknown>(
   url: keyof EndpointType,
   query: QueryParamType = queryParamDefaultValue
-) {
+): Promise<T> {
   const pathname = query.pathname || (query.params?.slug as string);
   const endpoint = await getEndpoint(url, pathname);
 
@@ -40,16 +40,16 @@ export async function getRequest(
     })
     .then((response) => {
       if (response && response.data !== undefined) {
-        return response.data;
+        return response.data as T;
       }
-      return [];
+      return [] as T;
     })
     .catch(async (error) => {
       console.error(`Error fetching ${url}:`, error);
       if (error?.status === 401) {
         redirect("/");
       }
-      return [];
+      return [] as T;
     });
 }
 

@@ -1,16 +1,16 @@
-import type React from "react";
+import { AuthProvider } from "@/contexts/auth-context";
+import { CartProvider } from "@/contexts/cart-context";
+import { AuthModalsProvider } from "@/providers/auth-modal-provider";
+import ReactQueryProvider from "@/providers/react-query-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import NextTopLoader from "nextjs-toploader";
+import type React from "react";
+import { Toaster } from "sonner";
+import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 import Navbar from "./_components/navbar";
-import Footer from "./_components/Footer";
-import { Toaster } from "sonner";
-import { AuthProvider } from "@/contexts/auth-context";
-import { AuthModalsProvider } from "@/providers/auth-modal-provider";
-import { CartProvider } from "@/contexts/cart-context";
-import ReactQueryProvider from "@/providers/react-query-provider";
-import NextTopLoader from "nextjs-toploader";
+import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
