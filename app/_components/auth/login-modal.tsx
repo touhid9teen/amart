@@ -8,10 +8,20 @@ import { useAuth } from "@/contexts/auth-context";
 import Logo from "../header/logo";
 import Link from "next/link";
 import { ModalComponent } from "@/components/modal-component";
+import { loginWithEmail } from "@/lib/actions";
+import { toast } from "sonner";
 
 export function LoginModal() {
-  const { authState, login, hideModals, isAuthLoading, showSignUpModal } =
-    useAuth();
+  const {
+    authState,
+    isLoading,
+    setIsLoading,
+    hideModals,
+    isAuthLoading,
+    showSignUpModal,
+    setAuthState,
+    setAuthId,
+  } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,14 +37,26 @@ export function LoginModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!isValidEmail || password.length < 6) return;
-
+    if (!isValidEmail || password.length < 6 || isLoading) return;
+    setIsLoading(true);
     try {
-      await login(email, password);
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      console.error("Login failed:", error);
+      const response = await loginWithEmail(email, password);
+      if (response?.code === "AmrtLSu2hnd") {
+        setAuthState("authenticated");
+        toast("Welcome Back!", {
+          description: "You've logged in successfully.",
+        });
+      } else {
+        toast.error("Login Failed", {
+          description: response?.message || "Invalid email or password.",
+        });
+      }
+    } catch {
+      toast.error("Error", {
+        description: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 

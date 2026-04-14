@@ -129,3 +129,17 @@ export type Order = {
 
 // For legacy code, provide a generic type
 export type AnyType = unknown;
+
+export type LoginResponseType = {
+  success: boolean;
+  code: string;
+  message: string;
+  user_id?: string;
+  email?: string;
+  data?: [
+    {
+      access_token: string;
+      refresh_token: string;
+    }
+  ];
+};

@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  loginWithEmail,
   logoutUserServer,
   refreshAuthTokenServer,
-  setCookie,
   signupWithEmail,
-  verifyOtpServer,
+  verifyOtpServer
 } from "@/lib/actions";
 import { jwtDecode as jwt_decode } from "jwt-decode";
 import type React from "react";
@@ -31,11 +29,14 @@ interface AuthContextType {
   showVerificationModal: () => void;
   hideModals: () => void;
   signup: (email: string, password: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  // login: (email: string, password: string) => Promise<void>;
   verifyOtp: (otp: string) => Promise<void>;
   logout: () => void;
-  // isLoading: boolean;
   isAuthLoading: boolean;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+  setAuthState: (state: AuthState) => void;
+  setAuthId: (id: string | null) => void;
   // productList: Product[];
   getValidAuthToken: () => Promise<string | null>;
 }
@@ -48,19 +49,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authId, setAuthId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [categoryList, setCategoryList] = useState<Category[]>([]);
-  // const [productList, setProductList] = useState<Product[]>([]);
 
-  // const { data: productList = [], isLoading: isProductLoading } = GetQuery(
-  //   "getProducts",
-  //   {},
-  //   true,
-  //   null,
-  //   Infinity,
-  // );
-  // const isLoading = isProductLoading;
   const isAuthLoading = isActionLoading;
 
   useEffect(() => {
@@ -84,6 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       typeof window !== "undefined" ? localStorage.getItem("email") : null;
     if (storedEmail) setEmail(storedEmail);
   }, []);
+
+
 
   // Persist email to localStorage whenever it changes
   useEffect(() => {
@@ -137,55 +130,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string): Promise<void> => {
-    setIsActionLoading(true);
-    try {
-      const result = await loginWithEmail(email, password);
+ 
 
-      if (!result.success) {
-        throw new Error(result.message || "Something went wrong");
-      }
-
-      // Set tokens in state after successful verification
-      if (result.data?.access_token) {
-        await setTokens(
-          result.data.access_token,
-          result.data.refresh_token || ""
-        );
-      }
-      if (result.data?.user_id) {
-        setAuthId(result.data.user_id);
-      }
-      // Set email if present in response
-      if (result.data?.email) {
-        setEmail(result.data.email);
-      }
-      setEmail(email); // Persist email
-      setAuthState("authenticated");
-
-      toast("Welcome Back!", {
-        description: "You've logged in successfully.",
-      });
-    } catch {
-      toast.error("Error", {
-        description: "Something went wrong. Please try again.",
-      });
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
-
-  const setTokens = async (access: string, refresh: string) => {
-    try {
-      await setCookie("authToken", access);
-      setAuthToken(access);
-      if (refresh) {
-        await setCookie("refreshToken", refresh);
-      }
-    } catch {
-      // Optionally handle error
-    }
-  };
 
   const isTokenExpired = (token: string | null) => {
     if (!token) return true;
@@ -282,11 +228,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         showVerificationModal,
         hideModals,
         signup,
-        login,
+        // login,
         verifyOtp,
         logout,
-        // isLoading,
         isAuthLoading,
+        isLoading,
+        setIsLoading,
+        setAuthState,
+        setAuthId,
         // productList,
         getValidAuthToken, // Expose utility
       }}

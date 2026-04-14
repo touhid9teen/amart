@@ -2,12 +2,13 @@
 
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
+import { AnyType, LoginResponseType } from "@/lib/types";
 import { BASE_URL } from "@/lib/variables";
-import { AnyType } from "@/lib/types";
 import axios from "axios";
 import { cookies } from "next/headers";
 
 // 1. Get all cart items
+
 export async function getCartItems(jwt: string) {
   try {
     const endpoint = await getEndpoint("getCartItems");
@@ -86,16 +87,43 @@ export async function signupWithEmail(email: string, password: string) {
 }
 
 // 1. Login with email
-export async function loginWithEmail(email: string, password: string) {
+export async function loginWithEmail(
+  email: string,
+  password: string
+): Promise<LoginResponseType> {
   try {
     const endpoint = `${BASE_URL}auth/email-login/`;
     const response = await axios.post(endpoint, {
-      email: email,
-      password: password,
+      email,
+      password,
     });
-    return response.data; // will contain { success, message, data }
-  } catch (error) {
-    return handleError(error); // make sure this returns { success: false, message, ... }
+
+    const responseData = response.data;
+    if (responseData.access_token) {
+      await setCookie("authToken", responseData.access_token);
+      if (responseData.refresh_token) {
+        await setCookie("refreshToken", responseData.refresh_token);
+      }
+    }
+    return {
+      success: responseData.success,
+      message: responseData.message,
+      code: responseData.code,
+    };
+  } catch (error: unknown) {
+    let message = "Something went wrong. Please try again.";
+    let code = "UNKNOWN_ERROR";
+    if (axios.isAxiosError(error)) {
+      message = error.response?.data?.message || message;
+      code = error.response?.data?.code || code;
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
+    return {
+      success: false,
+      message,
+      code,
+    };
   }
 }
 
@@ -150,7 +178,7 @@ export async function refreshAuthTokenServer() {
 export async function setCookie(key: string, value: string) {
   const cookieStore = await cookies();
   cookieStore.set(key, value, {
-    httpOnly: true, 
+    httpOnly: true,
     secure: true,
     sameSite: "strict",
   });
