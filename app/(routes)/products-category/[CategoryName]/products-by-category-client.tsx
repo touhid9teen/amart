@@ -2,6 +2,7 @@
 
 import BackButton from "@/app/_components/back-button";
 import { GetQuery } from "@/lib/queries";
+import type { Product } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import AllProducts from "./all-products";
 
@@ -10,13 +11,16 @@ export default function ProductsByCategoryClient({
 }: {
   categoryName: string;
 }) {
-  const { data: productList, isLoading } = GetQuery(
+  const { data: productList = [], isLoading } = GetQuery(
     "getProductByCategory",
     { params: { slug: categoryName } },
     true,
     null,
-    Infinity
-  );
+    Infinity,
+  ) as {
+    data: Product[];
+    isLoading: boolean;
+  };
 
   // Format category name for display
   const formattedCategoryName = categoryName
@@ -39,9 +43,7 @@ export default function ProductsByCategoryClient({
                 <span className="text-sm sm:text-base text-gray-600 mt-1 block">
                   {isLoading ? (
                     <Skeleton className="h-4 w-32" />
-                  ) : (
-                    `${productList?.length || 0} products found`
-                  )}
+                  ) : `${productList.length} products found`}
                 </span>
               </div>
             </div>
@@ -53,7 +55,7 @@ export default function ProductsByCategoryClient({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {isLoading ? (
           <ProductsSkeleton />
-        ) : !productList || productList.length === 0 ? (
+        ) : productList.length === 0 ? (
           <EmptyState categoryName={formattedCategoryName} />
         ) : (
           <div className="space-y-8">

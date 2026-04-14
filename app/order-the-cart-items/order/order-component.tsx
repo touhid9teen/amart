@@ -45,7 +45,7 @@ interface OrderData {
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, totalAmount, updateCart } = useCart();
-  const { getValidAuthToken, isLoading } = useAuth();
+  const { getValidAuthToken, isAuthLoading } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleOrderSubmit = async (formData: CheckoutFormData) => {
@@ -99,7 +99,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (isLoading) {
+  if (isAuthLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="bg-white shadow-sm border-b">

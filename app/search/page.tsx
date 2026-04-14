@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { Search } from "lucide-react";
 import { useProducts } from "@/hook/use-products";
+import type { Product } from "@/lib/types";
 import Products from "../_components/product/products";
 import BackButton from "../_components/back-button";
 
@@ -10,7 +11,7 @@ function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const { loading, error, searchProducts } = useProducts();
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
@@ -38,7 +39,10 @@ function SearchResults() {
   if (error) {
     return (
       <div className="text-center py-20">
-        <p className="text-red-500 mb-4">Error: {error}</p>
+        <p className="text-red-500 mb-4">
+          Error:{" "}
+          {error instanceof Error ? error.message : "Failed to load products"}
+        </p>
         <button
           onClick={() => window.location.reload()}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"

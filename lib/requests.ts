@@ -26,16 +26,16 @@ export async function getRequest<T = unknown>(
   url: keyof EndpointType,
   query: QueryParamType = queryParamDefaultValue
 ): Promise<T> {
+  console.log("????????????????????????", url, query);
   const pathname = query.pathname || (query.params?.slug as string);
   const endpoint = await getEndpoint(url, pathname);
 
-
-  const time = new Date().getTime();
+  // const time = new Date().getTime();
   return await api
     .get(endpoint, {
       params: {
         ...(query?.params || {}),
-        time,
+        // time,
       },
     })
     .then((response) => {

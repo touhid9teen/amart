@@ -9,7 +9,7 @@ export const GetQuery = (
   query: QueryParamType = { pathname: "", params: {} },
   enabled: boolean = true,
   initialData: AnyType = null,
-  gcTime: number = 0,
+  gcTime: number = 0
 ) => {
   return useQuery({
     queryKey: [url, JSON.stringify(query)],
@@ -17,8 +17,8 @@ export const GetQuery = (
     enabled,
     refetchOnWindowFocus: false,
     retry: false,
-    gcTime: gcTime > 0 ? gcTime : 1000 * 60 * 60,
-    staleTime: gcTime > 0 ? gcTime : 1000 * 60 * 60,
+    gcTime: gcTime,
+    // staleTime: gcTime,
     ...(initialData ? { initialData } : {}),
   });
 };
