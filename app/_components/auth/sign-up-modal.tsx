@@ -8,10 +8,19 @@ import { useAuth } from "@/contexts/auth-context";
 import Logo from "../header/logo";
 import Link from "next/link";
 import { ModalComponent } from "@/components/modal-component";
+import { signupWithEmail } from "@/lib/actions";
+import { toast } from "sonner";
 
 export function SingUpModal() {
-  const { authState, signup, hideModals, isAuthLoading, showLoginModal } =
-    useAuth();
+  const {
+    authState,
+    isLoading,
+    setIsLoading,
+    hideModals,
+    isAuthLoading,
+    showLoginModal,
+    setAuthState,
+  } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,14 +36,30 @@ export function SingUpModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!isValidEmail || password.length < 6) return;
+    if (!isValidEmail || password.length < 6 || isLoading) return;
 
+    setIsLoading(true);
     try {
-      await signup(email, password);
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      console.error("Signup failed:", error);
+      const response = await signupWithEmail(email, password);
+
+      if (response?.code === "AmrtRSu2hnd") {
+        setAuthState("verifying");
+        toast("OTP Sent", {
+          description:
+            response?.message ||
+            "Please check your email for the verification code",
+        });
+      } else {
+        toast.error("Signup Failed", {
+          description: response?.message || "Unable to create account.",
+        });
+      }
+    } catch {
+      toast.error("Error", {
+        description: "Failed to send OTP",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,7 +172,7 @@ export function SingUpModal() {
               </span>
             </div>
           </div>
-          
+
           <button
             onClick={showLoginModal}
             className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors underline"
@@ -160,11 +185,19 @@ export function SingUpModal() {
         <div className="text-center mt-6">
           <p className="text-xs text-gray-400 leading-relaxed px-4">
             By continuing, you agree to our{" "}
-            <Link href="/terms&condition" target="_blank" className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2">
+            <Link
+              href="/terms&condition"
+              target="_blank"
+              className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2"
+            >
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy-policy" target="_blank" className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2">
+            <Link
+              href="/privacy-policy"
+              target="_blank"
+              className="text-primary hover:text-primary/80 underline decoration-dotted underline-offset-2"
+            >
               Privacy Policy
             </Link>
             .

@@ -1,19 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useAuth } from "@/contexts/auth-context";
+import { signupWithEmail, verifyOtpServer } from "@/lib/actions";
 import { Loader2, Mail, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export function OtpVerificationModal() {
-  const { authState, email, verifyOtp, hideModals, isAuthLoading, login } =
-    useAuth();
+  const {
+    authState,
+    email,
+    isLoading,
+    setIsLoading,
+    hideModals,
+    isAuthLoading,
+} = useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -44,6 +52,27 @@ export function OtpVerificationModal() {
     return () => clearInterval(timer);
   }, [authState, canResend]);
 
+  const verifyOtp = async (otp: string) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const response = await verifyOtpServer(email, otp);
+      if (response.code === "AmrtVfySu2hnd") {
+        toast("Welcome!", {
+          description: response?.message || "Signup completed successfully.",
+        });
+        hideModals();
+      } else {
+        toast.error(response?.message || "Invalid OTP. Please try again.");
+      }
+    } catch {
+      toast.error("Error", {
+        description: "Failed to verify OTP",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleVerify = async (value: string) => {
     if (value.length === 6) {
       await verifyOtp(value);
@@ -59,7 +88,16 @@ export function OtpVerificationModal() {
 
   const handleResendOTP = async () => {
     if (canResend) {
-      await login(email, ""); // Email-based resend
+      const response = await signupWithEmail(email, ""); // Email-based resend
+      if (response.success) {
+        toast.success("OTP Resent", {
+          description: "A new OTP has been sent to your email.",
+        });
+      } else {
+        toast.error("Failed to resend OTP", {
+          description: response.message || "Please try again later.",
+        });
+      }
       setCountdown(60);
       setCanResend(false);
       setOtp("");

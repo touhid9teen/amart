@@ -2,14 +2,11 @@
 
 import {
   logoutUserServer,
-  refreshAuthTokenServer,
-  signupWithEmail,
-  verifyOtpServer
+  refreshAuthTokenServer
 } from "@/lib/actions";
 import { jwtDecode as jwt_decode } from "jwt-decode";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export type AuthState =
   | "unauthenticated"
@@ -28,9 +25,6 @@ interface AuthContextType {
   showSignUpModal: () => void;
   showVerificationModal: () => void;
   hideModals: () => void;
-  signup: (email: string, password: string) => Promise<void>;
-  // login: (email: string, password: string) => Promise<void>;
-  verifyOtp: (otp: string) => Promise<void>;
   logout: () => void;
   isAuthLoading: boolean;
   isLoading: boolean;
@@ -108,27 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string) => {
-    setIsActionLoading(true);
-    try {
-      const result = await signupWithEmail(email, password);
 
-      if (!result.success) {
-        throw new Error(result.message || "Something went wrong");
-      }
-      setEmail(email); // Persist email
-      setAuthState("verifying");
-      toast("OTP Sent", {
-        description: "Please check your email for the verification code",
-      });
-    } catch {
-      toast.error("Error", {
-        description: "Failed to send OTP",
-      });
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
 
  
 
@@ -172,26 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authToken]);
 
-  const verifyOtp = async (otp: string) => {
-    setIsActionLoading(true);
-    try {
-      const response = await verifyOtpServer(email, otp);
-      if (!response.success) {
-        throw new Error(response.message || "Something went wrong");
-      } else {
-        toast("Welcome!", {
-          description: "Signup completed successfully.",
-        });
-        hideModals();
-      }
-    } catch {
-      toast.error("Error", {
-        description: "Failed to verify OTP",
-      });
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
+
 
   // Utility to get a valid token, refreshing if needed
   const getValidAuthToken = async (): Promise<string | null> => {
@@ -227,9 +182,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         showSignUpModal,
         showVerificationModal,
         hideModals,
-        signup,
-        // login,
-        verifyOtp,
+   
+  
+    
         logout,
         isAuthLoading,
         isLoading,

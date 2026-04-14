@@ -80,8 +80,10 @@ export async function signupWithEmail(email: string, password: string) {
       email: email,
       password: password,
     });
+    console.log("#######", response);
     return response.data; // will contain { success, message, data }
   } catch (error) {
+    console.log("*********", error);
     return handleError(error); // make sure this returns { success: false, message, ... }
   }
 }
