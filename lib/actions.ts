@@ -234,3 +234,26 @@ export async function getCategoryListServer() {
     return handleError(error);
   }
 }
+
+// Submit Order (server action)
+export async function submitOrderServer(orderData: AnyType) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("authToken")?.value;
+
+    if (!token) {
+      throw new Error("Authentication required. Please login again.");
+    }
+
+    const res = await axios.post(`${BASE_URL}detail/orders/`, orderData, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return handleSuccess(res);
+  } catch (error) {
+    return handleError(error);
+  }
+}

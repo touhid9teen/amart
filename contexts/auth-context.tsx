@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  logoutUserServer,
-  refreshAuthTokenServer
-} from "@/lib/actions";
-import {
-  checkAuthState,
-  getStoredAuthData,
-  isTokenExpired,
-  removeStoredAuthData,
-} from "@/lib/auth-utils";
+import { checkAuthState, getStoredAuthData } from "@/lib/auth-utils";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -22,52 +13,37 @@ export type AuthState =
 
 interface AuthContextType {
   authState: AuthState;
-  authToken: string | null;
-  authId: string | null;
   email: string;
   setEmail: (email: string) => void;
   showLoginModal: () => void;
   showSignUpModal: () => void;
   showVerificationModal: () => void;
   hideModals: () => void;
-  logout: () => void;
   isAuthLoading: boolean;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   setAuthState: (state: AuthState) => void;
-  setAuthId: (id: string | null) => void;
-  getValidAuthToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
-  const [authToken, setAuthToken] = useState<string | null>(null);
-  const [authId, setAuthId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
 
   const isAuthLoading = isActionLoading;
 
   useEffect(() => {
     // --- Rehydrate auth state ---
-    const { token, id, email: storedEmail } = getStoredAuthData();
+    const { email: storedEmail } = getStoredAuthData();
     const state = checkAuthState();
-    
+
     setAuthState(state);
-    
-    if (token && state === "authenticated") {
-      setAuthToken(token);
-      setAuthId(id || null);
-    }
-    
+
     if (storedEmail) setEmail(storedEmail);
   }, []);
-
-
 
   // Persist email to localStorage whenever it changes
   useEffect(() => {
@@ -95,48 +71,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hideModals = () => {
     if (authState !== "authenticated") {
       setAuthState("unauthenticated");
-      setAuthToken(null);
-    }
-  };
-
-
-
- 
-
-
-  // isTokenExpired is now imported from @/lib/auth-utils
-
-
-
-  // Utility to get a valid token, refreshing via server action if needed
-  const getValidAuthToken = async (): Promise<string | null> => {
-    let token = authToken;
-    if (!token || isTokenExpired(token)) {
-      try {
-        const result = await refreshAuthTokenServer();
-        if (result?.data?.access_token) {
-          setAuthToken(result.data.access_token);
-          return result.data.access_token;
-        }
-      } catch (error) {
-        console.error("Token refresh failed", error);
-      }
-      logout();
-      return null;
-    }
-    return token;
-  };
-
-  const logout = async () => {
-    setAuthState("unauthenticated");
-    setEmail(""); // This will also clear from localStorage
-    setAuthToken(null);
-    setAuthId(null);
-    removeStoredAuthData();
-    try {
-      await logoutUserServer();
-    } catch {
-      // Optionally handle error
     }
   };
 
@@ -144,22 +78,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         authState,
-        authToken,
-        authId,
         email,
         setEmail,
         showLoginModal,
         showSignUpModal,
         showVerificationModal,
         hideModals,
-        logout,
         isAuthLoading,
         isLoading,
         setIsLoading,
         setAuthState,
-        setAuthId,
-        // productList,
-        getValidAuthToken, // Expose utility
       }}
     >
       {children}

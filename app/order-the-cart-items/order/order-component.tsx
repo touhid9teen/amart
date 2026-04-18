@@ -9,8 +9,7 @@ import { useAuth } from "@/contexts/auth-context";
 import ProcessIndicator from "@/app/_components/other/process-indicator";
 import { toast } from "sonner";
 import { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "@/lib/variables";
+import { submitOrderServer } from "@/lib/actions";
 import BackButton from "@/app/_components/back-button";
 
 interface CheckoutFormData {
@@ -45,7 +44,7 @@ interface OrderData {
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, totalAmount, updateCart } = useCart();
-  const { getValidAuthToken, isAuthLoading } = useAuth();
+  const { isAuthLoading } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleOrderSubmit = async (formData: CheckoutFormData) => {
@@ -74,18 +73,11 @@ export default function CheckoutPage() {
         items,
       };
 
-      const validToken = await getValidAuthToken();
-      if (!validToken)
-        throw new Error("Authentication required. Please login again.");
-
-     
-
-      const res = await axios.post(`${BASE_URL}detail/orders/`, orderData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${validToken}`,
-        },
-      });
+      const res = await submitOrderServer(orderData);
+      
+      if (!res.success) {
+        throw new Error(res.message || "Order submission failed.");
+      }
 
       const data = res.data;
 

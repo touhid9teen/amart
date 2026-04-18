@@ -7,15 +7,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth-context";
+import { logoutUserServer } from "@/lib/actions";
+import { removeStoredAuthData } from "@/lib/auth-utils";
 import { LogOut, ShoppingBag, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LoginLogout() {
-  const { authState, showLoginModal, logout, email } = useAuth();
+  const { authState, showLoginModal, email } = useAuth();
   const router = useRouter();
 
   const handleOrdersClick = () => {
     router.push("/orders");
+  };
+
+  const handleLogout = async () => {
+    removeStoredAuthData();
+    await logoutUserServer();
+    window.location.href = "/";
   };
 
   if (authState === "authenticated") {
@@ -50,7 +58,7 @@ export default function LoginLogout() {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onClick={logout}
+              onClick={handleLogout}
               className="flex items-center gap-2 px-3 py-2 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
             >
               <LogOut className="h-4 w-4" />
