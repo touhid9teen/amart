@@ -20,11 +20,11 @@ export function OtpVerificationModal() {
     setIsLoading,
     hideModals,
     isAuthLoading,
-} = useAuth();
+    email,
+  } = useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  const email = localStorage.getItem("pendingEmail") || ""; 
   useEffect(() => {
     if (authState === "verifying") {
       setOtp("");
