@@ -4,7 +4,12 @@ import {
   logoutUserServer,
   refreshAuthTokenServer
 } from "@/lib/actions";
-import { jwtDecode as jwt_decode } from "jwt-decode";
+import {
+  checkAuthState,
+  getStoredAuthData,
+  isTokenExpired,
+  removeStoredAuthData,
+} from "@/lib/auth-utils";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -31,7 +36,6 @@ interface AuthContextType {
   setIsLoading: (loading: boolean) => void;
   setAuthState: (state: AuthState) => void;
   setAuthId: (id: string | null) => void;
-  // productList: Product[];
   getValidAuthToken: () => Promise<string | null>;
 }
 
@@ -49,24 +53,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAuthLoading = isActionLoading;
 
   useEffect(() => {
-    // --- Rehydrate auth state from cookies ---
-    function getCookieValue(name: string): string | null {
-      if (typeof document === "undefined") return null;
-      const match = document.cookie.match(
-        new RegExp("(^| )" + name + "=([^;]+)")
-      );
-      return match ? decodeURIComponent(match[2]) : null;
-    }
-    const token = getCookieValue("authToken");
-    const id = getCookieValue("authId");
-    if (token) {
-      setAuthState("authenticated");
+    // --- Rehydrate auth state ---
+    const { token, id, email: storedEmail } = getStoredAuthData();
+    const state = checkAuthState();
+    
+    setAuthState(state);
+    
+    if (token && state === "authenticated") {
       setAuthToken(token);
       setAuthId(id || null);
     }
-    // --- Rehydrate email from localStorage ---
-    const storedEmail =
-      typeof window !== "undefined" ? localStorage.getItem("email") : null;
+    
     if (storedEmail) setEmail(storedEmail);
   }, []);
 
@@ -107,16 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
  
 
 
-  const isTokenExpired = (token: string | null) => {
-    if (!token) return true;
-    try {
-      const decoded = jwt_decode<{ exp?: number }>(token);
-      if (!decoded.exp) return true;
-      return decoded.exp * 1000 < Date.now();
-    } catch {
-      return true;
-    }
-  };
+  // isTokenExpired is now imported from @/lib/auth-utils
 
   const refreshAuthToken = async () => {
     try {
@@ -163,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setEmail(""); // This will also clear from localStorage
     setAuthToken(null);
     setAuthId(null);
+    removeStoredAuthData();
     try {
       await logoutUserServer();
     } catch {
@@ -182,9 +171,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         showSignUpModal,
         showVerificationModal,
         hideModals,
-   
-  
-    
         logout,
         isAuthLoading,
         isLoading,

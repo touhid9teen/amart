@@ -16,7 +16,6 @@ import { toast } from "sonner";
 export function OtpVerificationModal() {
   const {
     authState,
-    email,
     isLoading,
     setIsLoading,
     hideModals,
@@ -25,7 +24,7 @@ export function OtpVerificationModal() {
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
-
+  const email = localStorage.getItem("pendingEmail") || ""; 
   useEffect(() => {
     if (authState === "verifying") {
       setOtp("");
@@ -88,7 +87,7 @@ export function OtpVerificationModal() {
 
   const handleResendOTP = async () => {
     if (canResend) {
-      const response = await signupWithEmail(email, ""); // Email-based resend
+      const response = await signupWithEmail(email, "");
       if (response.success) {
         toast.success("OTP Resent", {
           description: "A new OTP has been sent to your email.",

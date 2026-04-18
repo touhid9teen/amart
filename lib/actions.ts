@@ -145,6 +145,9 @@ export async function verifyOtpServer(email: string, otp: string) {
       if (data.data.refresh_token) {
         await setCookie("refreshToken", data.data.refresh_token);
       }
+      if(data.data.email){
+        await setCookie("authEmail", data.data.email);
+      }
       if (data.data.user_id) {
         await setCookie("authId", data.data.user_id);
       }
