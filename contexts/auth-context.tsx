@@ -2,7 +2,7 @@
 
 import { checkAuthState, getStoredAuthData } from "@/lib/auth-utils";
 import type React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 
 export type AuthState =
   | "unauthenticated"
@@ -22,6 +22,7 @@ interface AuthContextType {
   isAuthLoading: boolean;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  setIsAuthLoading: (loading: boolean) => void;
   setAuthState: (state: AuthState) => void;
 }
 
@@ -30,10 +31,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
   const [email, setEmail] = useState("");
-  const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const isAuthLoading = isActionLoading;
 
   useEffect(() => {
     // --- Rehydrate auth state ---
@@ -45,51 +44,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedEmail) setEmail(storedEmail);
   }, []);
 
-  // Persist email to localStorage whenever it changes
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (email) {
-        localStorage.setItem("email", email);
-      } else {
-        localStorage.removeItem("email");
-      }
-    }
-  }, [email]);
+  // Removed redundant localStorage sync based on user instruction
 
-  const showLoginModal = () => {
+  const showLoginModal = useCallback(() => {
     setAuthState("login");
-  };
+  }, []);
 
-  const showSignUpModal = () => {
+  const showSignUpModal = useCallback(() => {
     setAuthState("signup");
-  };
+  }, []);
 
-  const showVerificationModal = () => {
+  const showVerificationModal = useCallback(() => {
     setAuthState("verifying");
-  };
+  }, []);
 
-  const hideModals = () => {
-    if (authState !== "authenticated") {
-      setAuthState("unauthenticated");
-    }
-  };
+  const hideModals = useCallback(() => {
+    setAuthState((current) => (current !== "authenticated" ? "unauthenticated" : current));
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      authState,
+      email,
+      setEmail,
+      showLoginModal,
+      showSignUpModal,
+      showVerificationModal,
+      hideModals,
+      isAuthLoading,
+      setIsAuthLoading,
+      isLoading,
+      setIsLoading,
+      setAuthState,
+    }),
+    [
+      authState,
+      email,
+      showLoginModal,
+      showSignUpModal,
+      showVerificationModal,
+      hideModals,
+      isAuthLoading,
+      isLoading,
+    ]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        authState,
-        email,
-        setEmail,
-        showLoginModal,
-        showSignUpModal,
-        showVerificationModal,
-        hideModals,
-        isAuthLoading,
-        isLoading,
-        setIsLoading,
-        setAuthState,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
