@@ -106,42 +106,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // isTokenExpired is now imported from @/lib/auth-utils
 
-  const refreshAuthToken = async () => {
-    try {
-      const result = await refreshAuthTokenServer();
-      if (!result?.success || !result?.data?.access_token) {
-        logout();
-        return null;
-      }
-      setTokens(result.data.access, result.data.refresh_token || "");
-      return result.data.access_token;
-    } catch {
-      logout();
-      return null;
-    }
-  };
-
-  // On mount, check if token is expired and refresh if needed
-  useEffect(() => {
-    const checkAndRefresh = async () => {
-      const token = authToken;
-      // Use rehydrated authToken, not localStorage or cookies
-      if (token && isTokenExpired(token)) {
-        await refreshAuthToken();
-      }
-    };
-    checkAndRefresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authToken]);
 
 
-
-  // Utility to get a valid token, refreshing if needed
+  // Utility to get a valid token, refreshing via server action if needed
   const getValidAuthToken = async (): Promise<string | null> => {
     let token = authToken;
     if (!token || isTokenExpired(token)) {
-      token = await refreshAuthToken();
-      if (!token) return null;
+      try {
+        const result = await refreshAuthTokenServer();
+        if (result?.data?.access_token) {
+          setAuthToken(result.data.access_token);
+          return result.data.access_token;
+        }
+      } catch (error) {
+        console.error("Token refresh failed", error);
+      }
+      logout();
+      return null;
     }
     return token;
   };
