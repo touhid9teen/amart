@@ -2,7 +2,7 @@
 
 import { checkAuthState, getStoredAuthData } from "@/lib/auth-utils";
 import type React from "react";
-import { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type AuthState =
   | "unauthenticated"
@@ -35,31 +35,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // --- Rehydrate auth state ---
     const { email: storedEmail } = getStoredAuthData();
     const state = checkAuthState();
-
     setAuthState(state);
-
     if (storedEmail) setEmail(storedEmail);
-  }, []);
-
-  // Removed redundant localStorage sync based on user instruction
-
-  const showLoginModal = useCallback(() => {
-    setAuthState("login");
-  }, []);
-
-  const showSignUpModal = useCallback(() => {
-    setAuthState("signup");
-  }, []);
-
-  const showVerificationModal = useCallback(() => {
-    setAuthState("verifying");
-  }, []);
-
-  const hideModals = useCallback(() => {
-    setAuthState((current) => (current !== "authenticated" ? "unauthenticated" : current));
   }, []);
 
   const contextValue = useMemo(
@@ -67,32 +46,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authState,
       email,
       setEmail,
-      showLoginModal,
-      showSignUpModal,
-      showVerificationModal,
-      hideModals,
+      showLoginModal: () => setAuthState("login"),
+      showSignUpModal: () => setAuthState("signup"),
+      showVerificationModal: () => setAuthState("verifying"),
+      hideModals: () =>
+        setAuthState((c) => (c !== "authenticated" ? "unauthenticated" : c)),
       isAuthLoading,
       setIsAuthLoading,
       isLoading,
       setIsLoading,
       setAuthState,
     }),
-    [
-      authState,
-      email,
-      showLoginModal,
-      showSignUpModal,
-      showVerificationModal,
-      hideModals,
-      isAuthLoading,
-      isLoading,
-    ]
+    [authState, email, isAuthLoading, isLoading],
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 
