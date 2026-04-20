@@ -1,15 +1,23 @@
 "use client";
 
+import { ModalComponent } from "@/components/modal-component";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth-context";
+import { loginWithEmail } from "@/lib/actions";
+import { Eye, EyeOff, Loader2, Lock, Mail, X } from "lucide-react";
+import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Loader2, Lock, Mail, X } from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
-import Logo from "../header/logo";
-import Link from "next/link";
-import { ModalComponent } from "@/components/modal-component";
-import { loginWithEmail } from "@/lib/actions";
 import { toast } from "sonner";
+import Logo from "../header/logo";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  AUTH_VALIDATION_ERROR: "Please check your email and password.",
+  AUTH_SERVER_ERROR: "Server error. Please try again later.",
+  AUTH_TIMEOUT: "Connection timed out. Try again.",
+  AUTH_NETWORK_ERROR: "No internet connection.",
+  AUTH_UNKNOWN_ERROR: "Something went wrong.",
+};
 
 export function LoginModal() {
   const {
@@ -20,7 +28,6 @@ export function LoginModal() {
     isAuthLoading,
     showSignUpModal,
     setAuthState,
-    setAuthId,
   } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,34 +41,43 @@ export function LoginModal() {
     setPassword(e.target.value);
   };
 
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isFormValid = isValidEmail && password.length >= 6;
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!isValidEmail || password.length < 6 || isLoading) return;
+
+    if (isLoading) return;
+    if (!isValidEmail) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     setIsLoading(true);
+
     try {
-      const response = await loginWithEmail(email, password);
-      if (response?.code === "AmrtLSu2hnd") {
+      const response = await loginWithEmail({ email, password });
+
+      if (response.success) {
+        // ── Happy path ─────────────────────────────────────────────────────
         setAuthState("authenticated");
-        toast("Welcome Back!", {
+        toast.success("Welcome back!", {
           description: "You've logged in successfully.",
         });
-      } else {
-        toast.error("Login Failed", {
-          description: response?.message || "Invalid email or password.",
-        });
+        return; // ← guard: nothing below should run on success
       }
+
+      // ── Server returned a structured failure ───────────────────────────
+      const displayMessage = ERROR_MESSAGES[response.code] ?? response.message;
+      toast.error(displayMessage);
     } catch {
-      toast.error("Error", {
-        description: "Something went wrong. Please try again.",
-      });
+      // ── Unexpected / network-level failure ─────────────────────────────
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isFormValid = isValidEmail && password.length >= 6;
 
   return (
     <ModalComponent open={authState === "login"} onOpenChange={hideModals}>

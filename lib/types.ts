@@ -130,16 +130,52 @@ export type Order = {
 // For legacy code, provide a generic type
 export type AnyType = unknown;
 
-export type LoginResponseType = {
+export interface LoginResponse {
   success: boolean;
   code: string;
   message: string;
-  user_id?: string;
-  email?: string;
-  data?: [
-    {
-      access_token: string;
-      refresh_token: string;
-    }
-  ];
-};
+  data?: {
+    access_token: string;
+    refresh_token: string;
+    user: {
+      id: string;
+      email: string;
+    };
+  };
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface SignupResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  data?: {
+    email: string;
+    user_id: string;
+  };
+}
+
+export interface SignupCredentials {
+  email: string;
+  password: string;
+}
+
+export interface OtpVerifyResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  data?: {
+    user_id: string;
+    email: string;
+    is_verified: boolean;
+  };
+}
+
+export interface OtpVerifyCredentials {
+  email: string;
+  otp: string;
+}

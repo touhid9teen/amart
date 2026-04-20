@@ -11,6 +11,18 @@ import { ModalComponent } from "@/components/modal-component";
 import { signupWithEmail } from "@/lib/actions";
 import { toast } from "sonner";
 
+const ERROR_MESSAGES: Record<string, string> = {
+  SIGNUP_VALIDATION_ERROR: "Please check your details and try again.",
+  SIGNUP_USER_ERROR: "Could not create your account. Please try again.",
+  SIGNUP_OTP_SERVICE_ERROR:
+    "Account created but verification email failed. Please try again.",
+  SIGNUP_OTP_DELIVERY_FAILED:
+    "Account created but verification email could not be delivered. Please try again.",
+  SIGNUP_TIMEOUT: "Connection timed out. Please try again.",
+  SIGNUP_NETWORK_ERROR: "No internet connection.",
+  SIGNUP_UNKNOWN_ERROR: "Something went wrong. Please try again.",
+};
+
 export function SingUpModal() {
   const {
     authState,
@@ -33,38 +45,46 @@ export function SingUpModal() {
     setPassword(e.target.value);
   };
 
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isFormValid = isValidEmail && password.length >= 6;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!isValidEmail || password.length < 6 || isLoading) return;
+
+    if (isLoading) return;
+
+    // ── Client-side validation ─────────────────────────────────────────────
+    if (!isValidEmail) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
 
     setIsLoading(true);
-    try {
-      const response = await signupWithEmail(email, password);
 
-      if (response?.code === "AmrtRSu2hnd") {
+    try {
+      const response = await signupWithEmail({ email, password });
+
+      if (response.success) {
+        // ── Happy path ───────────────────────────────────────────────────
         setAuthState("verifying");
-        toast("OTP Sent", {
-          description:
-            response?.message ||
-            "Please check your email for the verification code",
+        toast.success("OTP Sent", {
+          description: response.message,
         });
-      } else {
-        toast.error("Signup Failed", {
-          description: response?.message || "Unable to create account.",
-        });
+        return; // guard — nothing below should run on success
       }
-    } catch {
-      toast.error("Error", {
-        description: "Failed to send OTP",
+
+      // ── Server returned a structured failure ───────────────────────────
+      const displayMessage = ERROR_MESSAGES[response.code] ?? response.message;
+      toast.error("Signup Failed", {
+        description: displayMessage,
       });
+    } catch {
+      // ── Unexpected failure (should rarely reach here) ──────────────────
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isFormValid = isValidEmail && password.length >= 6;
 
   return (
     <ModalComponent open={authState === "signup"} onOpenChange={hideModals}>

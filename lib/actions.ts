@@ -2,9 +2,15 @@
 
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/request";
-import { AnyType, LoginResponseType } from "@/lib/types";
+import {
+  AnyType,
+  LoginCredentials,
+  LoginResponse,
+  OtpVerifyCredentials,
+  OtpVerifyResponse
+} from "@/lib/types";
 import { BASE_URL } from "@/lib/variables";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { cookies } from "next/headers";
 
 // 1. Get all cart items
@@ -73,90 +79,190 @@ export async function addToCart(data: AnyType, jwt: string) {
 
 // AUTH SERVER ACTIONS
 
-export async function signupWithEmail(email: string, password: string) {
+import { SignupCredentials, SignupResponse } from "@/types/auth";
+
+const SIGNUP_ENDPOINT = `${BASE_URL}/auth/email-signup/`;
+
+export async function signupWithEmail(
+  credentials: SignupCredentials,
+): Promise<SignupResponse> {
   try {
-    const endpoint = `${BASE_URL}auth/email-signup/`;
-    const response = await axios.post(endpoint, {
-      email: email,
-      password: password,
-    });
-    console.log("#######", response);
-    return response.data; // will contain { success, message, data }
+    const { data } = await axios.post<SignupResponse>(
+      SIGNUP_ENDPOINT,
+      credentials,
+      {
+        headers: { "Content-Type": "application/json" },
+        timeout: 10_000,
+      },
+    );
+
+    return data;
   } catch (error) {
-    console.log("*********", error);
-    return handleError(error); // make sure this returns { success: false, message, ... }
+    return resolveSignupError(error);
   }
+}
+
+function resolveSignupError(error: unknown): SignupResponse {
+  if (axios.isAxiosError(error)) {
+    const serverResponse = error.response?.data as SignupResponse | undefined;
+
+    // Server returned a structured error response
+    if (serverResponse?.code) {
+      return {
+        success: false,
+        code: serverResponse.code,
+        message: serverResponse.message ?? "Signup failed. Please try again.",
+      };
+    }
+
+    if (error.code === "ECONNABORTED") {
+      return {
+        success: false,
+        code: "SIGNUP_TIMEOUT",
+        message: "Request timed out. Please check your connection.",
+      };
+    }
+
+    if (!error.response) {
+      return {
+        success: false,
+        code: "SIGNUP_NETWORK_ERROR",
+        message: "Network error. Please check your internet connection.",
+      };
+    }
+  }
+
+  return {
+    success: false,
+    code: "SIGNUP_UNKNOWN_ERROR",
+    message: "Something went wrong. Please try again.",
+  };
 }
 
 // 1. Login with email
+const ACCESS_TOKEN_COOKIE = "authToken";
+const REFRESH_TOKEN_COOKIE = "refreshToken";
+
 export async function loginWithEmail(
-  email: string,
-  password: string
-): Promise<LoginResponseType> {
+  credentials: LoginCredentials,
+): Promise<LoginResponse> {
   try {
     const endpoint = `${BASE_URL}auth/email-login/`;
-    const response = await axios.post(endpoint, {
-      email,
-      password,
+    const { data } = await axios.post<LoginResponse>(endpoint, credentials, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 10_000, // 10s timeout
     });
 
-    const responseData = response.data;
-    if (responseData.access_token) {
-      await setCookie("authToken", responseData.access_token);
-      if (responseData.refresh_token) {
-        await setCookie("refreshToken", responseData.refresh_token);
-      }
-    }
-    return {
-      success: responseData.success,
-      message: responseData.message,
-      code: responseData.code,
-    };
-  } catch (error: unknown) {
-    let message = "Something went wrong. Please try again.";
-    let code = "UNKNOWN_ERROR";
-    if (axios.isAxiosError(error)) {
-      message = error.response?.data?.message || message;
-      code = error.response?.data?.code || code;
-    } else if (error instanceof Error) {
-      message = error.message;
-    }
-    return {
-      success: false,
-      message,
-      code,
-    };
-  }
-}
-
-// 2. Verify OTP
-export async function verifyOtpServer(email: string, otp: string) {
-  try {
-    const endpoint = `${BASE_URL}auth/verify-otp/`;
-    const response = await axios.post(endpoint, {
-      email: email,
-      otp,
-    });
-
-    const { data } = response;
-
-    if (data.success && data.data?.access_token) {
-      await setCookie("authToken", data.data.access_token);
-      if (data.data.refresh_token) {
-        await setCookie("refreshToken", data.data.refresh_token);
-      }
-      if(data.data.email){
-        await setCookie("authEmail", data.data.email);
-      }
-      if (data.data.user_id) {
-        await setCookie("authId", data.data.user_id);
-      }
+    if (data.success && data.data) {
+      await Promise.all([
+        setCookie(ACCESS_TOKEN_COOKIE, data.data.access_token),
+        setCookie(REFRESH_TOKEN_COOKIE, data.data.refresh_token),
+      ]);
     }
 
     return data;
   } catch (error) {
-    return handleError(error);
+    return resolveLoginError(error);
   }
+}
+
+function resolveLoginError(error: unknown): LoginResponse {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError<LoginResponse>;
+    const serverResponse = axiosError.response?.data;
+
+    // Server returned a structured error response
+    if (serverResponse?.code) {
+      return {
+        success: false,
+        code: serverResponse.code,
+        message: serverResponse.message ?? "Login failed. Please try again.",
+      };
+    }
+
+    // Network-level errors
+    if (axiosError.code === "ECONNABORTED") {
+      return {
+        success: false,
+        code: "AUTH_TIMEOUT",
+        message: "Request timed out. Please check your connection.",
+      };
+    }
+    if (!axiosError.response) {
+      return {
+        success: false,
+        code: "AUTH_NETWORK_ERROR",
+        message: "Network error. Please check your internet connection.",
+      };
+    }
+  }
+
+  return {
+    success: false,
+    code: "AUTH_UNKNOWN_ERROR",
+    message: "Something went wrong. Please try again.",
+  };
+}
+
+const OTP_VERIFY_ENDPOINT = `${BASE_URL}/auth/verify-otp/`;
+
+export async function verifyOtpServer(
+  credentials: OtpVerifyCredentials,
+): Promise<OtpVerifyResponse> {
+  try {
+    const { data } = await axios.post<OtpVerifyResponse>(
+      OTP_VERIFY_ENDPOINT,
+      credentials,
+      {
+        headers: { "Content-Type": "application/json" },
+        timeout: 10_000,
+      },
+    );
+
+    return data;
+  } catch (error) {
+    return resolveOtpError(error);
+  }
+}
+
+function resolveOtpError(error: unknown): OtpVerifyResponse {
+  if (axios.isAxiosError(error)) {
+    const serverResponse = error.response?.data as
+      | OtpVerifyResponse
+      | undefined;
+
+    if (serverResponse?.code) {
+      return {
+        success: false,
+        code: serverResponse.code,
+        message:
+          serverResponse.message ??
+          "OTP verification failed. Please try again.",
+      };
+    }
+
+    if (error.code === "ECONNABORTED") {
+      return {
+        success: false,
+        code: "OTP_TIMEOUT",
+        message: "Request timed out. Please check your connection.",
+      };
+    }
+
+    if (!error.response) {
+      return {
+        success: false,
+        code: "OTP_NETWORK_ERROR",
+        message: "Network error. Please check your internet connection.",
+      };
+    }
+  }
+
+  return {
+    success: false,
+    code: "OTP_UNKNOWN_ERROR",
+    message: "Something went wrong. Please try again.",
+  };
 }
 
 // 3. Refresh Auth Token
