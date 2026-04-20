@@ -13,6 +13,15 @@ import { Loader2, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+const OTP_ERROR_MESSAGES: Record<string, string> = {
+  OTP_VALIDATION_ERROR: "Please enter a valid 6-digit OTP.",
+  OTP_VERIFY_SERVER_ERROR:
+    "Verification failed due to a server error. Please try again.",
+  OTP_TIMEOUT: "Connection timed out. Please try again.",
+  OTP_NETWORK_ERROR: "No internet connection.",
+  OTP_UNKNOWN_ERROR: "Something went wrong. Please try again.",
+};
+
 export function OtpVerificationModal() {
   const {
     authState,
@@ -53,25 +62,41 @@ export function OtpVerificationModal() {
 
   const verifyOtp = async (otp: string) => {
     if (isLoading) return;
+
+    // ── Client-side validation ───────────────────────────────────────────────
+    if (!otp || otp.length !== 6 || !/^\d+$/.test(otp)) {
+      toast.error("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
     setIsLoading(true);
+
     try {
-      const response = await verifyOtpServer(email, otp);
-      if (response.code === "AmrtVfySu2hnd") {
-        toast("Welcome!", {
-          description: response?.message || "Signup completed successfully.",
+      const response = await verifyOtpServer({ email, otp });
+
+      if (response.success) {
+        // ── Happy path ─────────────────────────────────────────────────────
+        toast.success("Email Verified!", {
+          description: response.message,
         });
         hideModals();
-      } else {
-        toast.error(response?.message || "Invalid OTP. Please try again.");
+        return; // guard — nothing below should run on success
       }
-    } catch {
-      toast.error("Error", {
-        description: "Failed to verify OTP",
+
+      // ── Server returned a structured failure ─────────────────────────────
+      const displayMessage =
+        OTP_ERROR_MESSAGES[response.code] ?? response.message;
+      toast.error("Verification Failed", {
+        description: displayMessage,
       });
+    } catch {
+      // ── Unexpected failure ───────────────────────────────────────────────
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
   const handleVerify = async (value: string) => {
     if (value.length === 6) {
       await verifyOtp(value);
