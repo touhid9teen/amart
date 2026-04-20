@@ -7,7 +7,9 @@ import {
   LoginCredentials,
   LoginResponse,
   OtpVerifyCredentials,
-  OtpVerifyResponse
+  OtpVerifyResponse,
+  SignupCredentials,
+  SignupResponse,
 } from "@/lib/types";
 import { BASE_URL } from "@/lib/variables";
 import axios, { AxiosError } from "axios";
@@ -79,13 +81,12 @@ export async function addToCart(data: AnyType, jwt: string) {
 
 // AUTH SERVER ACTIONS
 
-import { SignupCredentials, SignupResponse } from "@/types/auth";
-
 const SIGNUP_ENDPOINT = `${BASE_URL}/auth/email-signup/`;
 
 export async function signupWithEmail(
   credentials: SignupCredentials,
 ): Promise<SignupResponse> {
+  console.log("ppppppppppppppppp", credentials);
   try {
     const { data } = await axios.post<SignupResponse>(
       SIGNUP_ENDPOINT,
@@ -95,7 +96,7 @@ export async function signupWithEmail(
         timeout: 10_000,
       },
     );
-
+    console.log("ppppppppppppppppp", data);
     return data;
   } catch (error) {
     return resolveSignupError(error);
