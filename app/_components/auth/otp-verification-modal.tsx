@@ -9,31 +9,17 @@ import {
 } from "@/components/ui/input-otp";
 import { useAuth } from "@/contexts/auth-context";
 import { signupWithEmail, verifyOtpServer } from "@/lib/actions";
+import { OTP_ERROR_MESSAGES } from "@/lib/variables";
 import { Loader2, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const OTP_ERROR_MESSAGES: Record<string, string> = {
-  OTP_VALIDATION_ERROR: "Please enter a valid 6-digit OTP.",
-  OTP_VERIFY_SERVER_ERROR:
-    "Verification failed due to a server error. Please try again.",
-  OTP_TIMEOUT: "Connection timed out. Please try again.",
-  OTP_NETWORK_ERROR: "No internet connection.",
-  OTP_UNKNOWN_ERROR: "Something went wrong. Please try again.",
-};
-
 export function OtpVerificationModal() {
-  const {
-    authState,
-    isLoading,
-    setIsLoading,
-    hideModals,
-    isAuthLoading,
-    email,
-  } = useAuth();
+  const { authState, hideModals, email } = useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (authState === "verifying") {
       setOtp("");
@@ -62,8 +48,6 @@ export function OtpVerificationModal() {
 
   const verifyOtp = async (otp: string) => {
     if (isLoading) return;
-
-    // ── Client-side validation ───────────────────────────────────────────────
     if (!otp || otp.length !== 6 || !/^\d+$/.test(otp)) {
       toast.error("Please enter a valid 6-digit OTP.");
       return;
@@ -75,12 +59,11 @@ export function OtpVerificationModal() {
       const response = await verifyOtpServer({ email, otp });
 
       if (response.success) {
-        // ── Happy path ─────────────────────────────────────────────────────
         toast.success("Email Verified!", {
           description: response.message,
         });
         hideModals();
-        return; // guard — nothing below should run on success
+        return;
       }
 
       // ── Server returned a structured failure ─────────────────────────────
@@ -167,7 +150,7 @@ export function OtpVerificationModal() {
               maxLength={6}
               value={otp}
               onChange={handleChange}
-              disabled={isAuthLoading}
+              disabled={isLoading}
             >
               <InputOTPGroup className="gap-2 sm:gap-3">
                 {[...Array(6)].map((_, i) => (
@@ -186,13 +169,13 @@ export function OtpVerificationModal() {
             <Button
               onClick={() => handleVerify(otp)}
               className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
-                otp.length === 6 && !isAuthLoading
+                otp.length === 6 && !isLoading
                   ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
                   : "bg-primary/50 text-white shadow-none cursor-not-allowed"
               }`}
-              disabled={otp.length !== 6 || isAuthLoading}
+              disabled={otp.length !== 6 || isLoading}
             >
-              {isAuthLoading && otp.length === 6 ? (
+              {isLoading && otp.length === 6 ? (
                 <div className="flex items-center gap-2">
                   <Loader2 className="animate-spin text-white" size={20} />
                   <span>Verifying...</span>
@@ -211,13 +194,13 @@ export function OtpVerificationModal() {
             {canResend ? (
               <button
                 onClick={handleResendOTP}
-                disabled={isAuthLoading}
+                disabled={isLoading}
                 className="text-primary font-semibold text-sm hover:text-primary/80 transition-colors hover:underline flex items-center justify-center mx-auto gap-2"
               >
-                {isAuthLoading && otp.length !== 6 && (
+                {isLoading && otp.length !== 6 && (
                   <Loader2 className="animate-spin" size={16} />
                 )}
-                {isAuthLoading && otp.length !== 6
+                {isLoading && otp.length !== 6
                   ? "Resending..."
                   : "Resend Verification Code"}
               </button>

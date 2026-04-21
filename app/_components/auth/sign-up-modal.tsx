@@ -10,32 +10,14 @@ import Link from "next/link";
 import { ModalComponent } from "@/components/modal-component";
 import { signupWithEmail } from "@/lib/actions";
 import { toast } from "sonner";
-
-const ERROR_MESSAGES: Record<string, string> = {
-  SIGNUP_VALIDATION_ERROR: "Please check your details and try again.",
-  SIGNUP_USER_ERROR: "Could not create your account. Please try again.",
-  SIGNUP_OTP_SERVICE_ERROR:
-    "Account created but verification email failed. Please try again.",
-  SIGNUP_OTP_DELIVERY_FAILED:
-    "Account created but verification email could not be delivered. Please try again.",
-  SIGNUP_TIMEOUT: "Connection timed out. Please try again.",
-  SIGNUP_NETWORK_ERROR: "No internet connection.",
-  SIGNUP_UNKNOWN_ERROR: "Something went wrong. Please try again.",
-};
+import { SIGNUP_ERROR_MESSAGES } from "@/lib/variables";
 
 export function SingUpModal() {
-  const {
-    authState,
-    isLoading,
-    setIsLoading,
-    hideModals,
-    isAuthLoading,
-    showLoginModal,
-    setAuthState,
-  } = useAuth();
+  const { authState, hideModals, showLoginModal, setAuthState } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -50,10 +32,7 @@ export function SingUpModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (isLoading) return;
-
-    // ── Client-side validation ─────────────────────────────────────────────
     if (!isValidEmail) {
       toast.error("Please enter a valid email address.");
       return;
@@ -65,16 +44,16 @@ export function SingUpModal() {
       const response = await signupWithEmail({ email, password });
 
       if (response.success) {
-        // ── Happy path ───────────────────────────────────────────────────
         setAuthState("verifying");
         toast.success("OTP Sent", {
           description: response.message,
         });
-        return; // guard — nothing below should run on success
+        return;
       }
 
       // ── Server returned a structured failure ───────────────────────────
-      const displayMessage = ERROR_MESSAGES[response.code] ?? response.message;
+      const displayMessage =
+        SIGNUP_ERROR_MESSAGES[response.code] ?? response.message;
       toast.error("Signup Failed", {
         description: displayMessage,
       });
@@ -163,13 +142,13 @@ export function SingUpModal() {
           <Button
             type="submit"
             className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
-              isFormValid && !isAuthLoading
+              isFormValid && !isLoading
                 ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
                 : "bg-primary/50 text-white shadow-none cursor-not-allowed"
             }`}
-            disabled={!isFormValid || isAuthLoading}
+            disabled={!isFormValid || isLoading}
           >
-            {isAuthLoading ? (
+            {isLoading ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="animate-spin text-white" size={20} />
                 <span>Creating Account...</span>

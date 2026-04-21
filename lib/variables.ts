@@ -18,7 +18,7 @@ import {
   Smile,
   PawPrint,
   LucideIcon,
-  Wine
+  Wine,
 } from "lucide-react";
 
 export const sliderList = [
@@ -83,7 +83,11 @@ export const categories: CategoryItem[] = [
   { name: "Snacks And Chips", icon: Cookie, slug: "snacks-and-chips" },
   { name: "Beverages", icon: CupSoda, slug: "beverages" },
   { name: "Condiments And Sauces", icon: Wine, slug: "condiments-and-sauces" },
-  { name: "Spices And Seasonings", icon: Sparkles, slug: "spices-and-seasonings" },
+  {
+    name: "Spices And Seasonings",
+    icon: Sparkles,
+    slug: "spices-and-seasonings",
+  },
   { name: "Baking Supplies", icon: ChefHat, slug: "baking-supplies" },
   { name: "Baby Food And Formula", icon: Baby, slug: "baby-food-and-formula" },
   { name: "Health And Wellness", icon: Heart, slug: "health-and-wellness" },
@@ -91,3 +95,32 @@ export const categories: CategoryItem[] = [
   { name: "Personal Care", icon: Smile, slug: "personal-care" },
   { name: "Pet Foods", icon: PawPrint, slug: "pet-foods" },
 ];
+
+export const LOIN_ERROR_MESSAGES: Record<string, string> = {
+  AUTH_VALIDATION_ERROR: "Please check your email and password.",
+  AUTH_SERVER_ERROR: "Server error. Please try again later.",
+  AUTH_TIMEOUT: "Connection timed out. Try again.",
+  AUTH_NETWORK_ERROR: "No internet connection.",
+  AUTH_UNKNOWN_ERROR: "Something went wrong.",
+};
+
+export const OTP_ERROR_MESSAGES: Record<string, string> = {
+  OTP_VALIDATION_ERROR: "Please enter a valid 6-digit OTP.",
+  OTP_VERIFY_SERVER_ERROR:
+    "Verification failed due to a server error. Please try again.",
+  OTP_TIMEOUT: "Connection timed out. Please try again.",
+  OTP_NETWORK_ERROR: "No internet connection.",
+  OTP_UNKNOWN_ERROR: "Something went wrong. Please try again.",
+};
+
+export const SIGNUP_ERROR_MESSAGES: Record<string, string> = {
+  SIGNUP_VALIDATION_ERROR: "Please check your details and try again.",
+  SIGNUP_USER_ERROR: "Could not create your account. Please try again.",
+  SIGNUP_OTP_SERVICE_ERROR:
+    "Account created but verification email failed. Please try again.",
+  SIGNUP_OTP_DELIVERY_FAILED:
+    "Account created but verification email could not be delivered. Please try again.",
+  SIGNUP_TIMEOUT: "Connection timed out. Please try again.",
+  SIGNUP_NETWORK_ERROR: "No internet connection.",
+  SIGNUP_UNKNOWN_ERROR: "Something went wrong. Please try again.",
+};

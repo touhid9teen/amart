@@ -10,28 +10,14 @@ import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Logo from "../header/logo";
-
-const ERROR_MESSAGES: Record<string, string> = {
-  AUTH_VALIDATION_ERROR: "Please check your email and password.",
-  AUTH_SERVER_ERROR: "Server error. Please try again later.",
-  AUTH_TIMEOUT: "Connection timed out. Try again.",
-  AUTH_NETWORK_ERROR: "No internet connection.",
-  AUTH_UNKNOWN_ERROR: "Something went wrong.",
-};
+import { LOIN_ERROR_MESSAGES } from "@/lib/variables";
 
 export function LoginModal() {
-  const {
-    authState,
-    isLoading,
-    setIsLoading,
-    hideModals,
-    isAuthLoading,
-    showSignUpModal,
-    setAuthState,
-  } = useAuth();
+  const { authState, hideModals, showSignUpModal, setAuthState } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -43,7 +29,6 @@ export function LoginModal() {
 
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isFormValid = isValidEmail && password.length >= 6;
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +54,8 @@ export function LoginModal() {
       }
 
       // ── Server returned a structured failure ───────────────────────────
-      const displayMessage = ERROR_MESSAGES[response.code] ?? response.message;
+      const displayMessage =
+        LOIN_ERROR_MESSAGES[response.code] ?? response.message;
       toast.error(displayMessage);
     } catch {
       // ── Unexpected / network-level failure ─────────────────────────────
@@ -164,13 +150,13 @@ export function LoginModal() {
           <Button
             type="submit"
             className={`w-full py-6 text-base font-semibold shadow-lg transition-all rounded-xl ${
-              isFormValid && !isAuthLoading
+              isFormValid && !isLoading
                 ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90 hover:scale-[1.01]"
                 : "bg-primary/50 text-white shadow-none cursor-not-allowed"
             }`}
-            disabled={!isFormValid || isAuthLoading}
+            disabled={!isFormValid || isLoading}
           >
-            {isAuthLoading ? (
+            {isLoading ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="animate-spin text-white" size={20} />
                 <span>Signing In...</span>
