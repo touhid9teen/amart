@@ -40,6 +40,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   const handleProceed = () => {
     if (authState !== "authenticated") {
+      onClose();
       showLoginModal();
     } else {
       setProceeding(true);

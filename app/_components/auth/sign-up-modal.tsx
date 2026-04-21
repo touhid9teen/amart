@@ -13,7 +13,13 @@ import { toast } from "sonner";
 import { SIGNUP_ERROR_MESSAGES } from "@/lib/variables";
 
 export function SingUpModal() {
-  const { authState, hideModals, showLoginModal, setAuthState } = useAuth();
+  const {
+    authModal,
+    hideModals,
+    showLoginModal,
+    showVerificationModal,
+    setEmail: setAuthEmail,
+  } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +50,8 @@ export function SingUpModal() {
       const response = await signupWithEmail({ email, password });
 
       if (response.success) {
-        setAuthState("verifying");
+        setAuthEmail(email);
+        showVerificationModal();
         toast.success("OTP Sent", {
           description: response.message,
         });
@@ -66,7 +73,12 @@ export function SingUpModal() {
   };
 
   return (
-    <ModalComponent open={authState === "signup"} onOpenChange={hideModals}>
+    <ModalComponent
+      open={authModal === "signup"}
+      onOpenChange={(open) => {
+        if (!open) hideModals();
+      }}
+    >
       <div className="bg-white w-full max-w-md mx-auto relative px-6 py-8">
         {/* Close Button */}
         <button

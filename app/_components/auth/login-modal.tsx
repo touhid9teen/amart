@@ -13,7 +13,13 @@ import Logo from "../header/logo";
 import { LOIN_ERROR_MESSAGES } from "@/lib/variables";
 
 export function LoginModal() {
-  const { authState, hideModals, showSignUpModal, setAuthState } = useAuth();
+  const {
+    authModal,
+    hideModals,
+    showSignUpModal,
+    setAuthState,
+    setEmail: setAuthEmail,
+  } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,12 +51,13 @@ export function LoginModal() {
       const response = await loginWithEmail({ email, password });
 
       if (response.success) {
-        // ── Happy path ─────────────────────────────────────────────────────
+        setAuthEmail(email);
         setAuthState("authenticated");
+        hideModals();
         toast.success("Welcome back!", {
           description: "You've logged in successfully.",
         });
-        return; // ← guard: nothing below should run on success
+        return;
       }
 
       // ── Server returned a structured failure ───────────────────────────
@@ -66,7 +73,12 @@ export function LoginModal() {
   };
 
   return (
-    <ModalComponent open={authState === "login"} onOpenChange={hideModals}>
+    <ModalComponent
+      open={authModal === "login"}
+      onOpenChange={(open) => {
+        if (!open) hideModals();
+      }}
+    >
       <div className="bg-white w-full max-w-md mx-auto relative px-6 py-8">
         {/* Close Button */}
         <button

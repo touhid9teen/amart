@@ -6,13 +6,13 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type AuthState =
   | "unauthenticated"
-  | "login"
-  | "signup"
-  | "verifying"
   | "authenticated";
+
+export type AuthModalState = "closed" | "login" | "signup" | "verifying";
 
 interface AuthContextType {
   authState: AuthState;
+  authModal: AuthModalState;
   email: string;
   setEmail: (email: string) => void;
   showLoginModal: () => void;
@@ -24,12 +24,14 @@ interface AuthContextType {
   setIsLoading: (loading: boolean) => void;
   setIsAuthLoading: (loading: boolean) => void;
   setAuthState: (state: AuthState) => void;
+  setAuthModal: (state: AuthModalState) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("unauthenticated");
+  const [authModal, setAuthModal] = useState<AuthModalState>("closed");
   const [email, setEmail] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,20 +46,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const contextValue = useMemo(
     () => ({
       authState,
+      authModal,
       email,
       setEmail,
-      showLoginModal: () => setAuthState("login"),
-      showSignUpModal: () => setAuthState("signup"),
-      showVerificationModal: () => setAuthState("verifying"),
-      hideModals: () =>
-        setAuthState((c) => (c !== "authenticated" ? "unauthenticated" : c)),
+      showLoginModal: () => setAuthModal("login"),
+      showSignUpModal: () => setAuthModal("signup"),
+      showVerificationModal: () => setAuthModal("verifying"),
+      hideModals: () => setAuthModal("closed"),
       isAuthLoading,
       setIsAuthLoading,
       isLoading,
       setIsLoading,
       setAuthState,
+      setAuthModal,
     }),
-    [authState, email, isAuthLoading, isLoading],
+    [authState, authModal, email, isAuthLoading, isLoading],
   );
 
   return (

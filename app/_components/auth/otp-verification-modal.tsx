@@ -15,21 +15,21 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function OtpVerificationModal() {
-  const { authState, hideModals, email } = useAuth();
+  const { authModal, hideModals, email } = useAuth();
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (authState === "verifying") {
+    if (authModal === "verifying") {
       setOtp("");
       setCountdown(60);
       setCanResend(false);
     }
-  }, [authState]);
+  }, [authModal]);
 
   useEffect(() => {
-    if (authState !== "verifying") return;
+    if (authModal !== "verifying") return;
     if (canResend) return;
 
     const timer = setInterval(() => {
@@ -44,7 +44,7 @@ export function OtpVerificationModal() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [authState, canResend]);
+  }, [authModal, canResend]);
 
   const verifyOtp = async (otp: string) => {
     if (isLoading) return;
@@ -95,7 +95,7 @@ export function OtpVerificationModal() {
 
   const handleResendOTP = async () => {
     if (canResend) {
-      const response = await signupWithEmail(email, "");
+      const response = await signupWithEmail({ email, password: "" });
       if (response.success) {
         toast.success("OTP Resent", {
           description: "A new OTP has been sent to your email.",
@@ -112,7 +112,12 @@ export function OtpVerificationModal() {
   };
 
   return (
-    <Dialog open={authState === "verifying"} onOpenChange={hideModals}>
+    <Dialog
+      open={authModal === "verifying"}
+      onOpenChange={(open) => {
+        if (!open) hideModals();
+      }}
+    >
       <DialogContent className="w-full max-w-md p-0 border-0 bg-transparent shadow-none">
         <DialogTitle className="sr-only">OTP Verification</DialogTitle>
         <div className="bg-white rounded-2xl w-full px-6 py-8 relative shadow-2xl">

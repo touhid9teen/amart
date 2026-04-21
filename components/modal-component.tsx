@@ -53,22 +53,7 @@ export function ModalComponent({
     if (!newOpen) {
       setIsClosing(true);
     }
-
-    // Prevent event bubbling
-    const handler = (e: Event) => {
-      e.stopPropagation();
-      if (onOpenChange) {
-        onOpenChange(newOpen);
-      }
-    };
-
-    if (newOpen) {
-      handler(new Event("open"));
-    } else {
-      setTimeout(() => {
-        handler(new Event("close"));
-      }, 50);
-    }
+    onOpenChange?.(newOpen);
   };
 
   if (!isClient) {
