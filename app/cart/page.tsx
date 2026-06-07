@@ -16,9 +16,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Product } from "@/lib/types";
-import CartPageSkeleton from "@/app/_components/skeleton/cart-page-skeleton";
 
 export default function CartPage() {
   const { cartItems, cartCount, totalAmount, updateCart } = useCart();
@@ -71,16 +70,7 @@ export default function CartPage() {
     updateCart(updated);
   };
 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 300);
-    return () => clearTimeout(timer);
-  }, []);
-
   const isEmpty = Object.keys(cartItems).length === 0;
-
-  if (loading) return <CartPageSkeleton />;
 
   return (
     <main className="min-h-screen" style={{ background: "#f5f4f0" }}>
