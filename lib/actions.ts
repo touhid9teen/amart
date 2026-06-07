@@ -346,15 +346,16 @@ export async function submitOrderServer(orderData: AnyType) {
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
 
-    if (!token) {
-      throw new Error("Authentication required. Please login again.");
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
     const res = await axios.post(`${BASE_URL}detail/orders/`, orderData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     });
 
     return handleSuccess(res);

@@ -1,24 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Button } from "@/components/ui/button";
 import {
   MapPin,
   CreditCard,
   Navigation,
   Loader2,
   CheckCircle,
-  Zap,
   StickyNote,
   AlertCircle,
+  ChevronRight,
+  Phone,
+  User,
+  ShoppingBag,
 } from "lucide-react";
 import { toast } from "sonner";
 
-// Define the type for the checkout form data
 export interface CheckoutFormData {
   firstName: string;
   lastName: string;
@@ -31,7 +31,6 @@ export interface CheckoutFormData {
   orderNotes: string;
 }
 
-// Define the props type for CheckoutComponent
 interface CheckoutComponentProps {
   onOrderSubmit: (formData: CheckoutFormData) => void;
   loading?: boolean;
@@ -55,6 +54,50 @@ const initialFormData: CheckoutFormData = {
   postalCode: "",
   orderNotes: "",
 };
+
+function SectionCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div
+      className={`rounded-2xl overflow-hidden ${className}`}
+      style={{
+        background: "#fff",
+        border: "1px solid #e8e4dc",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SectionHeader({
+  icon,
+  title,
+  action,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div
+      className="flex items-center justify-between px-5 py-4 border-b"
+      style={{ borderColor: "#f0ece4" }}
+    >
+      <div className="flex items-center gap-3">
+        <span
+          className="flex items-center justify-center rounded-full flex-shrink-0"
+          style={{ width: 36, height: 36, background: "#f0ede8" }}
+        >
+          {icon}
+        </span>
+        <h2 className="text-base font-semibold" style={{ color: "#333" }}>
+          {title}
+        </h2>
+      </div>
+      {action}
+    </div>
+  );
+}
 
 export default function CheckoutComponent({
   onOrderSubmit,
@@ -184,218 +227,343 @@ export default function CheckoutComponent({
     }
   };
 
-  const handleFastOrder = () => {
-    if (!formData.address.trim()) {
-      toast.error("Please enter your delivery address first");
-      return;
-    }
-    onOrderSubmit(formData);
-  };
-
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Fast Order Button */}
-      <Card className="shadow-sm border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="flex items-center gap-2 flex-1">
-              <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                <Zap className="w-4 h-4 text-amber-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-amber-800 text-sm">
-                  Quick Order
-                </p>
-                <p className="text-xs text-amber-600">
-                  Skip details, order with just your address
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={handleFastOrder}
-              disabled={loading || !formData.address.trim()}
-              className="bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm px-4 py-2 h-9 w-full sm:w-auto"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Zap className="w-4 h-4 mr-2" />
-              )}
-              {loading ? "Processing..." : "Order Now"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Delivery Address */}
-      <Card className="shadow-sm border border-gray-100 overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100 p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-blue-600" />
-              </div>
-              <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
-                Delivery Address
-              </CardTitle>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
+    <div className="space-y-5">
+      {/* ── Delivery Address ── */}
+      <SectionCard>
+        <SectionHeader
+          icon={<MapPin size={18} style={{ color: "#555" }} />}
+          title="Delivery Address"
+          action={
+            <button
               onClick={detectLocation}
               disabled={location.loading}
-              className="flex items-center gap-2 text-sm h-9 w-full sm:w-auto bg-transparent"
+              className="flex items-center gap-1.5 text-sm font-medium transition-all duration-200 px-3 py-1.5 rounded-lg"
+              style={{
+                color: "#1f5c2e",
+                background: "rgba(31,92,46,0.08)",
+                border: "none",
+                cursor: location.loading ? "default" : "pointer",
+              }}
             >
               {location.loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 size={14} className="animate-spin" />
               ) : (
-                <Navigation className="w-4 h-4" />
+                <Navigation size={14} />
               )}
               {location.loading ? "Detecting..." : "Auto-detect"}
-            </Button>
-          </div>
-        </CardHeader>
+            </button>
+          }
+        />
 
-        <CardContent className="p-4 sm:p-6 space-y-4">
+        <div className="p-5 space-y-4">
           {/* Location Status */}
           {location.coordinates && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-emerald-800">
-                    Location detected successfully
-                  </p>
-                  <p className="text-xs text-emerald-700 mt-1 break-words">
-                    {location.address}
-                  </p>
-                </div>
+            <div
+              className="flex items-start gap-3 p-3.5 rounded-xl"
+              style={{
+                background: "#f0faf4",
+                border: "1px solid #d1e6d8",
+              }}
+            >
+              <CheckCircle
+                size={16}
+                style={{ color: "#1f5c2e" }}
+                className="flex-shrink-0 mt-0.5"
+              />
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "#1a4a2a" }}
+                >
+                  Location detected
+                </p>
+                <p
+                  className="text-xs mt-0.5 leading-relaxed"
+                  style={{ color: "#3a7a4a" }}
+                >
+                  {location.address}
+                </p>
               </div>
             </div>
           )}
 
           {location.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-700">{location.error}</p>
-              </div>
+            <div
+              className="flex items-start gap-3 p-3.5 rounded-xl"
+              style={{
+                background: "#fef2f2",
+                border: "1px solid #fecaca",
+              }}
+            >
+              <AlertCircle
+                size={16}
+                style={{ color: "#dc2626" }}
+                className="flex-shrink-0 mt-0.5"
+              />
+              <p className="text-sm" style={{ color: "#991b1b" }}>
+                {location.error}
+              </p>
             </div>
           )}
 
-          <div className="space-y-2">
+          {/* Contact Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="phone"
+                className="text-sm font-medium"
+                style={{ color: "#555" }}
+              >
+                Phone Number <span style={{ color: "#dc2626" }}>*</span>
+              </Label>
+              <div
+                className="flex items-center rounded-xl overflow-hidden transition-colors duration-200 focus-within:ring-2 focus-within:ring-green-700/30"
+                style={{
+                  border: "1px solid #e0dcd4",
+                  background: "#fafaf8",
+                }}
+              >
+                <span
+                  className="flex items-center justify-center flex-shrink-0"
+                  style={{ width: 40, height: 42, color: "#999" }}
+                >
+                  <Phone size={15} />
+                </span>
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder="01XXXXXXXXX"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                  className="flex-1 text-sm outline-none bg-transparent pr-3"
+                  style={{ height: 42, color: "#333" }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium"
+                style={{ color: "#555" }}
+              >
+                Email
+              </Label>
+              <div
+                className="flex items-center rounded-xl overflow-hidden transition-colors duration-200 focus-within:ring-2 focus-within:ring-green-700/30"
+                style={{
+                  border: "1px solid #e0dcd4",
+                  background: "#fafaf8",
+                }}
+              >
+                <span
+                  className="flex items-center justify-center flex-shrink-0"
+                  style={{ width: 40, height: 42, color: "#999" }}
+                >
+                  <User size={15} />
+                </span>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  className="flex-1 text-sm outline-none bg-transparent pr-3"
+                  style={{ height: 42, color: "#333" }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Address */}
+          <div className="space-y-1.5">
             <Label
               htmlFor="address"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium"
+              style={{ color: "#555" }}
             >
-              Full Address *
+              Full Address <span style={{ color: "#dc2626" }}>*</span>
             </Label>
-            <Textarea
+            <textarea
               id="address"
-              placeholder="Enter your complete delivery address including house number, street, area, and city"
-              className="min-h-[80px] resize-none text-sm"
+              placeholder="House number, street, area, city — include any landmark for easier delivery"
               value={formData.address}
               onChange={(e) => handleInputChange("address", e.target.value)}
+              className="w-full text-sm outline-none resize-none rounded-xl p-3.5 transition-colors duration-200 focus-within:ring-2"
+              style={{
+                minHeight: 88,
+                border: "1px solid #e0dcd4",
+                background: "#fafaf8",
+                color: "#333",
+                lineHeight: 1.6,
+              }}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs" style={{ color: "#aaa" }}>
               Please provide a detailed address for accurate delivery
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      {/* Order Notes */}
-      <Card className="shadow-sm border border-gray-100">
-        <CardHeader className="border-b border-gray-100 p-4 sm:p-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-              <StickyNote className="w-4 h-4 text-gray-600" />
-            </div>
-            <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
-              Order Notes
-            </CardTitle>
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-              Optional
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6">
-          <Textarea
-            placeholder="Any special instructions for your order (e.g., call before delivery, gate code, etc.)"
-            className="min-h-[80px] resize-none text-sm"
+      {/* ── Order Notes ── */}
+      <SectionCard>
+        <SectionHeader
+          icon={<StickyNote size={18} style={{ color: "#555" }} />}
+          title="Order Notes"
+        />
+        <div className="p-5">
+          <textarea
+            placeholder="Special instructions — e.g., call before delivery, gate code, leave at door"
             value={formData.orderNotes}
             onChange={(e) => handleInputChange("orderNotes", e.target.value)}
+            className="w-full text-sm outline-none resize-none rounded-xl p-3.5 transition-colors duration-200"
+            style={{
+              minHeight: 84,
+              border: "1px solid #e0dcd4",
+              background: "#fafaf8",
+              color: "#333",
+              lineHeight: 1.6,
+            }}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      {/* Payment Method */}
-      <Card className="shadow-sm border border-gray-100 overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-100 p-4 sm:p-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-              <CreditCard className="w-4 h-4 text-purple-600" />
-            </div>
-            <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
-              Payment Method
-            </CardTitle>
-          </div>
-        </CardHeader>
+      {/* ── Payment Method ── */}
+      <SectionCard>
+        <SectionHeader
+          icon={<CreditCard size={18} style={{ color: "#555" }} />}
+          title="Payment Method"
+        />
 
-        <CardContent className="p-4 sm:p-6">
+        <div className="p-5">
           <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                <RadioGroupItem value="cod" id="cod" />
+              {/* COD Option */}
+              <label
+                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200 ${
+                  paymentMethod === "cod" ? "border-2" : "border"
+                }`}
+                style={{
+                  borderColor:
+                    paymentMethod === "cod" ? "#1f5c2e" : "#e0dcd4",
+                  background:
+                    paymentMethod === "cod"
+                      ? "rgba(31,92,46,0.03)"
+                      : "#fafaf8",
+                }}
+              >
+                <RadioGroupItem value="cod" id="cod" className="absolute opacity-0 inset-0 w-full h-full cursor-pointer" />
+                <span
+                  className={`flex items-center justify-center rounded-full flex-shrink-0 transition-all duration-200`}
+                  style={{
+                    width: 22,
+                    height: 22,
+                    border: paymentMethod === "cod" ? "6px solid #1f5c2e" : "2px solid #ccc",
+                    background: paymentMethod === "cod" ? "#1f5c2e" : "transparent",
+                  }}
+                />
                 <div className="flex-1">
-                  <Label
-                    htmlFor="cod"
-                    className="font-medium cursor-pointer text-sm"
-                  >
-                    Cash on Delivery (COD)
-                  </Label>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="font-semibold text-sm" style={{ color: "#333" }}>
+                    Cash on Delivery
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: "#888" }}>
                     Pay when you receive your order
                   </p>
                 </div>
-                <span className="text-xs text-emerald-600 font-medium bg-emerald-100 px-2 py-1 rounded-full">
+                <span
+                  className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                  style={{
+                    background: "rgba(31,92,46,0.1)",
+                    color: "#1f5c2e",
+                  }}
+                >
                   Recommended
                 </span>
-              </div>
+              </label>
 
-              <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg opacity-50 cursor-not-allowed">
-                <RadioGroupItem value="online" id="online" disabled />
+              {/* Online Payment (disabled) */}
+              <div
+                className="flex items-center gap-4 p-4 rounded-xl"
+                style={{
+                  border: "1px solid #e0dcd4",
+                  background: "#fafaf8",
+                  opacity: 0.5,
+                  cursor: "not-allowed",
+                }}
+              >
+                <span
+                  style={{
+                    width: 22,
+                    height: 22,
+                    border: "2px solid #ccc",
+                    borderRadius: "50%",
+                    display: "block",
+                    flexShrink: 0,
+                  }}
+                />
                 <div className="flex-1">
-                  <Label htmlFor="online" className="font-medium text-sm">
+                  <p className="font-semibold text-sm" style={{ color: "#999" }}>
                     Online Payment
-                  </Label>
-                  <p className="text-xs text-gray-600 mt-1">
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: "#bbb" }}>
                     Pay now with card or mobile banking
                   </p>
                 </div>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                <span
+                  className="text-xs font-medium px-2.5 py-1 rounded-full"
+                  style={{ background: "#f0ece4", color: "#aaa" }}
+                >
                   Coming Soon
                 </span>
               </div>
             </div>
           </RadioGroup>
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      {/* Submit Button */}
-      <div className="sticky bottom-0 bg-white p-4 border-t border-gray-200 -mx-4 sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:static">
-        <Button
-          className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 text-sm h-12 shadow-lg hover:shadow-xl transition-all duration-200"
+      {/* ── Submit Button ── */}
+      <div className="pt-1 sticky bottom-0 lg:static" style={{ zIndex: 30 }}>
+        <button
           onClick={() => onOrderSubmit(formData)}
-          disabled={loading || !formData.address.trim()}
+          disabled={loading || !formData.address.trim() || !formData.phone.trim()}
+          className="w-full flex items-center justify-between rounded-2xl font-bold text-base px-6 transition-all duration-200"
+          style={{
+            height: 60,
+            background:
+              loading || !formData.address.trim() || !formData.phone.trim()
+                ? "#a3c4ad"
+                : "#1f5c2e",
+            color: "#fff",
+            border: "none",
+            cursor:
+              loading || !formData.address.trim() || !formData.phone.trim()
+                ? "default"
+                : "pointer",
+            boxShadow:
+              loading || !formData.address.trim() || !formData.phone.trim()
+                ? "none"
+                : "0 4px 20px rgba(31,92,46,0.3)",
+          }}
         >
-          {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-          {loading ? "Placing Order..." : "Complete Order →"}
-        </Button>
+          <span className="flex items-center gap-2">
+            {loading ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <ShoppingBag size={20} />
+            )}
+            <span>{loading ? "Placing Order..." : "Place Order"}</span>
+          </span>
+          <span className="flex items-center gap-1 text-lg">
+            <ChevronRight size={20} strokeWidth={3} />
+          </span>
+        </button>
 
-        {!formData.address.trim() && (
-          <p className="text-xs text-red-500 mt-2 text-center">
-            Please enter your delivery address to continue
+        {(!formData.address.trim() || !formData.phone.trim()) && (
+          <p className="text-xs mt-2.5 text-center" style={{ color: "#dc2626" }}>
+            Please enter your {!formData.phone.trim() ? "phone number" : ""}
+            {!formData.phone.trim() && !formData.address.trim() ? " and " : ""}
+            {!formData.address.trim() ? "delivery address" : ""} to continue
           </p>
         )}
       </div>

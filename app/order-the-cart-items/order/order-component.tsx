@@ -1,16 +1,15 @@
 "use client";
 
 import CheckoutComponent from "./checkout-component";
-import CartItems from "./cart-items";
 import { CheckoutFormSkeleton, CartItemsSkeleton } from "./skeleton-loader";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/cart-context";
 import { useAuth } from "@/contexts/auth-context";
-import ProcessIndicator from "@/app/_components/other/process-indicator";
 import { toast } from "sonner";
 import { useState } from "react";
 import { submitOrderServer } from "@/lib/actions";
-import BackButton from "@/app/_components/back-button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface CheckoutFormData {
   firstName: string;
@@ -41,6 +40,44 @@ interface OrderData {
   items: OrderItem[];
 }
 
+function LoadingSkeleton() {
+  return (
+    <main className="min-h-screen" style={{ background: "#f5f4f0" }}>
+      {/* Top bar skeleton */}
+      <div
+        className="sticky top-0 z-40 border-b"
+        style={{
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "blur(16px)",
+          borderColor: "#e8e5de",
+        }}
+      >
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
+          <div
+            className="rounded-full animate-pulse"
+            style={{ width: 36, height: 36, background: "#e8e4dc" }}
+          />
+          <div
+            className="flex-1 h-2 rounded-full animate-pulse"
+            style={{ background: "#e8e4dc" }}
+          />
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        <div className="lg:grid lg:grid-cols-5 lg:gap-8">
+          <div className="lg:col-span-3">
+            <CheckoutFormSkeleton />
+          </div>
+          <div className="lg:col-span-2 mt-6 lg:mt-0">
+            <CartItemsSkeleton />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, totalAmount, updateCart } = useCart();
@@ -49,13 +86,12 @@ export default function CheckoutPage() {
 
   const handleOrderSubmit = async (formData: CheckoutFormData) => {
     setLoading(true);
-
     try {
       const delivery_charge = 40;
-      const address = `${formData.address}, ${formData.area}, ${formData.city}, ${formData.postalCode}`;
+      const address = formData.address;
 
-      const items: OrderItem[] = (Object.values(cartItems) as CartItem[]).map(
-        (item: CartItem) => ({
+      const items: OrderItem[] = (Object.values(cartItems) as any[]).map(
+        (item: any) => ({
           product_name: item.name,
           product_id: item.id,
           quantity: item.quantity,
@@ -74,13 +110,12 @@ export default function CheckoutPage() {
       };
 
       const res = await submitOrderServer(orderData);
-      
+
       if (!res.success) {
         throw new Error(res.message || "Order submission failed.");
       }
 
       const data = res.data;
-
       router.replace(`/order-conformation?page=success&id=${data.order_id}`);
       setTimeout(() => updateCart({}), 0);
     } catch (err) {
@@ -91,91 +126,57 @@ export default function CheckoutPage() {
     }
   };
 
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="bg-white shadow-sm border-b">
-          <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
-            {/* Mobile Loading Layout */}
-            <div className="block sm:hidden">
-              <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
-                <div className="w-16 h-4 bg-gray-200 rounded animate-pulse" />
-              </div>
-              <div className="w-full h-2 bg-gray-200 rounded animate-pulse" />
-            </div>
-
-            {/* Desktop Loading Layout */}
-            <div className="hidden sm:flex sm:items-center sm:gap-4 sm:min-h-[52px]">
-              <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
-              <div className="flex-1 h-2 bg-gray-200 rounded animate-pulse" />
-            </div>
-          </div>
-        </div>
-
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
-            <div className="lg:col-span-2">
-              <CheckoutFormSkeleton />
-            </div>
-            <div className="lg:col-span-1">
-              <div className="sticky top-20 sm:top-24">
-                <CartItemsSkeleton />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isAuthLoading) return <LoadingSkeleton />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-40">
-        <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
-          {/* Mobile Layout (< sm) */}
-          <div className="block sm:hidden">
-            <div className="flex items-center justify-between mb-2">
-              <BackButton />
-              <div className="text-xs text-gray-500 font-medium">Checkout</div>
-            </div>
-            <div className="w-full">
-              <ProcessIndicator />
-            </div>
-          </div>
-
-          {/* Desktop/Tablet Layout (>= sm) */}
-          <div className="hidden sm:flex sm:items-center sm:gap-4 sm:min-h-[52px]">
-            <div className="flex-shrink-0">
-              <BackButton />
-            </div>
-            <div className="flex-1">
-              <ProcessIndicator />
-            </div>
-          </div>
+    <main className="min-h-screen" style={{ background: "#f5f4f0" }}>
+      {/* ── Sticky Top Bar ── */}
+      <div
+        className="sticky top-0 z-40 border-b"
+        style={{
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "blur(16px)",
+          borderColor: "#e8e5de",
+        }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center">
+          <Link
+            href="/cart"
+            className="flex items-center gap-2 group"
+            style={{ textDecoration: "none" }}
+          >
+            <span
+              className="flex items-center justify-center transition-all duration-200 group-hover:bg-gray-100"
+              style={{
+                width: 36,
+                height: 36,
+                background: "#fff",
+                borderRadius: 6,
+              }}
+            >
+              <ArrowLeft size={18} strokeWidth={3} style={{ color: "#333" }} />
+            </span>
+            <span
+              className="hidden sm:inline"
+              style={{
+                color: "#333",
+                fontWeight: 700,
+                fontSize: 14,
+              }}
+            >
+              Back to Cart
+            </span>
+          </Link>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
-          {/* Left Column - Checkout Details */}
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            <CheckoutComponent
-              onOrderSubmit={handleOrderSubmit}
-              loading={loading}
-            />
-          </div>
-
-          {/* Right Column - Order Summary */}
-          <div className="lg:col-span-1 order-1 lg:order-2">
-            <div className="sticky top-20 sm:top-24">
-              <CartItems />
-            </div>
-          </div>
-        </div>
+      {/* ── Main Content ── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <CheckoutComponent
+          onOrderSubmit={handleOrderSubmit}
+          loading={loading}
+        />
       </div>
-    </div>
+    </main>
   );
 }

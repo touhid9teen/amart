@@ -1,7 +1,6 @@
 "use client";
 
 import { useCart } from "@/contexts/cart-context";
-import { useAuth } from "@/contexts/auth-context";
 import {
   ShoppingCart,
   Shield,
@@ -9,8 +8,6 @@ import {
   Plus,
   Minus,
   Package,
-  Truck,
-  Zap,
   ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
@@ -21,7 +18,6 @@ import type { Product } from "@/lib/types";
 
 export default function CartPage() {
   const { cartItems, cartCount, totalAmount, updateCart } = useCart();
-  const { authState, showLoginModal } = useAuth();
   const router = useRouter();
   const [proceeding, setProceeding] = useState(false);
 
@@ -31,13 +27,9 @@ export default function CartPage() {
   const items = Object.values(cartItems) as Product[];
 
   const handleProceed = () => {
-    if (authState !== "authenticated") {
-      showLoginModal();
-    } else {
-      setProceeding(true);
-      router.push("/order-the-cart-items");
-      setTimeout(() => setProceeding(false), 1000);
-    }
+    setProceeding(true);
+    router.push("/order-the-cart-items");
+    setTimeout(() => setProceeding(false), 1000);
   };
 
   const handleQuantityChange = (
@@ -86,26 +78,26 @@ export default function CartPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
           <Link
             href="/"
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-2 group"
             style={{ textDecoration: "none" }}
           >
             <span
-              className="flex items-center justify-center transition-all duration-200 group-hover:bg-gray-100"
+              className="flex items-center justify-center  transition-all duration-200 group-hover:bg-gray-100"
               style={{
-                width: 40,
-                height: 40,
-                background: "transparent",
-                borderRadius: 10,
+                width: 36,
+                height: 36,
+
+                background: "#fff",
               }}
             >
-              <ArrowLeft size={22} strokeWidth={3} style={{ color: "#333" }} />
+              <ArrowLeft size={18} strokeWidth={3} style={{ color: "#333" }} />
             </span>
             <span
               className="hidden sm:inline"
               style={{
                 color: "#333",
                 fontWeight: 700,
-                fontSize: 16,
+                fontSize: 14,
               }}
             >
               Continue Shopping
@@ -113,26 +105,6 @@ export default function CartPage() {
           </Link>
 
           <div className="flex-1" />
-
-          <div className="flex items-center gap-2">
-            <ShoppingCart size={16} style={{ color: "#888" }} />
-            <span className="text-sm font-semibold" style={{ color: "#222" }}>
-              Cart
-              {cartCount > 0 && (
-                <span
-                  className="ml-1.5 inline-flex items-center justify-center rounded-full text-xs font-bold"
-                  style={{
-                    background: "#2d6a3f",
-                    color: "#fff",
-                    width: 20,
-                    height: 20,
-                  }}
-                >
-                  {cartCount}
-                </span>
-              )}
-            </span>
-          </div>
         </div>
       </div>
 
@@ -179,23 +151,8 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="lg:grid lg:grid-cols-5 lg:gap-8 items-start">
-
             {/* ── LEFT: Cart Items ── */}
             <div className="lg:col-span-3 space-y-4">
-
-              {/* Section header */}
-              <div className="flex items-center justify-between pb-1">
-                <h1
-                  className="text-xl font-bold"
-                  style={{ color: "#1a1a1a", letterSpacing: "-0.02em" }}
-                >
-                  Your Order
-                </h1>
-                <span className="text-sm" style={{ color: "#999" }}>
-                  {items.length} {items.length === 1 ? "item" : "items"}
-                </span>
-              </div>
-
               {/* Items card */}
               <div
                 className="rounded-2xl overflow-hidden"
@@ -211,7 +168,7 @@ export default function CartPage() {
                 >
                   <Package size={15} style={{ color: "#888" }} />
                   <span
-                    className="text-sm font-semibold"
+                    className="text-base font-semibold"
                     style={{ color: "#333" }}
                   >
                     Items in your order
@@ -352,13 +309,10 @@ export default function CartPage() {
                   })}
                 </div>
               </div>
-
-          
             </div>
 
             {/* ── RIGHT: Summary ── */}
             <div className="mt-6 lg:mt-0 lg:col-span-2 space-y-4 lg:sticky lg:top-20">
-
               {/* Bill details */}
               <div
                 className="rounded-2xl overflow-hidden"
@@ -372,7 +326,7 @@ export default function CartPage() {
                   style={{ borderColor: "#f0ece4" }}
                 >
                   <h2
-                    className="text-sm font-semibold"
+                    className="text-base font-semibold"
                     style={{ color: "#333" }}
                   >
                     Bill Summary
@@ -383,7 +337,6 @@ export default function CartPage() {
                   {[
                     { label: "Items total", value: `৳${totalAmount}` },
                     { label: "Delivery charge", value: `৳${deliveryCharge}` },
-                    { label: "Handling charge", value: `৳${handlingCharge}` },
                   ].map(({ label, value }) => (
                     <div
                       key={label}
@@ -459,10 +412,10 @@ export default function CartPage() {
                 <span className="flex items-center gap-1.5">
                   {proceeding ? (
                     <span className="animate-pulse">Processing…</span>
-                  ) : authState !== "authenticated" ? (
-                    <>Login to Proceed <ChevronRight size={16} /></>
                   ) : (
-                    <>Complete Order <ChevronRight size={16} /></>
+                    <>
+                      Complete Order <ChevronRight size={16} />
+                    </>
                   )}
                 </span>
               </button>
@@ -527,10 +480,10 @@ export default function CartPage() {
             <span className="flex items-center gap-1.5 text-sm">
               {proceeding ? (
                 <span className="animate-pulse">Processing…</span>
-              ) : authState !== "authenticated" ? (
-                <>Login to Proceed <ChevronRight size={16} /></>
               ) : (
-                <>Complete Order <ChevronRight size={16} /></>
+                <>
+                  Complete Order <ChevronRight size={16} />
+                </>
               )}
             </span>
           </button>

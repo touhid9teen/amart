@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const privateRoutes = ["/order-the-cart-items", "/order-conformation"];
+const privateRoutes: string[] = [];
 const authRoutes: string[] = ["/"];
 
 export default async function middleware(req: NextRequest) {
@@ -29,5 +29,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/order-the-cart-items", "/order-conformation"],
+  matcher: ["/order-the-cart-items"],
 };
