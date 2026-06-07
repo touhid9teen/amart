@@ -9,7 +9,7 @@ import type React from "react";
 import { Toaster } from "sonner";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
-import Navbar from "./_components/navbar";
+import NavbarWrapper from "./_components/navbar-wrapper";
 import "./globals.css";
 
 const inter = Inter({
@@ -41,7 +41,7 @@ export default function RootLayout({
               <Toaster position="top-center" />
               <AuthModalsProvider />
               <Header />
-              <Navbar />
+              <NavbarWrapper />
               {children}
               <Footer />
             </CartProvider>
