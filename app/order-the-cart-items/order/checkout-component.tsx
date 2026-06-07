@@ -61,7 +61,8 @@ function SectionCard({ children, className = "" }: { children: React.ReactNode; 
       className={`rounded-2xl overflow-hidden ${className}`}
       style={{
         background: "#fff",
-        border: "1px solid #e8e4dc",
+        border: "1px solid #ddd8d0",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
       }}
     >
       {children}
@@ -81,12 +82,12 @@ function SectionHeader({
   return (
     <div
       className="flex items-center justify-between px-5 py-4 border-b"
-      style={{ borderColor: "#f0ece4" }}
+      style={{ borderColor: "#e8e4dc" }}
     >
       <div className="flex items-center gap-3">
         <span
           className="flex items-center justify-center rounded-full flex-shrink-0"
-          style={{ width: 36, height: 36, background: "#f0ede8" }}
+          style={{ width: 36, height: 36, background: "#e8e4dc" }}
         >
           {icon}
         </span>
@@ -312,8 +313,8 @@ export default function CheckoutComponent({
             <div className="space-y-1.5">
               <Label
                 htmlFor="phone"
-                className="text-sm font-medium"
-                style={{ color: "#555" }}
+                className="text-sm font-semibold"
+                style={{ color: "#333" }}
               >
                 Phone Number <span style={{ color: "#dc2626" }}>*</span>
               </Label>
@@ -345,13 +346,13 @@ export default function CheckoutComponent({
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="text-sm font-medium"
-                style={{ color: "#555" }}
+                className="text-sm font-semibold"
+                style={{ color: "#333" }}
               >
                 Email
               </Label>
               <div
-                className="flex items-center rounded-xl overflow-hidden transition-colors duration-200 focus-within:ring-2 focus-within:ring-green-700/30"
+                className="flex items-center rounded-xl overflow-hidden transition-colors duration-200 focus-within:ring-2 focus-within:ring-green-700/40 focus:border-green-700"
                 style={{
                   border: "1px solid #e0dcd4",
                   background: "#fafaf8",
@@ -364,13 +365,13 @@ export default function CheckoutComponent({
                   <User size={15} />
                 </span>
                 <input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="flex-1 text-sm outline-none bg-transparent pr-3"
-                  style={{ height: 42, color: "#333" }}
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                className="flex-1 text-sm outline-none bg-transparent pr-3 placeholder:text-gray-400"
+                style={{ height: 44, color: "#222" }}
                 />
               </div>
             </div>
@@ -379,27 +380,26 @@ export default function CheckoutComponent({
           {/* Address */}
           <div className="space-y-1.5">
             <Label
-              htmlFor="address"
-              className="text-sm font-medium"
-              style={{ color: "#555" }}
-            >
-              Full Address <span style={{ color: "#dc2626" }}>*</span>
+              htmlFor="address"                className="text-sm font-semibold"
+                style={{ color: "#333" }}
+              >
+                Full Address <span style={{ color: "#dc2626" }}>*</span>
             </Label>
             <textarea
               id="address"
               placeholder="House number, street, area, city — include any landmark for easier delivery"
               value={formData.address}
               onChange={(e) => handleInputChange("address", e.target.value)}
-              className="w-full text-sm outline-none resize-none rounded-xl p-3.5 transition-colors duration-200 focus-within:ring-2"
+              className="w-full text-sm outline-none resize-none rounded-xl p-3.5 transition-colors duration-200 focus-within:ring-2 focus-within:ring-green-700/40 focus:border-green-700 placeholder:text-gray-400"
               style={{
                 minHeight: 88,
-                border: "1px solid #e0dcd4",
-                background: "#fafaf8",
-                color: "#333",
+                border: "1.5px solid #d0ccc4",
+                background: "#fff",
+                color: "#222",
                 lineHeight: 1.6,
               }}
             />
-            <p className="text-xs" style={{ color: "#aaa" }}>
+            <p className="text-xs" style={{ color: "#999" }}>
               Please provide a detailed address for accurate delivery
             </p>
           </div>
@@ -417,12 +417,12 @@ export default function CheckoutComponent({
             placeholder="Special instructions — e.g., call before delivery, gate code, leave at door"
             value={formData.orderNotes}
             onChange={(e) => handleInputChange("orderNotes", e.target.value)}
-            className="w-full text-sm outline-none resize-none rounded-xl p-3.5 transition-colors duration-200"
+            className="w-full text-sm outline-none resize-none rounded-xl p-3.5 transition-colors duration-200 focus-within:ring-2 focus-within:ring-green-700/40 focus:border-green-700 placeholder:text-gray-400"
             style={{
               minHeight: 84,
-              border: "1px solid #e0dcd4",
-              background: "#fafaf8",
-              color: "#333",
+              border: "1.5px solid #d0ccc4",
+              background: "#fff",
+              color: "#222",
               lineHeight: 1.6,
             }}
           />

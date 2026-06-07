@@ -139,9 +139,9 @@ export default function CheckoutPage() {
           borderColor: "#e8e5de",
         }}
       >
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
           <Link
-            href="/cart"
+            href="/"
             className="flex items-center gap-2 group"
             style={{ textDecoration: "none" }}
           >
@@ -151,7 +151,6 @@ export default function CheckoutPage() {
                 width: 36,
                 height: 36,
                 background: "#fff",
-                borderRadius: 6,
               }}
             >
               <ArrowLeft size={18} strokeWidth={3} style={{ color: "#333" }} />
@@ -164,9 +163,11 @@ export default function CheckoutPage() {
                 fontSize: 14,
               }}
             >
-              Back to Cart
+              Continue Shopping
             </span>
           </Link>
+
+          <div className="flex-1" />
         </div>
       </div>
 
