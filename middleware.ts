@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const privateRoutes: string[] = [];
+const privateRoutes: string[] = ["/order-the-cart-items"];
 const authRoutes: string[] = ["/"];
+const adminRoutes: string[] = ["/admin"];
 
 export default async function middleware(req: NextRequest) {
   const currentRoute = req.nextUrl.pathname;
@@ -10,10 +11,19 @@ export default async function middleware(req: NextRequest) {
     currentRoute.startsWith(route)
   );
   const isAuthRoute = authRoutes.includes(currentRoute);
+  const isAdminRoute = adminRoutes.some((route) =>
+    currentRoute.startsWith(route)
+  );
 
-  // LocalStorage is not accessible in middleware (server-side only)
-  // You must set the token as a cookie for server-side route protection to work
-  // This middleware will NOT see tokens in localStorage
+  // Admin routes: check for admin access token cookie
+  if (isAdminRoute && currentRoute !== "/admin/login") {
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get("admin_access_token")?.value;
+    if (!adminToken) {
+      return NextResponse.redirect(new URL("/admin/login", req.nextUrl));
+    }
+  }
+
   const cookieStore = await cookies();
   const access = cookieStore.get("authToken")?.value;
 
@@ -29,5 +39,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/order-the-cart-items"],
+  matcher: ["/order-the-cart-items", "/admin/:path*"],
 };

@@ -7,6 +7,7 @@ import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type React from "react";
 import { Toaster } from "sonner";
+import { HideOnAdmin } from "@/components/hide-on-admin";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 import NavbarWrapper from "./_components/navbar-wrapper";
@@ -32,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <NextTopLoader height={3} showSpinner={false} />
         <ReactQueryProvider>
@@ -40,10 +41,16 @@ export default function RootLayout({
             <CartProvider>
               <Toaster position="top-center" />
               <AuthModalsProvider />
-              <Header />
-              <NavbarWrapper />
+              <HideOnAdmin>
+                <Header />
+              </HideOnAdmin>
+              <HideOnAdmin>
+                <NavbarWrapper />
+              </HideOnAdmin>
               {children}
-              <Footer />
+              <HideOnAdmin>
+                <Footer />
+              </HideOnAdmin>
             </CartProvider>
           </AuthProvider>
         </ReactQueryProvider>
