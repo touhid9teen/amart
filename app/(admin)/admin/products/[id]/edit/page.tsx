@@ -297,7 +297,7 @@ export default function EditProductPage() {
               <div>
                 <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">Drag and drop images here, or click to browse</p>
-                <p className="text-xs text-muted-foreground mt-1">Mock - Image upload coming with DRF backend</p>
+                <p className="text-xs text-muted-foreground mt-1">Upload product images</p>
               </div>
             </div>
           </CardContent>

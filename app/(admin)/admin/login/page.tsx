@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
     try {
       await login({ email, password });
     } catch {
-      setError("Invalid email or password. Try admin@amart.com / password123");
+      setError("Invalid email or password");
     }
   };
 
@@ -78,9 +78,7 @@ export default function AdminLoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <span className="text-xs text-muted-foreground">
-                    Use: password123
-                  </span>
+
                 </div>
                 <div className="relative">
                   <Input
@@ -131,12 +129,7 @@ export default function AdminLoginPage() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-xs text-muted-foreground">
-              <p className="mb-1">Demo Credentials:</p>
-              <p className="font-mono">admin@amart.com / password123</p>
-              <p className="font-mono">manager@amart.com / password123</p>
-              <p className="font-mono">staff@amart.com / password123</p>
-            </div>
+
           </CardContent>
         </Card>
 

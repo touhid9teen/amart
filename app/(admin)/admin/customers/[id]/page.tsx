@@ -99,7 +99,7 @@ export default function CustomerDetailPage() {
           <Card className="border-0 shadow-sm">
             <CardHeader><CardTitle className="text-base flex items-center gap-2"><ShoppingBag className="h-4 w-4" /> Activity Log</CardTitle></CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Customer activity logs will be available when connected to the DRF backend.</p>
+              <p className="text-sm text-muted-foreground">Customer activity logs will appear here.</p>
             </CardContent>
           </Card>
         </div>

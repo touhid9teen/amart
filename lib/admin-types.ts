@@ -302,6 +302,24 @@ export interface NotificationSettings {
   admin_new_order: boolean;
 }
 
+// ==============================
+// PERMISSION TYPES (moved from admin-mock-data)
+// ==============================
+export type Permission =
+  | "view_dashboard"
+  | "manage_products"
+  | "manage_categories"
+  | "manage_brands"
+  | "manage_orders"
+  | "manage_customers"
+  | "manage_reviews"
+  | "manage_coupons"
+  | "manage_inventory"
+  | "view_analytics"
+  | "view_reports"
+  | "manage_settings"
+  | "manage_staff";
+
 // DataTable Types
 export interface Column<T> {
   key: string;

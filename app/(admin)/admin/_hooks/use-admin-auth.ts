@@ -9,8 +9,7 @@ import {
   logout as logoutService,
   hasPermission,
 } from "@/lib/services/auth.service";
-import type { AdminUser, AdminRole, AdminLoginCredentials } from "@/lib/admin-types";
-import type { Permission } from "@/lib/admin-mock-data";
+import type { AdminUser, AdminRole, AdminLoginCredentials, Permission } from "@/lib/admin-types";
 import { toast } from "sonner";
 
 // ==============================

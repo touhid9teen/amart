@@ -352,7 +352,7 @@ export default function CreateProductPage() {
                   Drag and drop images here, or click to browse
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  PNG, JPG, WebP up to 5MB (Mock - Coming with DRF backend)
+                  PNG, JPG, WebP up to 5MB
                 </p>
               </div>
             </div>

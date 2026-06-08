@@ -1,14 +1,11 @@
 // API Client for Admin Services
-// Currently using mock data. When Django REST Framework backend is ready,
-// switch to real HTTP calls by toggling USE_MOCK_DATA to false.
+// Connects to the Django REST Framework backend
 
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
-export const USE_MOCK_DATA = true;
-
-// Axios instance for future real API calls
+// Axios instance for real API calls
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
@@ -58,26 +55,3 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// Simulate network delay for mock data
-export function simulateDelay(ms = 300): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// Helper to simulate API response structure
-export function mockSuccessResponse<T>(data: T, message = "Success") {
-  return {
-    success: true,
-    message,
-    data,
-  };
-}
-
-export function mockErrorResponse(message = "Something went wrong", code = "ERROR") {
-  return {
-    success: false,
-    message,
-    code,
-    data: null,
-  };
-}
