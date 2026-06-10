@@ -8,6 +8,7 @@ import NextTopLoader from "nextjs-toploader";
 import type React from "react";
 import { Toaster } from "sonner";
 import { HideOnAdmin } from "@/components/hide-on-admin";
+import FloatingCartButton from "./_components/floating-cart-button";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 import NavbarWrapper from "./_components/navbar-wrapper";
@@ -48,6 +49,9 @@ export default function RootLayout({
                 <NavbarWrapper />
               </HideOnAdmin>
               {children}
+              <HideOnAdmin>
+                <FloatingCartButton />
+              </HideOnAdmin>
               <HideOnAdmin>
                 <Footer />
               </HideOnAdmin>
