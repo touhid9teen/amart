@@ -1,15 +1,11 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const privateRoutes: string[] = ["/order-the-cart-items"];
 const authRoutes: string[] = ["/"];
 const adminRoutes: string[] = ["/admin"];
 
 export default async function middleware(req: NextRequest) {
   const currentRoute = req.nextUrl.pathname;
-  const isPrivateRoute = privateRoutes.some((route) =>
-    currentRoute.startsWith(route)
-  );
   const isAuthRoute = authRoutes.includes(currentRoute);
   const isAdminRoute = adminRoutes.some((route) =>
     currentRoute.startsWith(route)
@@ -31,13 +27,9 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/order-the-cart-items", req.nextUrl));
   }
 
-  if (isPrivateRoute && !isAuthRoute && !access) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/order-the-cart-items", "/admin/:path*"],
+  matcher: ["/admin/:path*"],
 };

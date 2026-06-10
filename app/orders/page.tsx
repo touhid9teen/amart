@@ -22,6 +22,7 @@ import {
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useOrders } from "@/hook/use-orders";
+import { useAuth } from "@/contexts/auth-context";
 import type { Order, OrderItem } from "@/lib/types";
 
 const getStatusColor = (status: string) => {
@@ -166,9 +167,51 @@ function TabletOrderCard({ order }: { order: Order }) {
   );
 }
 
+function LoginPrompt() {
+  const { showLoginModal } = useAuth();
+
+  return (
+    <div className="container mx-auto px-4 py-4 sm:py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="outline" size="icon" onClick={() => window.history.back()}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
+      </div>
+
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12 sm:py-16">
+          <Package className="h-16 w-16 sm:h-20 sm:w-20 text-gray-300 mb-6" />
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+            Sign in to view your orders
+          </h3>
+          <p className="text-gray-500 text-sm sm:text-base text-center max-w-md mb-6">
+            Please log in or create an account to see your order history.
+          </p>
+          <Button
+            onClick={showLoginModal}
+            className="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-2.5"
+          >
+            Sign In
+          </Button>
+          <p className="text-xs text-gray-400 mt-4">
+            You can place orders without an account, but you&apos;ll need one to track them.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default function OrdersPage() {
   const router = useRouter();
+  const { authState } = useAuth();
   const { orders, isLoading, error } = useOrders();
+
+  // Only logged-in users can view orders
+  if (authState === "unauthenticated") {
+    return <LoginPrompt />;
+  }
 
   if (isLoading) {
     return (
@@ -312,7 +355,7 @@ export default function OrdersPage() {
                               </div>
                               <div className="text-gray-500 text-xs max-w-[200px] py-1">
                                 <div className="space-y-1">
-                                  {order.items.map((item) => (
+                                  {order.items.map((item: OrderItem) => (
                                     <div
                                       key={item.id}
                                       className="leading-relaxed"

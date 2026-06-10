@@ -12,11 +12,36 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Image from "next/image";
-import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { getOrderById } from "@/lib/actions";
-import OrderConfirmationSkeleton from "../_components/skeleton/order-conformation-skeleton";
+import { getCookieValue } from "@/lib/auth-utils";
 import { BASE_URL } from "@/lib/variables";
+
+// Inline skeleton while loading
+function OrderConfirmationSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 animate-pulse">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="h-10 w-10 bg-gray-200 rounded-md" />
+          <div className="h-8 w-48 bg-gray-200 rounded" />
+        </div>
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-6" />
+          <div className="h-8 w-64 bg-gray-200 rounded mx-auto mb-3" />
+          <div className="h-5 w-96 bg-gray-200 rounded mx-auto" />
+        </div>
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+            <div className="h-6 w-48 bg-gray-200 rounded mb-4" />
+            <div className="h-4 w-full bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-3/4 bg-gray-200 rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // Professional Error Component
 function ProfessionalError({
@@ -70,8 +95,9 @@ export default function OrderConfirmation() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id") || "";
-  const { authToken } = useAuth();
-  const baseUrl = BASE_URL;
+
+  // Get auth token from cookies if available — guests can still view their order
+  const authToken = typeof window !== "undefined" ? getCookieValue("authToken") : null;
 
   // Use TanStack Query for order details
   const {
@@ -82,11 +108,10 @@ export default function OrderConfirmation() {
   } = useQuery({
     queryKey: ["order", orderId],
     queryFn: async () => {
-      if (!orderId || !authToken)
-        throw new Error("Missing orderId or authToken");
-      return await getOrderById(orderId, authToken);
+      if (!orderId) throw new Error("Missing order ID");
+      return await getOrderById(orderId, authToken || "");
     },
-    enabled: !!orderId && !!authToken,
+    enabled: !!orderId,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
   });
