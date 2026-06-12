@@ -5,6 +5,7 @@ import type {
   AdminRole,
   Permission,
 } from "@/lib/admin-types";
+import { BASE_URL } from "@/lib/variables";
 import { apiClient } from "./api-client";
 
 // ==============================
@@ -56,10 +57,27 @@ const rolePermissions: Record<string, Permission[]> = {
 export const login = async (
   credentials: AdminLoginCredentials
 ): Promise<AdminLoginResponse> => {
-  const { data } = await apiClient.post<AdminLoginResponse>(
-    "/admin/auth/login/",
-    credentials
-  );
+  const endpoint = `${BASE_URL.replace(/\/$/, "")}/admin/auth/login/`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  let data: AdminLoginResponse;
+  try {
+    data = (await response.json()) as AdminLoginResponse;
+  } catch {
+    throw new Error("Login failed");
+  }
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || "Login failed");
+  }
+
   return data;
 };
 
@@ -86,6 +104,7 @@ export const logout = async (): Promise<{ success: boolean; message: string }> =
   localStorage.removeItem("admin_refresh_token");
   localStorage.removeItem("admin_user");
   localStorage.removeItem("admin_role");
+  document.cookie = "admin_access_token=; path=/; max-age=0; SameSite=Strict";
   return { success: true, message: "Logged out successfully" };
 };
 

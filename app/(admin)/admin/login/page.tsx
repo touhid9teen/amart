@@ -34,8 +34,8 @@ export default function AdminLoginPage() {
 
     try {
       await login({ email, password });
-    } catch {
-      setError("Invalid email or password");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Invalid email or password");
     }
   };
 
