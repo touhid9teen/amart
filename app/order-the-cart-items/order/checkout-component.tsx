@@ -441,7 +441,7 @@ export default function CheckoutComponent({
             <div className="space-y-3">
               {/* COD Option */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200 ${
+                className={`relative flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200 ${
                   paymentMethod === "cod" ? "border-2" : "border"
                 }`}
                 style={{
