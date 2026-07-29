@@ -49,7 +49,7 @@ export const getOrders = async (params?: {
   date_from?: string;
   date_to?: string;
 }): Promise<ApiResponse<AdminOrder[]>> => {
-  const { data } = await apiClient.get("/admin/orders/", { params });
+  const { data } = await apiClient.get("/api/admin/orders/", { params });
   const orders: ApiOrderListItem[] = data?.data || [];
   return {
     ...data,
@@ -58,7 +58,7 @@ export const getOrders = async (params?: {
 };
 
 export const getOrder = async (id: number): Promise<ApiResponse<AdminOrder>> => {
-  const { data } = await apiClient.get(`/admin/orders/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/orders/${id}/`);
   const order: ApiOrderDetail = data?.data;
   return {
     ...data,
@@ -67,6 +67,6 @@ export const getOrder = async (id: number): Promise<ApiResponse<AdminOrder>> => 
 };
 
 export const updateOrderStatus = async (id: number, status: OrderStatus) => {
-  const { data } = await apiClient.patch(`/admin/orders/${id}/status/`, { status });
+  const { data } = await apiClient.patch(`/api/admin/orders/${id}/status/`, { status });
   return data;
 };

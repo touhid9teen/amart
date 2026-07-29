@@ -43,7 +43,7 @@ const denormalizeStoreSettings = (ui: Partial<StoreSettings>): Partial<ApiStoreS
 });
 
 export const getStoreSettings = async (): Promise<ApiResponse<StoreSettings>> => {
-  const { data } = await apiClient.get("/admin/settings/store/");
+  const { data } = await apiClient.get("/api/admin/settings/store/");
   return {
     ...data,
     data: data?.data ? normalizeStoreSettings(data.data as ApiStoreSettings) : undefined,
@@ -51,7 +51,7 @@ export const getStoreSettings = async (): Promise<ApiResponse<StoreSettings>> =>
 };
 
 export const updateStoreSettings = async (settings: Partial<StoreSettings>) => {
-  const { data } = await apiClient.patch("/admin/settings/store/", denormalizeStoreSettings(settings));
+  const { data } = await apiClient.patch("/api/admin/settings/store/", denormalizeStoreSettings(settings));
   return data;
 };
 
@@ -73,7 +73,7 @@ const denormalizeTaxSettings = (ui: Partial<TaxSettings>): Partial<ApiTaxSetting
 });
 
 export const getTaxSettings = async (): Promise<ApiResponse<TaxSettings>> => {
-  const { data } = await apiClient.get("/admin/settings/tax/");
+  const { data } = await apiClient.get("/api/admin/settings/tax/");
   return {
     ...data,
     data: data?.data ? normalizeTaxSettings(data.data as ApiTaxSettings) : undefined,
@@ -81,7 +81,7 @@ export const getTaxSettings = async (): Promise<ApiResponse<TaxSettings>> => {
 };
 
 export const updateTaxSettings = async (settings: Partial<TaxSettings>) => {
-  const { data } = await apiClient.patch("/admin/settings/tax/", denormalizeTaxSettings(settings));
+  const { data } = await apiClient.patch("/api/admin/settings/tax/", denormalizeTaxSettings(settings));
   return data;
 };
 
@@ -103,7 +103,7 @@ const denormalizeShippingSettings = (ui: Partial<ShippingSettings>): Partial<Api
 });
 
 export const getShippingSettings = async (): Promise<ApiResponse<ShippingSettings>> => {
-  const { data } = await apiClient.get("/admin/settings/shipping/");
+  const { data } = await apiClient.get("/api/admin/settings/shipping/");
   return {
     ...data,
     data: data?.data ? normalizeShippingSettings(data.data as ApiShippingSettings) : undefined,
@@ -111,7 +111,7 @@ export const getShippingSettings = async (): Promise<ApiResponse<ShippingSetting
 };
 
 export const updateShippingSettings = async (settings: Partial<ShippingSettings>) => {
-  const { data } = await apiClient.patch("/admin/settings/shipping/", denormalizeShippingSettings(settings));
+  const { data } = await apiClient.patch("/api/admin/settings/shipping/", denormalizeShippingSettings(settings));
   return data;
 };
 
@@ -142,7 +142,7 @@ const denormalizePaymentSettings = (ui: Partial<PaymentSettings>): Partial<ApiPa
 });
 
 export const getPaymentSettings = async (): Promise<ApiResponse<PaymentSettings>> => {
-  const { data } = await apiClient.get("/admin/settings/payment/");
+  const { data } = await apiClient.get("/api/admin/settings/payment/");
   return {
     ...data,
     data: data?.data ? normalizePaymentSettings(data.data as ApiPaymentSettings) : undefined,
@@ -150,7 +150,7 @@ export const getPaymentSettings = async (): Promise<ApiResponse<PaymentSettings>
 };
 
 export const updatePaymentSettings = async (settings: Partial<PaymentSettings>) => {
-  const { data } = await apiClient.patch("/admin/settings/payment/", denormalizePaymentSettings(settings));
+  const { data } = await apiClient.patch("/api/admin/settings/payment/", denormalizePaymentSettings(settings));
   return data;
 };
 
@@ -175,7 +175,7 @@ const denormalizeEmailSettings = (ui: Partial<EmailSettings>): Partial<ApiEmailS
 });
 
 export const getEmailSettings = async (): Promise<ApiResponse<EmailSettings>> => {
-  const { data } = await apiClient.get("/admin/settings/email/");
+  const { data } = await apiClient.get("/api/admin/settings/email/");
   return {
     ...data,
     data: data?.data ? normalizeEmailSettings(data.data as ApiEmailSettings) : undefined,
@@ -183,7 +183,7 @@ export const getEmailSettings = async (): Promise<ApiResponse<EmailSettings>> =>
 };
 
 export const updateEmailSettings = async (settings: Partial<EmailSettings>) => {
-  const { data } = await apiClient.patch("/admin/settings/email/", denormalizeEmailSettings(settings));
+  const { data } = await apiClient.patch("/api/admin/settings/email/", denormalizeEmailSettings(settings));
   return data;
 };
 
@@ -211,7 +211,7 @@ const denormalizeNotificationSettings = (ui: Partial<NotificationSettings>): Par
 });
 
 export const getNotificationSettings = async (): Promise<ApiResponse<NotificationSettings>> => {
-  const { data } = await apiClient.get("/admin/settings/notification/");
+  const { data } = await apiClient.get("/api/admin/settings/notification/");
   return {
     ...data,
     data: data?.data ? normalizeNotificationSettings(data.data as ApiNotificationSettings) : undefined,
@@ -219,6 +219,6 @@ export const getNotificationSettings = async (): Promise<ApiResponse<Notificatio
 };
 
 export const updateNotificationSettings = async (settings: Partial<NotificationSettings>) => {
-  const { data } = await apiClient.patch("/admin/settings/notification/", denormalizeNotificationSettings(settings));
+  const { data } = await apiClient.patch("/api/admin/settings/notification/", denormalizeNotificationSettings(settings));
   return data;
 };

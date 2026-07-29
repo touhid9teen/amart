@@ -50,7 +50,7 @@ const rolePermissions: Record<string, Permission[]> = {
 export const login = async (
   credentials: AdminLoginCredentials
 ): Promise<AdminLoginResponse> => {
-  const { data } = await apiClient.post("/admin/auth/login/", credentials);
+  const { data } = await apiClient.post("/api/admin/auth/login/", credentials);
   
   if (!data.success) {
     throw new Error(data.message || "Login failed");
@@ -64,14 +64,14 @@ export const getProfile = async (): Promise<{
   data?: AdminUser;
   message: string;
 }> => {
-  const { data } = await apiClient.get("/admin/auth/profile/");
+  const { data } = await apiClient.get("/api/admin/auth/profile/");
   return data;
 };
 
 export const refreshToken = async (
   refreshTokenValue: string
 ): Promise<{ success: boolean; data?: { access_token: string; refresh_token: string }; message: string }> => {
-  const { data } = await apiClient.post("/admin/auth/refresh/", {
+  const { data } = await apiClient.post("/api/admin/auth/refresh/", {
     refresh_token: refreshTokenValue,
   });
   return data;

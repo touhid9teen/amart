@@ -17,7 +17,7 @@ const normalizeCategory = (cat: ApiCategory): AdminCategory => ({
 
 export const getCategories = async (search?: string): Promise<ApiResponse<AdminCategory[]>> => {
   const params = search ? { search } : {};
-  const { data } = await apiClient.get("/admin/categories/", { params });
+  const { data } = await apiClient.get("/api/admin/categories/", { params });
   const categories: ApiCategory[] = data?.data || [];
   return {
     ...data,
@@ -26,7 +26,7 @@ export const getCategories = async (search?: string): Promise<ApiResponse<AdminC
 };
 
 export const getCategory = async (id: number): Promise<ApiResponse<AdminCategory>> => {
-  const { data } = await apiClient.get(`/admin/categories/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/categories/${id}/`);
   const cat: ApiCategory = data?.data;
   return {
     ...data,
@@ -35,7 +35,7 @@ export const getCategory = async (id: number): Promise<ApiResponse<AdminCategory
 };
 
 export const createCategory = async (categoryData: Partial<AdminCategory> & { image?: string; image_alt?: string; colore?: string }) => {
-  const { data } = await apiClient.post("/admin/categories/", {
+  const { data } = await apiClient.post("/api/admin/categories/", {
     name: categoryData.name,
     description: categoryData.description,
     parent: categoryData.parent || null,
@@ -47,7 +47,7 @@ export const createCategory = async (categoryData: Partial<AdminCategory> & { im
 };
 
 export const updateCategory = async (id: number, categoryData: Partial<AdminCategory> & { image?: string; image_alt?: string; colore?: string }) => {
-  const { data } = await apiClient.patch(`/admin/categories/${id}/`, {
+  const { data } = await apiClient.patch(`/api/admin/categories/${id}/`, {
     name: categoryData.name,
     description: categoryData.description,
     parent: categoryData.parent,
@@ -59,6 +59,6 @@ export const updateCategory = async (id: number, categoryData: Partial<AdminCate
 };
 
 export const deleteCategory = async (id: number) => {
-  const { data } = await apiClient.delete(`/admin/categories/${id}/`);
+  const { data } = await apiClient.delete(`/api/admin/categories/${id}/`);
   return data;
 };

@@ -20,7 +20,7 @@ export const getInventory = async (params?: {
   low_stock?: boolean;
   search?: string;
 }): Promise<ApiResponse<AdminInventoryItem[]>> => {
-  const { data } = await apiClient.get("/admin/inventory/", { params });
+  const { data } = await apiClient.get("/api/admin/inventory/", { params });
   const items: ApiInventoryItem[] = data?.data || [];
   return {
     ...data,
@@ -29,12 +29,12 @@ export const getInventory = async (params?: {
 };
 
 export const getInventoryItem = async (id: number) => {
-  const { data } = await apiClient.get(`/admin/inventory/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/inventory/${id}/`);
   return data;
 };
 
 export const adjustStock = async (productId: number, quantity: number, reason: string) => {
-  const { data } = await apiClient.post("/admin/inventory/adjust/", {
+  const { data } = await apiClient.post("/api/admin/inventory/adjust/", {
     product_id: productId,
     quantity,
     reason,

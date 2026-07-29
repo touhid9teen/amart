@@ -24,7 +24,7 @@ export const getCustomers = async (params?: { search?: string; is_active?: boole
   const query: Record<string, string | boolean> = {};
   if (params?.search) query.search = params.search;
   if (params?.is_active !== undefined) query.is_active = params.is_active;
-  const { data } = await apiClient.get("/admin/customers/", { params: query });
+  const { data } = await apiClient.get("/api/admin/customers/", { params: query });
   const customers: ApiCustomer[] = data?.data || [];
   return {
     ...data,
@@ -33,7 +33,7 @@ export const getCustomers = async (params?: { search?: string; is_active?: boole
 };
 
 export const getCustomer = async (id: number | string): Promise<ApiResponse<AdminCustomer>> => {
-  const { data } = await apiClient.get(`/admin/customers/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/customers/${id}/`);
   const customer: ApiCustomerDetail = data?.data;
   if (!customer) {
     return { ...data, data: undefined as any };
@@ -45,16 +45,16 @@ export const getCustomer = async (id: number | string): Promise<ApiResponse<Admi
 };
 
 export const blockCustomer = async (id: number | string) => {
-  const { data } = await apiClient.post(`/admin/customers/${id}/block/`);
+  const { data } = await apiClient.post(`/api/admin/customers/${id}/block/`);
   return data;
 };
 
 export const unblockCustomer = async (id: number | string) => {
-  const { data } = await apiClient.post(`/admin/customers/${id}/unblock/`);
+  const { data } = await apiClient.post(`/api/admin/customers/${id}/unblock/`);
   return data;
 };
 
 export const deleteCustomer = async (id: number | string) => {
-  const { data } = await apiClient.delete(`/admin/customers/${id}/`);
+  const { data } = await apiClient.delete(`/api/admin/customers/${id}/`);
   return data;
 };

@@ -21,7 +21,7 @@ export const getReviews = async (params?: {
   product_id?: number;
   search?: string;
 }): Promise<ApiResponse<AdminReview[]>> => {
-  const { data } = await apiClient.get("/admin/reviews/", { params });
+  const { data } = await apiClient.get("/api/admin/reviews/", { params });
   const reviews: ApiReview[] = data?.data || [];
   return {
     ...data,
@@ -30,16 +30,16 @@ export const getReviews = async (params?: {
 };
 
 export const approveReview = async (id: number) => {
-  const { data } = await apiClient.post(`/admin/reviews/${id}/approve/`);
+  const { data } = await apiClient.post(`/api/admin/reviews/${id}/approve/`);
   return data;
 };
 
 export const rejectReview = async (id: number) => {
-  const { data } = await apiClient.post(`/admin/reviews/${id}/reject/`);
+  const { data } = await apiClient.post(`/api/admin/reviews/${id}/reject/`);
   return data;
 };
 
 export const deleteReview = async (id: number) => {
-  const { data } = await apiClient.delete(`/admin/reviews/${id}/`);
+  const { data } = await apiClient.delete(`/api/admin/reviews/${id}/`);
   return data;
 };

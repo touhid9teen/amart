@@ -20,7 +20,7 @@ export const getCoupons = async (params?: {
   search?: string;
   is_active?: boolean;
 }): Promise<ApiResponse<AdminCoupon[]>> => {
-  const { data } = await apiClient.get("/admin/coupons/", { params });
+  const { data } = await apiClient.get("/api/admin/coupons/", { params });
   const coupons: ApiCoupon[] = data?.data || [];
   return {
     ...data,
@@ -29,7 +29,7 @@ export const getCoupons = async (params?: {
 };
 
 export const getCoupon = async (id: number): Promise<ApiResponse<AdminCoupon>> => {
-  const { data } = await apiClient.get(`/admin/coupons/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/coupons/${id}/`);
   const coupon: ApiCoupon = data?.data;
   return {
     ...data,
@@ -38,7 +38,7 @@ export const getCoupon = async (id: number): Promise<ApiResponse<AdminCoupon>> =
 };
 
 export const createCoupon = async (couponData: Partial<AdminCoupon>) => {
-  const { data } = await apiClient.post("/admin/coupons/", {
+  const { data } = await apiClient.post("/api/admin/coupons/", {
     code: couponData.code,
     discount_type: couponData.discount_type,
     discount_value: couponData.discount_value,
@@ -52,7 +52,7 @@ export const createCoupon = async (couponData: Partial<AdminCoupon>) => {
 };
 
 export const updateCoupon = async (id: number, couponData: Partial<AdminCoupon>) => {
-  const { data } = await apiClient.patch(`/admin/coupons/${id}/`, {
+  const { data } = await apiClient.patch(`/api/admin/coupons/${id}/`, {
     code: couponData.code,
     discount_type: couponData.discount_type,
     discount_value: couponData.discount_value,
@@ -66,6 +66,6 @@ export const updateCoupon = async (id: number, couponData: Partial<AdminCoupon>)
 };
 
 export const deleteCoupon = async (id: number) => {
-  const { data } = await apiClient.delete(`/admin/coupons/${id}/`);
+  const { data } = await apiClient.delete(`/api/admin/coupons/${id}/`);
   return data;
 };

@@ -33,7 +33,7 @@ export const getProducts = async (params?: {
   is_featured?: boolean;
   low_stock?: boolean;
 }): Promise<ApiResponse<AdminProduct[]>> => {
-  const { data } = await apiClient.get("/admin/products/", { params });
+  const { data } = await apiClient.get("/api/admin/products/", { params });
   const products: ApiProductListItem[] = data?.data || [];
   return {
     ...data,
@@ -42,7 +42,7 @@ export const getProducts = async (params?: {
 };
 
 export const getProduct = async (id: number): Promise<ApiResponse<AdminProduct>> => {
-  const { data } = await apiClient.get(`/admin/products/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/products/${id}/`);
   const product: ApiProductDetail = data?.data;
   if (!product) {
     return { ...data, data: undefined as any };
@@ -55,7 +55,7 @@ export const getProduct = async (id: number): Promise<ApiResponse<AdminProduct>>
 
 export const createProduct = async (productData: AdminProductFormData) => {
   // Map UI field names to API field names
-  const { data } = await apiClient.post("/admin/products/", {
+  const { data } = await apiClient.post("/api/admin/products/", {
     name: productData.name,
     description: productData.description || "",
     short_description: productData.short_description || "",
@@ -78,7 +78,7 @@ export const createProduct = async (productData: AdminProductFormData) => {
 };
 
 export const updateProduct = async (id: number, productData: Partial<AdminProductFormData>) => {
-  const { data } = await apiClient.patch(`/admin/products/${id}/`, {
+  const { data } = await apiClient.patch(`/api/admin/products/${id}/`, {
     name: productData.name,
     description: productData.description,
     short_description: productData.short_description,
@@ -100,20 +100,20 @@ export const updateProduct = async (id: number, productData: Partial<AdminProduc
 };
 
 export const deleteProduct = async (id: number) => {
-  const { data } = await apiClient.delete(`/admin/products/${id}/`);
+  const { data } = await apiClient.delete(`/api/admin/products/${id}/`);
   return data;
 };
 
 export const duplicateProduct = async (id: number) => {
-  const { data } = await apiClient.post(`/admin/products/${id}/duplicate/`);
+  const { data } = await apiClient.post(`/api/admin/products/${id}/duplicate/`);
   return data;
 };
 
 // Fetch reference data for product forms (categories & brands)
 export const getProductFormData = async () => {
   const [categoriesRes, brandsRes] = await Promise.all([
-    apiClient.get("/admin/categories/"),
-    apiClient.get("/admin/brands/"),
+    apiClient.get("/api/admin/categories/"),
+    apiClient.get("/api/admin/brands/"),
   ]);
   return {
     success: true,

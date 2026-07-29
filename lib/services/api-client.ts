@@ -3,7 +3,7 @@
 
 import axios from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
 
 // Axios instance for real API calls
 export const apiClient = axios.create({
@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
       const refreshToken = localStorage.getItem("admin_refresh_token");
       if (refreshToken) {
         try {
-          const res = await axios.post(`${API_BASE_URL}/admin/auth/refresh/`, {
+          const res = await axios.post(`${API_BASE_URL}/api/admin/auth/refresh/`, {
             refresh_token: refreshToken,
           });
           const newToken = res.data?.data?.access_token || res.data?.access_token;

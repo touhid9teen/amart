@@ -43,7 +43,7 @@ const normalizeTopProduct = (item: ApiTopProduct): TopProduct => ({
 });
 
 export const getDashboardStats = async (): Promise<ApiResponse<DashboardStats>> => {
-  const { data } = await apiClient.get("/admin/analytics/dashboard/");
+  const { data } = await apiClient.get("/api/admin/analytics/dashboard/");
   const apiStats: ApiDashboardStats = data?.data;
   if (!apiStats) {
     return { success: false, message: "No data", data: undefined as any };
@@ -55,7 +55,7 @@ export const getDashboardStats = async (): Promise<ApiResponse<DashboardStats>> 
 };
 
 export const getSalesTrend = async (days: number = 30): Promise<ApiResponse<SalesTrend[]>> => {
-  const { data } = await apiClient.get("/admin/analytics/sales-trend/", { params: { days } });
+  const { data } = await apiClient.get("/api/admin/analytics/sales-trend/", { params: { days } });
   const items: ApiSalesTrendItem[] = data?.data || [];
   return {
     ...data,
@@ -64,7 +64,7 @@ export const getSalesTrend = async (days: number = 30): Promise<ApiResponse<Sale
 };
 
 export const getTopProducts = async (limit: number = 10, days: number = 30): Promise<ApiResponse<TopProduct[]>> => {
-  const { data } = await apiClient.get("/admin/analytics/top-products/", { params: { limit, days } });
+  const { data } = await apiClient.get("/api/admin/analytics/top-products/", { params: { limit, days } });
   const items: ApiTopProduct[] = data?.data || [];
   return {
     ...data,
@@ -73,7 +73,7 @@ export const getTopProducts = async (limit: number = 10, days: number = 30): Pro
 };
 
 export const getRevenueData = async (months: number = 12): Promise<ApiResponse<RevenueData[]>> => {
-  const { data } = await apiClient.get("/admin/analytics/revenue/", { params: { months } });
+  const { data } = await apiClient.get("/api/admin/analytics/revenue/", { params: { months } });
   const items: ApiRevenueItem[] = data?.data || [];
   return {
     ...data,

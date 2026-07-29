@@ -16,7 +16,7 @@ const normalizeBrand = (brand: ApiBrand): AdminBrand => ({
 
 export const getBrands = async (search?: string): Promise<ApiResponse<AdminBrand[]>> => {
   const params = search ? { search } : {};
-  const { data } = await apiClient.get("/admin/brands/", { params });
+  const { data } = await apiClient.get("/api/admin/brands/", { params });
   const brands: ApiBrand[] = data?.data || [];
   return {
     ...data,
@@ -25,7 +25,7 @@ export const getBrands = async (search?: string): Promise<ApiResponse<AdminBrand
 };
 
 export const getBrand = async (id: number): Promise<ApiResponse<AdminBrand>> => {
-  const { data } = await apiClient.get(`/admin/brands/${id}/`);
+  const { data } = await apiClient.get(`/api/admin/brands/${id}/`);
   const brand: ApiBrand = data?.data;
   return {
     ...data,
@@ -34,7 +34,7 @@ export const getBrand = async (id: number): Promise<ApiResponse<AdminBrand>> => 
 };
 
 export const createBrand = async (brandData: Partial<AdminBrand>) => {
-  const { data } = await apiClient.post("/admin/brands/", {
+  const { data } = await apiClient.post("/api/admin/brands/", {
     name: brandData.name,
     description: brandData.description || "",
     website: brandData.website || "",
@@ -43,7 +43,7 @@ export const createBrand = async (brandData: Partial<AdminBrand>) => {
 };
 
 export const updateBrand = async (id: number, brandData: Partial<AdminBrand>) => {
-  const { data } = await apiClient.patch(`/admin/brands/${id}/`, {
+  const { data } = await apiClient.patch(`/api/admin/brands/${id}/`, {
     name: brandData.name,
     description: brandData.description,
     website: brandData.website,
@@ -52,6 +52,6 @@ export const updateBrand = async (id: number, brandData: Partial<AdminBrand>) =>
 };
 
 export const deleteBrand = async (id: number) => {
-  const { data } = await apiClient.delete(`/admin/brands/${id}/`);
+  const { data } = await apiClient.delete(`/api/admin/brands/${id}/`);
   return data;
 };
