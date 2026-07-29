@@ -612,6 +612,7 @@ export interface StoreSettings {
   store_phone: string;
   store_address: string;
   currency: string;
+  currency_symbol: string;
   timezone: string;
   logo: string | null;
   favicon: string | null;
@@ -637,6 +638,10 @@ export interface PaymentSettings {
   cod_enabled: boolean;
   bkash_enabled: boolean;
   nagad_enabled: boolean;
+  rocket_enabled: boolean;
+  bkash_number: string;
+  nagad_number: string;
+  rocket_number: string;
 }
 
 export interface EmailSettings {
@@ -649,6 +654,7 @@ export interface EmailSettings {
 }
 
 export interface NotificationSettings {
+  email_notifications: boolean;
   order_confirmation: boolean;
   order_shipped: boolean;
   order_delivered: boolean;

@@ -20,9 +20,11 @@ const normalizeCustomer = (customer: ApiCustomer | ApiCustomerDetail): AdminCust
   };
 };
 
-export const getCustomers = async (search?: string): Promise<ApiResponse<AdminCustomer[]>> => {
-  const params = search ? { search } : {};
-  const { data } = await apiClient.get("/admin/customers/", { params });
+export const getCustomers = async (params?: { search?: string; is_active?: boolean }): Promise<ApiResponse<AdminCustomer[]>> => {
+  const query: Record<string, string | boolean> = {};
+  if (params?.search) query.search = params.search;
+  if (params?.is_active !== undefined) query.is_active = params.is_active;
+  const { data } = await apiClient.get("/admin/customers/", { params: query });
   const customers: ApiCustomer[] = data?.data || [];
   return {
     ...data,

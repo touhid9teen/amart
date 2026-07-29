@@ -34,20 +34,26 @@ export const getCategory = async (id: number): Promise<ApiResponse<AdminCategory
   };
 };
 
-export const createCategory = async (categoryData: Partial<AdminCategory>) => {
+export const createCategory = async (categoryData: Partial<AdminCategory> & { image?: string; image_alt?: string; colore?: string }) => {
   const { data } = await apiClient.post("/admin/categories/", {
     name: categoryData.name,
     description: categoryData.description,
     parent: categoryData.parent || null,
+    image: categoryData.image || undefined,
+    image_alt: categoryData.image_alt || undefined,
+    colore: categoryData.colore || undefined,
   });
   return data;
 };
 
-export const updateCategory = async (id: number, categoryData: Partial<AdminCategory>) => {
+export const updateCategory = async (id: number, categoryData: Partial<AdminCategory> & { image?: string; image_alt?: string; colore?: string }) => {
   const { data } = await apiClient.patch(`/admin/categories/${id}/`, {
     name: categoryData.name,
     description: categoryData.description,
     parent: categoryData.parent,
+    image: categoryData.image,
+    image_alt: categoryData.image_alt,
+    colore: categoryData.colore,
   });
   return data;
 };

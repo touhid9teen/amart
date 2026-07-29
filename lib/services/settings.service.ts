@@ -24,6 +24,7 @@ const normalizeStoreSettings = (api: ApiStoreSettings): StoreSettings => ({
   store_phone: api.store_phone || "",
   store_address: api.address || "",
   currency: api.currency || "BDT",
+  currency_symbol: api.currency_symbol || "৳",
   timezone: api.timezone || "Asia/Dhaka",
   logo: api.logo_url || null,
   favicon: api.favicon_url || null,
@@ -35,6 +36,7 @@ const denormalizeStoreSettings = (ui: Partial<StoreSettings>): Partial<ApiStoreS
   store_phone: ui.store_phone,
   address: ui.store_address,
   currency: ui.currency,
+  currency_symbol: ui.currency_symbol || undefined,
   timezone: ui.timezone,
   logo_url: ui.logo || undefined,
   favicon_url: ui.favicon || undefined,
@@ -122,6 +124,10 @@ const normalizePaymentSettings = (api: ApiPaymentSettings): PaymentSettings => (
   cod_enabled: api.cod_enabled ?? true,
   bkash_enabled: api.bkash_enabled ?? false,
   nagad_enabled: api.nagad_enabled ?? false,
+  rocket_enabled: api.rocket_enabled ?? false,
+  bkash_number: api.bkash_number || "",
+  nagad_number: api.nagad_number || "",
+  rocket_number: api.rocket_number || "",
 });
 
 const denormalizePaymentSettings = (ui: Partial<PaymentSettings>): Partial<ApiPaymentSettings> => ({
@@ -129,6 +135,10 @@ const denormalizePaymentSettings = (ui: Partial<PaymentSettings>): Partial<ApiPa
   online_payment_enabled: ui.stripe_enabled,
   bkash_enabled: ui.bkash_enabled,
   nagad_enabled: ui.nagad_enabled,
+  rocket_enabled: ui.rocket_enabled,
+  bkash_number: ui.bkash_number || undefined,
+  nagad_number: ui.nagad_number || undefined,
+  rocket_number: ui.rocket_number || undefined,
 });
 
 export const getPaymentSettings = async (): Promise<ApiResponse<PaymentSettings>> => {
@@ -181,6 +191,7 @@ export const updateEmailSettings = async (settings: Partial<EmailSettings>) => {
 // Notification Settings
 // ==============================
 const normalizeNotificationSettings = (api: ApiNotificationSettings): NotificationSettings => ({
+  email_notifications: api.email_notifications ?? true,
   order_confirmation: api.order_confirmation ?? true,
   order_shipped: api.order_shipped ?? true,
   order_delivered: api.order_delivered ?? true,
@@ -190,6 +201,7 @@ const normalizeNotificationSettings = (api: ApiNotificationSettings): Notificati
 });
 
 const denormalizeNotificationSettings = (ui: Partial<NotificationSettings>): Partial<ApiNotificationSettings> => ({
+  email_notifications: ui.email_notifications,
   order_confirmation: ui.order_confirmation,
   order_shipped: ui.order_shipped,
   order_delivered: ui.order_delivered,

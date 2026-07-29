@@ -32,7 +32,7 @@ export default function AdminCustomersPage() {
 
   const { data: res, isLoading, isError, refetch } = useQuery({
     queryKey: ["admin-customers", search],
-    queryFn: () => getCustomers(),
+    queryFn: () => getCustomers({ search: search || undefined }),
   });
 
   const blockMutation = useMutation({
