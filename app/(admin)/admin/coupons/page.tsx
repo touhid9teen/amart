@@ -43,7 +43,7 @@ export default function AdminCouponsPage() {
     expiry_date: "",
   });
 
-  const { data: res, isLoading } = useQuery({ queryKey: ["admin-coupons"], queryFn: getCoupons });
+  const { data: res, isLoading } = useQuery({ queryKey: ["admin-coupons"], queryFn: () => getCoupons() });
   const coupons: AdminCoupon[] = res?.data || [];
 
   const createMutation = useMutation({

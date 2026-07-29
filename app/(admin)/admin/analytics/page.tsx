@@ -27,26 +27,26 @@ const COLORS = ["hsl(var(--primary))", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6
 export default function AdminAnalyticsPage() {
   const { data: salesRes, isLoading: salesLoading } = useQuery({
     queryKey: ["admin-sales-trend"],
-    queryFn: getSalesTrend,
+    queryFn: () => getSalesTrend(),
   });
 
   const { data: revenueRes, isLoading: revenueLoading } = useQuery({
     queryKey: ["admin-revenue-data"],
-    queryFn: getRevenueData,
+    queryFn: () => getRevenueData(),
   });
 
   const { data: topRes, isLoading: topLoading } = useQuery({
     queryKey: ["admin-top-products-analytics"],
-    queryFn: getTopProducts,
+    queryFn: () => getTopProducts(),
   });
 
-  const salesData = salesRes?.data || [];
-  const revenueData = revenueRes?.data || [];
-  const topProducts = topRes?.data || [];
+  const salesData = (salesRes as any)?.data || [];
+  const revenueData = (revenueRes as any)?.data || [];
+  const topProducts = (topRes as any)?.data || [];
 
-  const pieData = topProducts.slice(0, 6).map((p: { name: string; revenue: number }) => ({
-    name: p.name.length > 15 ? p.name.substring(0, 15) + "..." : p.name,
-    value: p.revenue,
+  const pieData = topProducts.slice(0, 6).map((p: any) => ({
+    name: p.name?.length > 15 ? p.name.substring(0, 15) + "..." : p.name || "",
+    value: p.revenue || 0,
   }));
 
   if (salesLoading || revenueLoading || topLoading) {
@@ -124,7 +124,7 @@ export default function AdminAnalyticsPage() {
                     outerRadius={100}
                     paddingAngle={3}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={(entry: any) => `${entry.name || ''} ${((entry.percent || 0) * 100).toFixed(0)}%`}
                   >
                     {pieData.map((_: unknown, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

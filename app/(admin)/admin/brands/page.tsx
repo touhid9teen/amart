@@ -27,7 +27,7 @@ export default function AdminBrandsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", slug: "", description: "", website: "" });
 
-  const { data: res, isLoading } = useQuery({ queryKey: ["admin-brands"], queryFn: getBrands });
+  const { data: res, isLoading } = useQuery({ queryKey: ["admin-brands"], queryFn: () => getBrands() });
   const brands: AdminBrand[] = res?.data || [];
 
   const createMutation = useMutation({

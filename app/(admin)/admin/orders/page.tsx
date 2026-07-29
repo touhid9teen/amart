@@ -32,7 +32,7 @@ export default function AdminOrdersPage() {
 
   const { data: res, isLoading, isError, refetch } = useQuery({
     queryKey: ["admin-orders"],
-    queryFn: getOrders,
+    queryFn: () => getOrders(),
   });
 
   const statusMutation = useMutation({

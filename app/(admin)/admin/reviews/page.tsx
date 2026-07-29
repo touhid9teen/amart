@@ -30,7 +30,7 @@ export default function AdminReviewsPage() {
 
   const { data: res, isLoading, isError, refetch } = useQuery({
     queryKey: ["admin-reviews"],
-    queryFn: getReviews,
+    queryFn: () => getReviews(),
   });
 
   const approveMutation = useMutation({

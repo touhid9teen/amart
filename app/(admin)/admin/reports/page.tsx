@@ -49,22 +49,22 @@ export default function AdminReportsPage() {
 
   const { data: salesRes, isLoading: salesLoading } = useQuery({
     queryKey: ["admin-sales-trend"],
-    queryFn: getSalesTrend,
+    queryFn: () => getSalesTrend(),
   });
 
   const { data: orderRes, isLoading: orderLoading } = useQuery({
     queryKey: ["admin-orders-report"],
-    queryFn: getOrders,
+    queryFn: () => getOrders(),
   });
 
   const { data: productRes, isLoading: prodLoading } = useQuery({
     queryKey: ["admin-products-report"],
-    queryFn: getProducts,
+    queryFn: () => getProducts(),
   });
 
   const { data: custRes, isLoading: custLoading } = useQuery({
     queryKey: ["admin-customers-report"],
-    queryFn: getCustomers,
+    queryFn: () => getCustomers(),
   });
 
   const salesData = salesRes?.data || [];
@@ -78,7 +78,7 @@ export default function AdminReportsPage() {
 
     switch (type) {
       case "sales":
-        data = salesData;
+        data = salesData as unknown as Record<string, unknown>[];
         filename = "sales-report";
         break;
       case "orders":

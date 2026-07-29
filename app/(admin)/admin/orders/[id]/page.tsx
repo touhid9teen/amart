@@ -48,7 +48,7 @@ export default function OrderDetailPage() {
     onError: () => toast.error("Failed to update status"),
   });
 
-  const order: AdminOrder = res?.data;
+  const order: AdminOrder | undefined = res?.data;
 
   if (isLoading) {
     return (
@@ -58,7 +58,7 @@ export default function OrderDetailPage() {
     );
   }
 
-  if (!order) {
+  if (!order || !order.items) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">Order not found</p>

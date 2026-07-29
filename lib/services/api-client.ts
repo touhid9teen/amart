@@ -39,9 +39,9 @@ apiClient.interceptors.response.use(
       if (refreshToken) {
         try {
           const res = await axios.post(`${API_BASE_URL}/admin/auth/refresh/`, {
-            refresh: refreshToken,
+            refresh_token: refreshToken,
           });
-          const newToken = res.data.access_token;
+          const newToken = res.data?.data?.access_token || res.data?.access_token;
           localStorage.setItem("admin_access_token", newToken);
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return apiClient(originalRequest);

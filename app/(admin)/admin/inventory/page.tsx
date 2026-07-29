@@ -28,7 +28,7 @@ export default function AdminInventoryPage() {
 
   const { data: res, isLoading, isError, refetch } = useQuery({
     queryKey: ["admin-inventory"],
-    queryFn: getInventory,
+    queryFn: () => getInventory(),
   });
 
   const adjustMutation = useMutation({

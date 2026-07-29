@@ -46,7 +46,7 @@ export default function AdminCategoriesPage() {
 
   const { data: res, isLoading } = useQuery({
     queryKey: ["admin-categories"],
-    queryFn: getCategories,
+    queryFn: () => getCategories(),
   });
 
   const categories: AdminCategory[] = res?.data || [];

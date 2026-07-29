@@ -1,23 +1,54 @@
-import type { AdminCategory } from "@/lib/admin-types";
+import type { AdminCategory, ApiCategory, ApiResponse } from "@/lib/admin-types";
 import { apiClient } from "./api-client";
 
-export const getCategories = async () => {
-  const { data } = await apiClient.get("/admin/categories/");
-  return data;
+// Normalize a single category from API format to UI format
+const normalizeCategory = (cat: ApiCategory): AdminCategory => ({
+  id: cat.id,
+  name: cat.name,
+  slug: cat.slug,
+  description: cat.description || "",
+  image: cat.image || null,
+  parent: cat.parent,
+  children: [],
+  product_count: cat.products_count ?? 0,
+  created_at: cat.createdAt || "",
+  updated_at: cat.updatedAt || "",
+});
+
+export const getCategories = async (search?: string): Promise<ApiResponse<AdminCategory[]>> => {
+  const params = search ? { search } : {};
+  const { data } = await apiClient.get("/admin/categories/", { params });
+  const categories: ApiCategory[] = data?.data || [];
+  return {
+    ...data,
+    data: categories.map(normalizeCategory),
+  };
 };
 
-export const getCategory = async (id: number) => {
+export const getCategory = async (id: number): Promise<ApiResponse<AdminCategory>> => {
   const { data } = await apiClient.get(`/admin/categories/${id}/`);
-  return data;
+  const cat: ApiCategory = data?.data;
+  return {
+    ...data,
+    data: cat ? normalizeCategory(cat) : undefined,
+  };
 };
 
 export const createCategory = async (categoryData: Partial<AdminCategory>) => {
-  const { data } = await apiClient.post("/admin/categories/", categoryData);
+  const { data } = await apiClient.post("/admin/categories/", {
+    name: categoryData.name,
+    description: categoryData.description,
+    parent: categoryData.parent || null,
+  });
   return data;
 };
 
 export const updateCategory = async (id: number, categoryData: Partial<AdminCategory>) => {
-  const { data } = await apiClient.patch(`/admin/categories/${id}/`, categoryData);
+  const { data } = await apiClient.patch(`/admin/categories/${id}/`, {
+    name: categoryData.name,
+    description: categoryData.description,
+    parent: categoryData.parent,
+  });
   return data;
 };
 

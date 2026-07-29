@@ -42,17 +42,17 @@ export default function AdminDashboardPage() {
 
   const { data: salesRes, isLoading: salesLoading } = useQuery({
     queryKey: ["admin-sales-trend"],
-    queryFn: getSalesTrend,
+    queryFn: () => getSalesTrend(),
   });
 
   const { data: topRes, isLoading: topLoading } = useQuery({
     queryKey: ["admin-top-products"],
-    queryFn: getTopProducts,
+    queryFn: () => getTopProducts(),
   });
 
   const { data: ordersRes, isLoading: ordersLoading } = useQuery({
     queryKey: ["admin-recent-orders"],
-    queryFn: getOrders,
+    queryFn: () => getOrders(),
   });
 
   const stats = statsRes?.data;
