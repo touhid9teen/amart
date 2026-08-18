@@ -23,8 +23,7 @@ export default function AdminLoginPage() {
     return null;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setError("");
 
     if (!email || !password) {
@@ -34,8 +33,15 @@ export default function AdminLoginPage() {
 
     try {
       await login({ email, password });
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Invalid email or password");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid email or password");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !isLoading) {
+      e.preventDefault();
+      handleSubmit();
     }
   };
 
@@ -61,7 +67,7 @@ export default function AdminLoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -70,16 +76,14 @@ export default function AdminLoginPage() {
                   placeholder="admin@amart.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   autoComplete="email"
                   disabled={isLoading}
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -87,6 +91,7 @@ export default function AdminLoginPage() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     autoComplete="current-password"
                     disabled={isLoading}
                     className="pr-10"
@@ -112,11 +117,11 @@ export default function AdminLoginPage() {
                 </div>
               )}
 
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
+              <button
+                type="button"
+                className="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8"
                 disabled={isLoading}
+                onClick={handleSubmit}
               >
                 {isLoading ? (
                   <>
@@ -126,18 +131,20 @@ export default function AdminLoginPage() {
                 ) : (
                   "Sign In"
                 )}
-              </Button>
-            </form>
-
-
+              </button>
+            </div>
           </CardContent>
         </Card>
 
         {/* Back to store link */}
         <div className="text-center mt-6">
-          <Button variant="link" size="sm" onClick={() => router.push("/")}>
+          <button
+            type="button"
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            onClick={() => router.push("/")}
+          >
             ← Back to Store
-          </Button>
+          </button>
         </div>
       </div>
     </div>

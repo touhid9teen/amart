@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const authRoutes: string[] = ["/"];
@@ -13,18 +12,17 @@ export default async function middleware(req: NextRequest) {
 
   // Admin routes: check for admin access token cookie
   if (isAdminRoute && currentRoute !== "/admin/login") {
-    const cookieStore = await cookies();
-    const adminToken = cookieStore.get("admin_access_token")?.value;
+    const adminToken = req.cookies.get("admin_access_token")?.value;
     if (!adminToken) {
-      return NextResponse.redirect(new URL("/admin/login", req.nextUrl));
+      // Use 303 to force GET method (avoid 405 on POST requests)
+      return NextResponse.redirect(new URL("/admin/login", req.url), { status: 303 });
     }
   }
 
-  const cookieStore = await cookies();
-  const access = cookieStore.get("authToken")?.value;
+  const access = req.cookies.get("authToken")?.value;
 
   if (isAuthRoute && access) {
-    return NextResponse.redirect(new URL("/order-the-cart-items", req.nextUrl));
+    return NextResponse.redirect(new URL("/order-the-cart-items", req.url), { status: 303 });
   }
 
   return NextResponse.next();
