@@ -81,7 +81,7 @@ export async function addToCart(data: AnyType, jwt: string) {
 
 // AUTH SERVER ACTIONS
 
-const SIGNUP_ENDPOINT = `${BASE_URL}/auth/email-signup/`;
+const SIGNUP_ENDPOINT = `${BASE_URL}auth/email-signup/`;
 
 export async function signupWithEmail(
   credentials: SignupCredentials,
@@ -203,7 +203,7 @@ function resolveLoginError(error: unknown): LoginResponse {
   };
 }
 
-const OTP_VERIFY_ENDPOINT = `${BASE_URL}/auth/verify-otp/`;
+const OTP_VERIFY_ENDPOINT = `${BASE_URL}auth/verify-otp/`;
 
 export async function verifyOtpServer(
   credentials: OtpVerifyCredentials,
