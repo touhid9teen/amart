@@ -3,19 +3,32 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Store, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAdminAuth } from "../_hooks/use-admin-auth";
+import { adminLogin } from "@/lib/admin-actions";
+import {
+  setAdminTokens,
+  setAdminStoredUser,
+  setAdminStoredRole,
+  getAdminToken,
+} from "@/lib/cookie-utils";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { login, isLoading, isAuthenticated } = useAdminAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check if already logged in (cookie present)
+  useEffect(() => {
+    if (getAdminToken()) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -32,10 +45,31 @@ export default function AdminLoginPage() {
       return;
     }
 
+    setIsLoading(true);
     try {
-      await login({ email, password });
+      const result = await adminLogin({ email, password });
+
+      if (!result.success) {
+        setError(result.message || "Invalid email or password");
+        return;
+      }
+
+      if (result.data) {
+        // Set client-side cookies so getAdminToken() works immediately
+        setAdminTokens(
+          result.data.tokens.access_token,
+          result.data.tokens.refresh_token
+        );
+        // Store user data for the UI
+        setAdminStoredUser(result.data.user);
+        setAdminStoredRole(result.data.user.role);
+      }
+
+      setIsAuthenticated(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid email or password");
+    } finally {
+      setIsLoading(false);
     }
   };
 
