@@ -2,6 +2,7 @@
 // Connects to the Django REST Framework backend
 
 import axios from "axios";
+import { getAdminToken, clearAdminSession } from "@/lib/cookie-utils";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
 
@@ -18,7 +19,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("admin_access_token");
+      const token = getAdminToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -37,25 +38,22 @@ apiClient.interceptors.response.use(
 
     if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = localStorage.getItem("admin_refresh_token");
-      if (refreshToken) {
-        try {
-          const res = await axios.post(`${API_BASE_URL}/api/admin/auth/refresh/`, {
-            refresh_token: refreshToken,
-          });
-          const newToken = res.data?.data?.access_token || res.data?.access_token;
-          localStorage.setItem("admin_access_token", newToken);
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+      try {
+        // Use server action for token refresh
+        const { adminRefreshToken } = await import("@/lib/admin-actions");
+        const result = await adminRefreshToken();
+
+        if (result.success && result.data) {
+          originalRequest.headers.Authorization = `Bearer ${result.data.access_token}`;
           return apiClient(originalRequest);
-        } catch {
-          localStorage.removeItem("admin_access_token");
-          localStorage.removeItem("admin_refresh_token");
-          localStorage.removeItem("admin_user");
-          localStorage.removeItem("admin_role");
-          document.cookie = "admin_access_token=; path=/; max-age=0; SameSite=Strict";
-          window.location.href = "/admin/login";
         }
+      } catch {
+        // Refresh failed
       }
+
+      // Clear everything and redirect to login
+      clearAdminSession();
+      window.location.href = "/admin/login";
     }
     return Promise.reject(error);
   }
