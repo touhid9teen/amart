@@ -1,6 +1,17 @@
 import type { AdminProduct, AdminProductFormData, ApiProductListItem, ApiProductDetail, ApiResponse, ApiCategory, ApiBrand } from "@/lib/admin-types";
 import { apiClient } from "./api-client";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
+
+function resolveImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  // Already a full URL — return as-is
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  // Relative path — resolve against backend base URL
+  const base = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+  return `${base}${url.startsWith("/") ? url : "/" + url}`;
+}
+
 // Normalize a product list item from API format to UI format
 const normalizeProduct = (product: ApiProductListItem | ApiProductDetail): AdminProduct => {
   const detail = product as ApiProductDetail;
@@ -17,7 +28,7 @@ const normalizeProduct = (product: ApiProductListItem | ApiProductDetail): Admin
     category: (product as any).category_names?.[0] || (product as any).categories?.[0]?.name || `#${product.id}`,
     brand: (product as any).brand_name || (product as any).brand || null,
     tags: detail.tags || [],
-    images: product.image ? [product.image] : [],
+    images: product.image ? [resolveImageUrl(product.image)] : [],
     status: product.status || "active",
     is_featured: product.is_featured ?? false,
     created_at: product.createdAt || "",
