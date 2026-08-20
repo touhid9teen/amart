@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Store, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,10 +18,11 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
 
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    router.push("/admin");
-    return null;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/admin");
+    }
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async () => {
     setError("");
