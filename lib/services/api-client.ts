@@ -33,7 +33,9 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const status = error.response?.status;
+
+    if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem("admin_refresh_token");
       if (refreshToken) {
@@ -48,6 +50,9 @@ apiClient.interceptors.response.use(
         } catch {
           localStorage.removeItem("admin_access_token");
           localStorage.removeItem("admin_refresh_token");
+          localStorage.removeItem("admin_user");
+          localStorage.removeItem("admin_role");
+          document.cookie = "admin_access_token=; path=/; max-age=0; SameSite=Strict";
           window.location.href = "/admin/login";
         }
       }
