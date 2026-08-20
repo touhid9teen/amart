@@ -2,100 +2,81 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { adminGetProfile, adminLogout } from "@/lib/admin-actions";
+import { hasPermission } from "@/lib/services/auth.service";
 import {
-  login as loginService,
-  getProfile,
-  logout as logoutService,
-  hasPermission,
-} from "@/lib/services/auth.service";
-import type { AdminRole, AdminLoginCredentials, ApiAdminUser, Permission } from "@/lib/admin-types";
+  getAdminToken,
+  getAdminStoredUser,
+  getAdminStoredRole,
+  clearAdminSession,
+} from "@/lib/cookie-utils";
+import type { AdminRole, ApiAdminUser, Permission } from "@/lib/admin-types";
 import { toast } from "sonner";
 
 // ==============================
 // ADMIN AUTH HOOK
 // ==============================
 
-function getStoredUser(): ApiAdminUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem("admin_user");
-    if (!raw) return null;
-    return JSON.parse(raw) as ApiAdminUser;
-  } catch {
-    return null;
-  }
-}
-
-function getStoredRole(): AdminRole | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("admin_role") as AdminRole | null;
-}
-
 export function useAdminAuth() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [user, setUser] = useState<ApiAdminUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  // On mount: check cookie + localStorage, then fetch profile from server
   useEffect(() => {
-    const token = localStorage.getItem("admin_access_token");
-    const userData = localStorage.getItem("admin_user");
-    if (token && userData) {
+    const token = getAdminToken();
+    const stored = getAdminStoredUser();
+
+    if (token) {
       setIsAuthenticated(true);
+      setUser(stored);
+
+      // Background profile refresh via server action
+      adminGetProfile()
+        .then((res) => {
+          if (res.success && res.data) {
+            setUser(res.data);
+            localStorage.setItem("admin_user", JSON.stringify(res.data));
+          }
+        })
+        .catch(() => {
+          // Profile failed — keep stored data
+        });
     }
+
     setIsInitialized(true);
-  }, []);
-
-  // Profile fetch — treated as a background refresh, NOT a requirement for auth.
-  // Falls back to stored user data if the endpoint fails (e.g. 403/401).
-  const {
-    data: user,
-    isLoading: profileLoading,
-    refetch: refetchProfile,
-  } = useQuery({
-    queryKey: ["admin-profile"],
-    queryFn: async () => {
-      try {
-        const result = await getProfile();
-        if (result.success && result.data) {
-          // Update localStorage with fresh data from server
-          localStorage.setItem("admin_user", JSON.stringify(result.data));
-          return result.data;
-        }
-      } catch {
-        // Profile endpoint failed — fall through to stored data
-      }
-      return null;
-    },
-    enabled: isAuthenticated,
-    staleTime: 5 * 60 * 1000,
-    retry: false, // Don't spam retries on auth failures
-  });
-
-  // Merge: prefer fresh profile data, fall back to stored data
-  const resolvedUser = user ?? getStoredUser();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = useCallback(
-    async (credentials: AdminLoginCredentials) => {
-      setIsLoggingIn(true);
+    async (credentials: { email: string; password: string }) => {
+      // Login is now handled directly in the login page via adminLogin server action.
+      // This is kept as a fallback / convenience for other consumers.
+      setIsLoading(true);
       try {
-        const result = await loginService(credentials);
+        const { adminLogin } = await import("@/lib/admin-actions");
+        const result = await adminLogin(credentials);
 
-        localStorage.setItem("admin_access_token", result.data!.tokens.access_token);
-        localStorage.setItem("admin_refresh_token", result.data!.tokens.refresh_token);
-        localStorage.setItem("admin_user", JSON.stringify(result.data!.user));
-        localStorage.setItem("admin_role", result.data!.user.role);
-        // Set a simple cookie so middleware can detect the session
-        document.cookie = `admin_access_token=${result.data!.tokens.access_token}; path=/; max-age=${60 * 60 * 24}; SameSite=Strict`;
+        if (!result.success) {
+          throw new Error(result.message || "Login failed");
+        }
+
+        if (result.data) {
+          localStorage.setItem("admin_user", JSON.stringify(result.data.user));
+          localStorage.setItem("admin_role", result.data.user.role);
+          setUser(result.data.user);
+        }
+
         setIsAuthenticated(true);
         queryClient.invalidateQueries({ queryKey: ["admin-profile"] });
         toast.success("Welcome to Admin Panel");
         router.push("/admin");
       } finally {
-        setIsLoggingIn(false);
+        setIsLoading(false);
       }
     },
     [queryClient, router]
@@ -104,8 +85,10 @@ export function useAdminAuth() {
   const logout = useCallback(async () => {
     setIsLoggingOut(true);
     try {
-      await logoutService();
+      await adminLogout();
+      clearAdminSession();
       setIsAuthenticated(false);
+      setUser(null);
       queryClient.clear();
       router.push("/admin/login");
       toast.success("Logged out successfully");
@@ -116,22 +99,23 @@ export function useAdminAuth() {
 
   const checkPermission = useCallback(
     (permission: Permission) => {
-      return hasPermission((resolvedUser?.role as AdminRole) || null, permission);
+      return hasPermission((user?.role as AdminRole) || null, permission);
     },
-    [resolvedUser]
+    [user]
   );
 
+  const role: AdminRole | null = (user?.role as AdminRole) || (getAdminStoredRole() as AdminRole | null);
+
   return {
-    user: resolvedUser ?? null,
-    role: (resolvedUser?.role as AdminRole) || getStoredRole(),
+    user,
+    role,
     isAuthenticated,
     isInitialized,
-    isLoading: isLoggingIn,
+    isLoading,
     isLoggingOut,
     login,
     logout,
     checkPermission,
-    refetchProfile,
   };
 }
 
