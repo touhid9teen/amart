@@ -9,12 +9,28 @@ import {
   logout as logoutService,
   hasPermission,
 } from "@/lib/services/auth.service";
-import type { AdminRole, AdminLoginCredentials, Permission } from "@/lib/admin-types";
+import type { AdminRole, AdminLoginCredentials, ApiAdminUser, Permission } from "@/lib/admin-types";
 import { toast } from "sonner";
 
 // ==============================
 // ADMIN AUTH HOOK
 // ==============================
+
+function getStoredUser(): ApiAdminUser | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem("admin_user");
+    if (!raw) return null;
+    return JSON.parse(raw) as ApiAdminUser;
+  } catch {
+    return null;
+  }
+}
+
+function getStoredRole(): AdminRole | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("admin_role") as AdminRole | null;
+}
 
 export function useAdminAuth() {
   const router = useRouter();
@@ -33,6 +49,8 @@ export function useAdminAuth() {
     setIsInitialized(true);
   }, []);
 
+  // Profile fetch — treated as a background refresh, NOT a requirement for auth.
+  // Falls back to stored user data if the endpoint fails (e.g. 403/401).
   const {
     data: user,
     isLoading: profileLoading,
@@ -40,15 +58,25 @@ export function useAdminAuth() {
   } = useQuery({
     queryKey: ["admin-profile"],
     queryFn: async () => {
-      const result = await getProfile();
-      if (result.success && result.data) {
-        return result.data;
+      try {
+        const result = await getProfile();
+        if (result.success && result.data) {
+          // Update localStorage with fresh data from server
+          localStorage.setItem("admin_user", JSON.stringify(result.data));
+          return result.data;
+        }
+      } catch {
+        // Profile endpoint failed — fall through to stored data
       }
       return null;
     },
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
+    retry: false, // Don't spam retries on auth failures
   });
+
+  // Merge: prefer fresh profile data, fall back to stored data
+  const resolvedUser = user ?? getStoredUser();
 
   const login = useCallback(
     async (credentials: AdminLoginCredentials) => {
@@ -88,22 +116,17 @@ export function useAdminAuth() {
 
   const checkPermission = useCallback(
     (permission: Permission) => {
-      return hasPermission((user?.role as AdminRole) || null, permission);
+      return hasPermission((resolvedUser?.role as AdminRole) || null, permission);
     },
-    [user]
+    [resolvedUser]
   );
 
-  const getStoredRole = (): AdminRole | null => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("admin_role") as AdminRole | null;
-  };
-
   return {
-    user: user ?? null,
-    role: (user?.role as AdminRole) || getStoredRole(),
+    user: resolvedUser ?? null,
+    role: (resolvedUser?.role as AdminRole) || getStoredRole(),
     isAuthenticated,
     isInitialized,
-    isLoading: isLoggingIn || profileLoading,
+    isLoading: isLoggingIn,
     isLoggingOut,
     login,
     logout,
