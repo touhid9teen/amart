@@ -329,6 +329,19 @@ export async function getProductsServer() {
   }
 }
 
+// Get a single product by ID (server action) — much faster than fetching all products
+export async function getProductByIdServer(id: string) {
+  try {
+    const baseUrl = BASE_URL;
+    const safeBaseUrl = baseUrl?.endsWith("/") ? baseUrl : `${baseUrl}/`;
+    const endpoint = `${safeBaseUrl}store/products/${id}/`;
+    const response = await axios.get(endpoint, { timeout: 10000 });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, data: null };
+  }
+}
+
 // Get all categories (server action)
 export async function getCategoryListServer() {
   try {
