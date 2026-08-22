@@ -76,13 +76,14 @@ export default function ArticleSection() {
               </div>
 
               <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#7fad39] transition-colors">
-                <Link href={`/articles/${article.slug}`}>
+                <Link href={`/articles/${article.slug}`} prefetch={false}>
                   {article.title}
                 </Link>
               </h3>
 
               <Link
                 href={`/articles/${article.slug}`}
+                prefetch={false}
                 className="text-gray-500 text-sm font-medium uppercase hover:text-[#7fad39] transition-colors inline-flex items-center gap-1 group/link"
               >
                 Read more

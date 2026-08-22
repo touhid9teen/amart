@@ -24,6 +24,7 @@ export default function CategoryList({
             <Link
               key={index}
               href={`/products-category/${cat.slug}`}
+              prefetch={false}
               onClick={onCategoryClick}
               className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-100 focus:text-primary transition group gap-3 rounded-md"
             >
@@ -45,6 +46,7 @@ export default function CategoryList({
             <Link
               key={index}
               href={`/products-category/${cat.slug}`}
+              prefetch={false}
               onClick={onCategoryClick}
               className="
                 group flex items-center gap-3 px-6 py-3
