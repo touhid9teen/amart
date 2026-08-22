@@ -2,10 +2,10 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { Search } from "lucide-react";
-import { useProducts } from "@/hook/use-products";
+import { useProducts } from "@/hooks/use-products";
 import type { Product } from "@/lib/types";
-import Products from "../_components/product/products";
-import BackButton from "../_components/back-button";
+import Products from "@/components/product/products";
+import BackButton from "@/components/shared/back-button";
 
 function SearchResults() {
   const searchParams = useSearchParams();

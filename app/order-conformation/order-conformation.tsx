@@ -15,7 +15,7 @@ import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getOrderById } from "@/lib/actions";
 import { getCookieValue } from "@/lib/auth-utils";
-import { BASE_URL } from "@/lib/variables";
+import { BASE_URL } from "@/lib/config";
 
 // Inline skeleton while loading
 function OrderConfirmationSkeleton() {

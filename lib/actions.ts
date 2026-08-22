@@ -1,7 +1,7 @@
 "use server";
 
 import { getEndpoint } from "@/lib/endpoint";
-import { handleError, handleSuccess } from "@/lib/request";
+import { handleError, handleSuccess } from "@/lib/response-helpers";
 import {
   AnyType,
   LoginCredentials,
@@ -11,7 +11,7 @@ import {
   SignupCredentials,
   SignupResponse,
 } from "@/lib/types";
-import { BASE_URL } from "@/lib/variables";
+import { BASE_URL } from "@/lib/config";
 import axios, { AxiosError } from "axios";
 import { cookies } from "next/headers";
 

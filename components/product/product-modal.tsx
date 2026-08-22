@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X, Star, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "@/contexts/cart-context";
-import CartActionButton from "../cart-action-button";
+import CartActionButton from "../cart/cart-action-button";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import type { Product } from "@/lib/types";
 

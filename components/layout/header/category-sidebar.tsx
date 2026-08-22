@@ -4,7 +4,7 @@ import {
   List,
 } from "lucide-react";
 import { useEffect } from "react";
-import CategoryList from "../category/category-list";
+import CategoryList from "../../category/category-list";
 
 interface CategorySidebarProps {
   isOpen: boolean;

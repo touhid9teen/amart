@@ -1,4 +1,4 @@
-import { BASE_URL } from "./variables";
+import { BASE_URL } from "./config";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

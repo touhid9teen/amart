@@ -20,7 +20,7 @@ import { ArrowLeft, Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { createProduct, getProductFormData } from "@/lib/services/product.service";
-import { slugify } from "@/app/_utils/slugify";
+import { slugify } from "@/lib/utils/slugify";
 
 export default function CreateProductPage() {
   const router = useRouter();

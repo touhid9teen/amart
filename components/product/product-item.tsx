@@ -2,7 +2,7 @@
 
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
-import ProductDetails from "./productItem-details";
+import ProductDetails from "./product-item-details";
 import { Eye } from "lucide-react";
 import type { ProductItemProps, Product } from "@/lib/types";
 

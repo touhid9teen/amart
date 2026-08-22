@@ -3,7 +3,7 @@
 import { Calendar, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { articles } from "../_components/article-section"; // Import shared data
+import { articles } from "@/components/layout/article-section"; // Import shared data
 
 export default function ArticlesPage() {
  

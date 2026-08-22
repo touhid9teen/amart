@@ -1,6 +1,6 @@
 "use client";
 
-import CartActionButton from "../cart-action-button";
+import CartActionButton from "../cart/cart-action-button";
 import type { ProductDetailsProps } from "@/lib/types";
 
 export default function ProductDetails({

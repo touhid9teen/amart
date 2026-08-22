@@ -3,9 +3,9 @@ import { Search, X, FolderOpen } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useProducts } from "@/hook/use-products";
-import { useDebounce } from "@/hook/use-debounce";
-import { searchItems, categories } from "@/lib/variables";
+import { useProducts } from "@/hooks/use-products";
+import { useDebounce } from "@/hooks/use-debounce";
+import { searchItems, categories } from "@/lib/config";
 import type { Product } from "@/lib/types";
 
 interface MatchedCategory {

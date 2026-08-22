@@ -1,4 +1,4 @@
-import { categories } from "@/lib/variables";
+import { categories } from "@/lib/config";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 

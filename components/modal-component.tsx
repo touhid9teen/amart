@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsMobile } from "@/hook/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useEffect, useState } from "react";
 import {

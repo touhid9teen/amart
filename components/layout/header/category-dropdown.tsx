@@ -7,7 +7,7 @@ import {
 import {
   ChevronDown,
 } from "lucide-react";
-import CategoryList from "../category/category-list";
+import CategoryList from "../../category/category-list";
 
 export default function CategoryDropdown() {
   return (

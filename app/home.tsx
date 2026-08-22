@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import ArticleSection from "./_components/article-section";
-import CategorySidebar from "./_components/category/category-sidebar";
-import FeaturesSection from "./_components/feature-section";
-import HeroSection from "./_components/hero-section";
-import Products from "./_components/product/products";
-import SignupBanner from "./_components/signup-banner";
-import { useProducts } from "@/hook/use-products";
+import ArticleSection from "@/components/layout/article-section";
+import CategorySidebar from "@/components/category/category-sidebar";
+import FeaturesSection from "@/components/layout/feature-section";
+import HeroSection from "@/components/layout/hero-section";
+import Products from "@/components/product/products";
+import SignupBanner from "@/components/layout/signup-banner";
+import { useProducts } from "@/hooks/use-products";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

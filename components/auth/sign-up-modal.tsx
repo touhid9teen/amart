@@ -1,23 +1,23 @@
 "use client";
 
-import { ModalComponent } from "@/components/modal-component";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
-import { loginWithEmail } from "@/lib/actions";
-import { Eye, EyeOff, Loader2, Lock, Mail, X } from "lucide-react";
-import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Eye, EyeOff, Loader2, Lock, Mail, X } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import Logo from "../layout/header/logo";
+import Link from "next/link";
+import { ModalComponent } from "@/components/modal-component";
+import { signupWithEmail } from "@/lib/actions";
 import { toast } from "sonner";
-import Logo from "../header/logo";
-import { LOIN_ERROR_MESSAGES } from "@/lib/variables";
+import { SIGNUP_ERROR_MESSAGES } from "@/lib/config";
 
-export function LoginModal() {
+export function SingUpModal() {
   const {
     authModal,
     hideModals,
-    showSignUpModal,
-    setAuthState,
+    showLoginModal,
+    showVerificationModal,
     setEmail: setAuthEmail,
   } = useAuth();
   const [email, setEmail] = useState("");
@@ -38,7 +38,6 @@ export function LoginModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (isLoading) return;
     if (!isValidEmail) {
       toast.error("Please enter a valid email address.");
@@ -48,24 +47,25 @@ export function LoginModal() {
     setIsLoading(true);
 
     try {
-      const response = await loginWithEmail({ email, password });
+      const response = await signupWithEmail({ email, password });
 
       if (response.success) {
         setAuthEmail(email);
-        setAuthState("authenticated");
-        hideModals();
-        toast.success("Welcome back!", {
-          description: "You've logged in successfully.",
+        showVerificationModal();
+        toast.success("OTP Sent", {
+          description: response.message,
         });
         return;
       }
 
       // ── Server returned a structured failure ───────────────────────────
       const displayMessage =
-        LOIN_ERROR_MESSAGES[response.code] ?? response.message;
-      toast.error(displayMessage);
+        SIGNUP_ERROR_MESSAGES[response.code] ?? response.message;
+      toast.error("Signup Failed", {
+        description: displayMessage,
+      });
     } catch {
-      // ── Unexpected / network-level failure ─────────────────────────────
+      // ── Unexpected failure (should rarely reach here) ──────────────────
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -74,7 +74,7 @@ export function LoginModal() {
 
   return (
     <ModalComponent
-      open={authModal === "login"}
+      open={authModal === "signup"}
       onOpenChange={(open) => {
         if (!open) hideModals();
       }}
@@ -95,10 +95,10 @@ export function LoginModal() {
             <Logo />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 text-center">
-            Welcome Back
+            Create Account
           </h1>
           <p className="text-gray-600 text-center mt-1 text-sm">
-            Enter your details to sign in to your account
+            Join Amart and start shopping smarter today
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export function LoginModal() {
               <input
                 value={password}
                 onChange={handlePasswordChange}
-                placeholder="Enter your password"
+                placeholder="Create a password (min 6 chars)"
                 className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
                 type={showPassword ? "text" : "password"}
               />
@@ -147,14 +147,6 @@ export function LoginModal() {
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
-            </div>
-            <div className="flex justify-end">
-              <a
-                href="#"
-                className="text-xs font-semibold text-primary hover:underline"
-              >
-                Forgot Password?
-              </a>
             </div>
           </div>
 
@@ -171,10 +163,10 @@ export function LoginModal() {
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="animate-spin text-white" size={20} />
-                <span>Signing In...</span>
+                <span>Creating Account...</span>
               </div>
             ) : (
-              "Sign In"
+              "Sign Up"
             )}
           </Button>
         </form>
@@ -187,16 +179,16 @@ export function LoginModal() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-2 text-gray-500 font-medium">
-                New to Amart?
+                Already have an account?
               </span>
             </div>
           </div>
 
           <button
-            onClick={showSignUpModal}
+            onClick={showLoginModal}
             className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors underline"
           >
-            Create an account
+            Login to your account
           </button>
         </div>
 

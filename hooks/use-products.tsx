@@ -1,4 +1,4 @@
-import { getRequest } from "@/lib/requests";
+import { getRequest } from "@/lib/api";
 import type { Product } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";

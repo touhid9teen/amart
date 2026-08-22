@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRequest } from "./requests";
+import { getRequest } from "./api";
 import { AnyType, EndpointType, QueryParamType } from "./types";
 
 export { useMutation, useQuery, useQueryClient };

@@ -3,7 +3,7 @@
 import type { Product } from "@/lib/types";
 import { useEffect, useState, useRef } from "react";
 import ProductModal from "./product-modal";
-import ProductItem from "./productItem";
+import ProductItem from "./product-item";
 
 function LazyCategoryRow({ category, products, openModal }: { category: string, products: Product[], openModal: (product: Product) => void }) {
   const [isVisible, setIsVisible] = useState(false);

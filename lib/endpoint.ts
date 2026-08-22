@@ -1,5 +1,5 @@
 import { EndpointType } from "./types";
-import { BASE_URL } from "./variables";
+import { BASE_URL } from "./config";
 
 const baseUrl = BASE_URL;
 

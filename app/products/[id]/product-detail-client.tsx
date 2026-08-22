@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import CartActionButton from "../../_components/cart-action-button";
+import CartActionButton from "@/components/cart/cart-action-button";
 import { useState, useEffect } from "react";
 import type { Product } from "@/lib/types";
 

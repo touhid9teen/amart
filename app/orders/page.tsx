@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { useOrders } from "@/hook/use-orders";
+import { useOrders } from "@/hooks/use-orders";
 import { useAuth } from "@/contexts/auth-context";
 import type { Order, OrderItem } from "@/lib/types";
 

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/input-otp";
 import { useAuth } from "@/contexts/auth-context";
 import { signupWithEmail, verifyOtpServer } from "@/lib/actions";
-import { OTP_ERROR_MESSAGES } from "@/lib/variables";
+import { OTP_ERROR_MESSAGES } from "@/lib/config";
 import { Loader2, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

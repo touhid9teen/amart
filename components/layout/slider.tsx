@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { sliderList } from "@/lib/variables";
+import { sliderList } from "@/lib/config";
 
 export default function HeroSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);

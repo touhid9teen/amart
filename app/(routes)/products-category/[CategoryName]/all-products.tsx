@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { SkeletonProductItem } from "@/app/_components/product/SkeletonProductItem";
-import ProductItem from "@/app/_components/product/productItem";
-import ProductModal from "@/app/_components/product/product-modal";
+import { SkeletonProductItem } from "@/components/product/skeleton-product-item";
+import ProductItem from "@/components/product/product-item";
+import ProductModal from "@/components/product/product-modal";
 import { Product } from "@/lib/types";
 
 export default function AllProducts({

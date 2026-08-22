@@ -1,6 +1,6 @@
 "use client";
 
-import BackButton from "@/app/_components/back-button";
+import BackButton from "@/components/shared/back-button";
 import { GetQuery } from "@/lib/queries";
 import type { Product } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";

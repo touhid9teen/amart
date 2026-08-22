@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Shield, Clock, Truck, Package } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { BASE_URL } from "@/lib/variables";
+import { BASE_URL } from "@/lib/config";
 import Image from "next/image";
 
 interface CartItem {
