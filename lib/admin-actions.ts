@@ -11,6 +11,16 @@ import type {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
 
+type ServerActionResponse<T = unknown> = {
+  success: boolean;
+  message: string;
+  data?: T;
+};
+
+function toPlainResponse<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value));
+}
+
 // ─── Cookie helpers (server-side) ────────────
 
 const ADMIN_TOKEN_KEY = "admin_access_token";
@@ -38,7 +48,7 @@ export async function adminLogin(
   credentials: AdminLoginCredentials
 ): Promise<AdminLoginResponse> {
   try {
-    const { data } = await axios.post<AdminLoginResponse>(
+    const { data } = await axios.post(
       `${API_BASE_URL}/api/admin/auth/login/`,
       credentials,
       {
@@ -47,34 +57,100 @@ export async function adminLogin(
       }
     );
 
-    if (data.success && data.data) {
+    // Handle plain axios response (may or may not be AdminLoginResponse-shaped)
+    const result = data as Record<string, unknown>;
+
+    // Backend may return success at the top level or inside a wrapper
+    const success = result.success ?? result.status === "success";
+    const message =
+      (typeof result.message === "string" && result.message) ||
+      (typeof result.detail === "string" && result.detail) ||
+      (success ? "Login successful" : "Login failed");
+
+    // Tokens may be nested under data.tokens, data.access, or at top level
+    const nestedData = (result.data ?? result) as Record<string, unknown>;
+    const tokens =
+      (nestedData.tokens as Record<string, string> | undefined) ?? null;
+    const accessToken =
+      tokens?.access_token ??
+      (nestedData.access_token as string | undefined) ??
+      (nestedData.access as string | undefined);
+    const refreshToken =
+      tokens?.refresh_token ??
+      (nestedData.refresh_token as string | undefined) ??
+      (nestedData.refresh as string | undefined);
+
+    // User may be nested under data.user, data.profile, or at top level
+    const user = (nestedData.user ?? nestedData) as ApiAdminUser | undefined;
+
+    if (success && accessToken && refreshToken && user) {
       // Set httpOnly cookies so the middleware can read them
       await Promise.all([
-        setCookie(ADMIN_TOKEN_KEY, data.data.tokens.access_token),
-        setCookie(ADMIN_REFRESH_KEY, data.data.tokens.refresh_token),
+        setCookie(ADMIN_TOKEN_KEY, accessToken),
+        setCookie(ADMIN_REFRESH_KEY, refreshToken),
       ]);
+
+      return {
+        success: true,
+        message,
+        data: {
+          user,
+          tokens: {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          },
+        },
+      };
     }
 
-    return data;
+    // Credentials were wrong or backend returned an error payload
+    return {
+      success: false,
+      message,
+    };
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      const serverResponse = error.response?.data as AdminLoginResponse | undefined;
-      if (serverResponse) {
-        return serverResponse;
+      const status = error.response?.status;
+      const serverData = error.response?.data;
+
+      // Try to extract a meaningful message from the backend error
+      const detail =
+        (serverData as Record<string, unknown>)?.detail ??
+        (serverData as Record<string, unknown>)?.message ??
+        (serverData as Record<string, unknown>)?.error ??
+        null;
+
+      if (detail && typeof detail === "string") {
+        return { success: false, message: detail };
       }
+
+      // If the server returned a response body, forward it so the client can
+      // surface whatever message the API provided.
+      if (serverData && typeof serverData === "object") {
+        return toPlainResponse(serverData) as AdminLoginResponse;
+      }
+
       if (error.code === "ECONNABORTED") {
         return {
           success: false,
           message: "Request timed out. Please check your connection.",
         };
       }
+
       if (!error.response) {
         return {
           success: false,
           message: "Network error. Please check your internet connection.",
         };
       }
+
+      return {
+        success: false,
+        message: `Server returned status ${status ?? "unknown"}. Please try again.`,
+      };
     }
+
+    // Non-axios error (e.g. JSON.parse, runtime error)
     return {
       success: false,
       message: "Something went wrong. Please try again.",
