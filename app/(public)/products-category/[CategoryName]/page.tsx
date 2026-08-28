@@ -6,6 +6,9 @@ interface Props {
   params: Promise<{ CategoryName: string }>;
 }
 
+// Guarantee static generation at build time (SSG)
+export const dynamic = "force-static";
+
 // SSG: pre-render every category page at build time from the static category list
 export function generateStaticParams() {
   return categories.map((cat) => ({ CategoryName: cat.slug }));

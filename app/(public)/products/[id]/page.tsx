@@ -1,13 +1,15 @@
-import { Metadata } from "next";
-import dynamic from "next/dynamic";
-import { notFound } from "next/navigation";
 import {
-  getProductByIdServer,
   getAllProductIdsServer,
+  getProductByIdServer,
 } from "@/lib/actions";
 import type { Product } from "@/lib/types";
 import { ArrowLeft } from "lucide-react";
+import { Metadata } from "next";
+import NextDynamic from "next/dynamic";
 import Link from "next/link";
+
+// Guarantee static generation at build time (SSG)
+export const dynamic = "force-static";
 
 // SSG: pre-render every product page at build time
 export async function generateStaticParams(): Promise<{ id: string }[]> {
@@ -16,7 +18,7 @@ export async function generateStaticParams(): Promise<{ id: string }[]> {
 }
 
 // Dynamic import the client component — keeps it out of initial JS bundle
-const ProductDetailClient = dynamic(
+const ProductDetailClient = NextDynamic(
   () => import("./product-detail-client"),
   {
     loading: () => (
