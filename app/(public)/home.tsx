@@ -7,11 +7,16 @@ import FeaturesSection from "@/components/layout/feature-section";
 import HeroSection from "@/components/layout/hero-section";
 import Products from "@/components/product/products";
 import SignupBanner from "@/components/layout/signup-banner";
-import { useProducts } from "@/hooks/use-products";
+import type { Product } from "@/lib/types";
 
-export default function Home() {
+export default function Home({
+  initialProducts,
+}: {
+  initialProducts: Product[];
+}) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { products, loading } = useProducts();
+  const products = initialProducts;
+  const loading = false;
 
   const filteredProducts = selectedCategory
     ? products.filter((product) =>
