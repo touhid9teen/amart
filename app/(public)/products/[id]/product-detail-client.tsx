@@ -30,6 +30,10 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       )
     : 0;
 
+  const onImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = "/placeholder.svg";
+  };
+
   const cleanProduct = (p: Product) => ({
     id: p.id,
     name: p.name,
@@ -96,7 +100,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
       {/* Product Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl overflow-hidden">
           <div className="flex flex-col lg:flex-row">
             {/* Image */}
             <div className="flex-1 bg-gray-50 p-4 sm:p-8 lg:p-12">
@@ -107,6 +111,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                   fill
                   className="object-contain p-4"
                   unoptimized
+                  onError={onImgError}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
                 />
@@ -119,30 +124,34 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             </div>
 
             {/* Details */}
-            <div className="flex-1 p-6 sm:p-8 lg:p-10 space-y-6">
+            <div className="flex-1 p-6 sm:p-8 lg:p-12 space-y-6">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {product.name}
                 </h1>
+                {product.ItemQuantityType && (
+                  <span className="inline-block mt-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                    {product.ItemQuantityType}
+                  </span>
+                )}
               </div>
 
               {/* Price */}
               <div className="space-y-1">
-                <div className="flex items-center gap-3">
+                <div className="flex items-baseline gap-3">
                   <span className="text-3xl font-bold text-gray-900">
                     ৳{product.sellingPice}
                   </span>
                   {product.mrp &&
                     Number(product.mrp) > Number(product.sellingPice) && (
-                      <span className="text-lg text-gray-500 line-through">
+                      <span className="text-lg text-gray-400 line-through">
                         ৳{product.mrp}
                       </span>
                     )}
                 </div>
                 {discountPercentage > 0 && (
                   <p className="text-sm text-green-600 font-medium">
-                    You save{" "}
-                    ৳
+                    You save ৳
                     {(
                       Number(product.mrp) - Number(product.sellingPice)
                     ).toFixed(0)}{" "}
@@ -176,7 +185,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               </div>
 
               {/* Features */}
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+              <div className="grid grid-cols-3 gap-4 pt-4">
                 <div className="flex flex-col items-center gap-2 text-center">
                   <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
                     <Truck className="h-5 w-5 text-blue-600" />
