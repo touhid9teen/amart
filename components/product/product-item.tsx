@@ -2,17 +2,23 @@
 
 import { useCart } from "@/contexts/cart-context";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ProductDetails from "./product-item-details";
 import { Eye } from "lucide-react";
 import type { ProductItemProps, Product } from "@/lib/types";
 
 export default function ProductItem({
   product,
-  onQuickView,
   isFeatured = false,
 }: ProductItemProps) {
+  const router = useRouter();
   const { cartItems, updateCart } = useCart();
   const quantity = (cartItems[product.id] as any)?.quantity || 0;
+
+  const goToProduct = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/products/${product.id}`);
+  };
 
   const cleanProduct = (product: Product) => ({
     id: product?.id,
@@ -101,26 +107,17 @@ export default function ProductItem({
           </div>
         )}
 
-        {/* Quick View Button */}
+        {/* View Product Button */}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onQuickView?.();
-          }}
+          onClick={goToProduct}
           className="absolute top-1 right-1 z-10 bg-white border border-gray-200 p-1 rounded hover:bg-gray-50"
-          aria-label="Quick view"
+          aria-label={`View ${product.name}`}
         >
           <Eye className="w-3 h-3 text-gray-700" />
         </button>
 
         {/* Product Image */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onQuickView?.();
-          }}
-          className="w-full h-full"
-        >
+        <button onClick={goToProduct} className="w-full h-full">
           <Image
             src={product.image || "/placeholder.svg"}
             alt={product.name}

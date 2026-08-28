@@ -2,7 +2,6 @@ export type AuthToken = string;
 
 export type ProductItemProps = {
   product: Product;
-  onQuickView?: () => void;
   isFeatured?: boolean;
 };
 

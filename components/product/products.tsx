@@ -2,10 +2,9 @@
 
 import type { Product } from "@/lib/types";
 import { useEffect, useState, useRef } from "react";
-import ProductModal from "./product-modal";
 import ProductItem from "./product-item";
 
-function LazyCategoryRow({ category, products, openModal }: { category: string, products: Product[], openModal: (product: Product) => void }) {
+function LazyCategoryRow({ category, products }: { category: string, products: Product[] }) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -47,7 +46,6 @@ function LazyCategoryRow({ category, products, openModal }: { category: string, 
                 <ProductItem
                   key={product.id || index}
                   product={product}
-                  onQuickView={() => openModal(product)}
                   isFeatured={true}
                 />
               ))}
@@ -102,24 +100,12 @@ export default function Products({
     []
   );
 
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   useEffect(() => {
     if (productList && productList.length > 0) {
       const grouped = groupProductsByCategory(productList);
       setGroupedProducts(grouped);
     }
   }, [productList]);
-
-  const openModal = (product: Product) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   if (isLoading) {
     return <ProductsSkeleton />;
@@ -160,14 +146,8 @@ export default function Products({
           key={category} 
           category={category} 
           products={products} 
-          openModal={openModal} 
         />
       ))}
-
-      {/* Product Modal */}
-      {isModalOpen && selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={closeModal} />
-      )}
 
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {

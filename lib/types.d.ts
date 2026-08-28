@@ -2,7 +2,6 @@ type AuthToken = string;
 
 type ProductItemProps = {
   product: Product;
-  onQuickView?: () => void;
   isFeatured?: boolean;
 };
 

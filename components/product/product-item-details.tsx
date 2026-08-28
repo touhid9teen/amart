@@ -1,6 +1,7 @@
 "use client";
 
 import CartActionButton from "../cart/cart-action-button";
+import { useRouter } from "next/navigation";
 import type { ProductDetailsProps } from "@/lib/types";
 
 export default function ProductDetails({
@@ -11,11 +12,21 @@ export default function ProductDetails({
   incrementQuantity,
   decrementQuantity,
 }: ProductDetailsProps) {
+  const router = useRouter();
+
+  const goToProduct = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/products/${product.id}`);
+  };
+
   return (
     <div className="p-3 sm:p-4 space-y-3">
       {/* Product Name */}
       <div className="space-y-1">
-        <h3 className="font-semibold text-sm sm:text-sm line-clamp-4 text-gray-900 leading-tight">
+        <h3
+          onClick={goToProduct}
+          className="font-semibold text-sm sm:text-sm line-clamp-4 text-gray-900 leading-tight cursor-pointer hover:text-primary transition-colors"
+        >
           {product?.name}
         </h3>
       </div>
