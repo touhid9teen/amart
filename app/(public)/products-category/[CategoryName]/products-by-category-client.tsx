@@ -1,26 +1,17 @@
 "use client";
 
 import BackButton from "@/components/shared/back-button";
-import { GetQuery } from "@/lib/queries";
 import type { Product } from "@/lib/types";
-import { Skeleton } from "@/components/ui/skeleton";
 import AllProducts from "./all-products";
 
 export default function ProductsByCategoryClient({
   categoryName,
+  products,
 }: {
   categoryName: string;
+  products: Product[];
 }) {
-  const { data: productList = [], isLoading } = GetQuery(
-    "getProductByCategory",
-    { params: { slug: categoryName } },
-    true,
-    null,
-    Infinity,
-  ) as {
-    data: Product[];
-    isLoading: boolean;
-  };
+  const productList = products;
 
   // Format category name for display
   const formattedCategoryName = categoryName
@@ -41,9 +32,7 @@ export default function ProductsByCategoryClient({
                   {formattedCategoryName}
                 </h1>
                 <span className="text-sm sm:text-base text-gray-600 mt-1 block">
-                  {isLoading ? (
-                    <Skeleton className="h-4 w-32" />
-                  ) : `${productList.length} products found`}
+                  {productList.length} products found
                 </span>
               </div>
             </div>
@@ -53,9 +42,7 @@ export default function ProductsByCategoryClient({
 
       {/* Main Content with proper margins */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {isLoading ? (
-          <ProductsSkeleton />
-        ) : productList.length === 0 ? (
+        {productList.length === 0 ? (
           <EmptyState categoryName={formattedCategoryName} />
         ) : (
           <div className="space-y-8">
@@ -65,42 +52,6 @@ export default function ProductsByCategoryClient({
             </div>
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-// Skeleton component for loading state
-function ProductsSkeleton() {
-  return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-16" />
-        </div>
-        <div className="flex gap-4 overflow-hidden">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-[180px]">
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="aspect-square bg-gray-100 p-4">
-                  <Skeleton className="w-full h-full rounded" />
-                </div>
-                <div className="p-4 space-y-3">
-                  <div className="space-y-2">
-                    <Skeleton className="h-3 w-16" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-3 w-12" />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-5 w-12" />
-                    <Skeleton className="h-8 w-16 rounded" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );

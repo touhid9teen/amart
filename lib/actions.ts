@@ -342,6 +342,47 @@ export async function getProductByIdServer(id: string) {
   }
 }
 
+// Fetch the full product list (raw array) — used at build time by generateStaticParams
+export async function getAllProductsServer(): Promise<any[]> {
+  try {
+    const endpoint = await getEndpoint("getProducts");
+    const response = await axios.get(endpoint, { timeout: 15000 });
+    const body = response.data;
+    return Array.isArray(body) ? body : (body?.data ?? []);
+  } catch (error) {
+    return [];
+  }
+}
+
+// All product IDs — used by generateStaticParams to pre-render every product page
+export async function getAllProductIdsServer(): Promise<string[]> {
+  const products = await getAllProductsServer();
+  return products.map((p) => String(p?.id)).filter(Boolean);
+}
+
+// Normalize a category label so it can be matched against product category names
+const normalizeLabel = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+// Fetch products that belong to a category slug — filters the full product list
+// server-side using each product's category name field.
+export async function getProductsByCategoryServer(
+  categoryName: string
+): Promise<any[]> {
+  const products = await getAllProductsServer();
+  const target = normalizeLabel(categoryName);
+
+  if (!target) return products;
+
+  return products.filter((product) => {
+    const categories = product?.categories;
+    if (!Array.isArray(categories)) return false;
+    return categories.some(
+      (cat) => normalizeLabel(String(cat?.name ?? cat)) === target
+    );
+  });
+}
+
 // Get all categories (server action)
 export async function getCategoryListServer() {
   try {
