@@ -336,7 +336,18 @@ export async function getProductByIdServer(id: string) {
     const safeBaseUrl = baseUrl?.endsWith("/") ? baseUrl : `${baseUrl}/`;
     const endpoint = `${safeBaseUrl}store/products/${id}/`;
     const response = await axios.get(endpoint, { timeout: 10000 });
-    return { success: true, data: response.data };
+    const product = response.data;
+
+    // The single-product endpoint sometimes omits the image (returns null)
+    // even though the list endpoint has it. Fall back to list data so the
+    // detail page matches the home page.
+    if (!product?.image) {
+      const all = await getAllProductsServer();
+      const match = all.find((p) => String(p?.id) === String(id));
+      if (match?.image) product.image = match.image;
+    }
+
+    return { success: true, data: product };
   } catch (error) {
     return { success: false, data: null };
   }
