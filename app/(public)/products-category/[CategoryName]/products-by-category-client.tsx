@@ -24,17 +24,15 @@ export default function ProductsByCategoryClient({
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4 sm:py-6">
-            <div className="flex items-center space-x-4">
-              <Breadcrumb items={[{ label: formattedCategoryName }]} />
-              <div>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-                  {formattedCategoryName}
-                </h1>
-                <span className="text-sm sm:text-base text-gray-600 mt-1 block">
-                  {productList.length} products found
-                </span>
-              </div>
+          <div className="py-4 sm:py-6">
+            <Breadcrumb items={[{ label: formattedCategoryName }]} />
+            <div className="mt-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+                {formattedCategoryName}
+              </h1>
+              <span className="text-sm sm:text-base text-gray-600 mt-1 block">
+                {productList.length} products found
+              </span>
             </div>
           </div>
         </div>
