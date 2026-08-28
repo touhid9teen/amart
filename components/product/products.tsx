@@ -2,7 +2,24 @@
 
 import type { Product } from "@/lib/types";
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import ProductItem from "./product-item";
+import { categories } from "@/lib/config";
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function categorySlug(name: string): string {
+  const match = categories.find(
+    (c) => c.name.toLowerCase() === name.toLowerCase(),
+  );
+  return match ? match.slug : slugify(name);
+}
 
 function LazyCategoryRow({ category, products }: { category: string, products: Product[] }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -28,26 +45,36 @@ function LazyCategoryRow({ category, products }: { category: string, products: P
     };
   }, []);
 
+  const viewAllHref = `/products-category/${categorySlug(category)}`;
+
   return (
     <div ref={ref} className="space-y-3 min-h-[250px] w-full">
       {isVisible ? (
         <>
           {/* Category Header */}
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-4">
               <h2 className="text-xl font-bold text-gray-900">{category}</h2>
+              <Link
+                href={viewAllHref}
+                className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors whitespace-nowrap"
+              >
+                View all
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
 
           {/* Products Container */}
           <div className="container mx-auto px-4">
-            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
               {products.map((product, index) => (
-                <ProductItem
-                  key={product.id || index}
-                  product={product}
-                  isFeatured={true}
-                />
+                <div key={product.id || index} className="flex-shrink-0 w-[160px] sm:w-[180px]">
+                  <ProductItem
+                    product={product}
+                    isFeatured={true}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -55,11 +82,12 @@ function LazyCategoryRow({ category, products }: { category: string, products: P
       ) : (
         <div className="container mx-auto px-4 animate-pulse">
           <div className="h-6 w-48 bg-gray-200 rounded mb-4" />
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-             <div className="h-[280px] bg-gray-100 rounded-lg"></div>
-             <div className="h-[280px] bg-gray-100 rounded-lg hidden sm:block"></div>
-             <div className="h-[280px] bg-gray-100 rounded-lg hidden md:block"></div>
-             <div className="h-[280px] bg-gray-100 rounded-lg hidden lg:block"></div>
+          <div className="flex gap-4 overflow-hidden pb-2">
+             <div className="h-[280px] w-[160px] bg-gray-100 rounded-lg"></div>
+             <div className="h-[280px] w-[160px] bg-gray-100 rounded-lg"></div>
+             <div className="h-[280px] w-[160px] bg-gray-100 rounded-lg"></div>
+             <div className="h-[280px] w-[160px] bg-gray-100 rounded-lg hidden sm:block"></div>
+             <div className="h-[280px] w-[160px] bg-gray-100 rounded-lg hidden md:block"></div>
           </div>
         </div>
       )}
@@ -70,6 +98,7 @@ function LazyCategoryRow({ category, products }: { category: string, products: P
 interface ProductsProps {
   productList: Product[];
   isLoading?: boolean;
+  selectedCategory?: string | null;
 }
 
 function groupProductsByCategory(products: Product[]): [string, Product[]][] {
@@ -95,6 +124,7 @@ function groupProductsByCategory(products: Product[]): [string, Product[]][] {
 export default function Products({
   productList,
   isLoading = false,
+  selectedCategory = null,
 }: ProductsProps) {
   const [groupedProducts, setGroupedProducts] = useState<[string, Product[]][]>(
     []
@@ -135,6 +165,28 @@ export default function Products({
         <p className="text-sm text-gray-600">
           Please check back later for available products.
         </p>
+      </div>
+    );
+  }
+
+  if (selectedCategory) {
+    return (
+      <div className="space-y-6 bg-white py-6">
+        <div className="container mx-auto px-4">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            {selectedCategory}
+          </h2>
+          <div className="flex flex-wrap gap-4 pb-2">
+            {productList.map((product, index) => (
+              <div key={product.id || index} className="flex-shrink-0 w-[160px] sm:w-[180px]">
+                <ProductItem
+                  product={product}
+                  isFeatured={true}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

@@ -41,7 +41,11 @@ export default function Home({
           </aside>
 
           <main className="w-full lg:w-3/4">
-            <Products productList={filteredProducts} isLoading={loading} />
+            <Products
+              productList={filteredProducts}
+              isLoading={loading}
+              selectedCategory={selectedCategory}
+            />
           </main>
         </div>
       </div>
