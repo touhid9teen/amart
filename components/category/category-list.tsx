@@ -1,5 +1,5 @@
 import { categories } from "@/lib/config";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, List } from "lucide-react";
 import Link from "next/link";
 
 interface CategoryListProps {
@@ -69,6 +69,22 @@ export default function CategoryList({
   // Default: sidebar variant
   return (
     <div className="flex flex-col">
+      <button
+        onClick={() => onSelectCategory?.(null)}
+        className={`
+          group flex items-center gap-3 py-3 px-2
+          text-sm font-normal transition-colors
+          border-b border-dashed border-gray-300 bg-transparent
+          ${selectedCategory === null ? "text-primary" : "text-gray-600 hover:text-primary"}
+          hover:bg-transparent
+        `}
+      >
+        <div className="relative w-5 h-5 shrink-0 opacity-80 flex items-center justify-center">
+          <List className="w-5 h-5" />
+        </div>
+        <span className="flex-1 text-left font-semibold">All</span>
+        <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors opacity-0 group-hover:opacity-100" />
+      </button>
       {categories.map((cat, index) => {
         const Icon = cat.icon;
         const isSelected = selectedCategory && selectedCategory === cat.name;
