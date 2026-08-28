@@ -3,13 +3,21 @@
 import { usePathname } from "next/navigation";
 import Navbar from "./navbar";
 
+const NAVBAR_ROUTES = [
+  "/",
+  "/about-us",
+  "/articles",
+  "/our-services",
+  "/help&support",
+  "/faqs",
+  "/terms&condition",
+  "/privacy-policy",
+];
+
 export default function NavbarWrapper() {
   const pathname = usePathname();
-  const isCartRoute = pathname === "/cart";
-  const isOrderConfirmationRoute = pathname.startsWith("/order-conformation");
-  const isCheckoutRoute = pathname.startsWith("/order-the-cart-items");
 
-  if (isCartRoute || isOrderConfirmationRoute || isCheckoutRoute) return null;
+  if (!NAVBAR_ROUTES.includes(pathname)) return null;
 
   return <Navbar />;
 }
