@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Truck, ShieldCheck, RefreshCw } from "lucide-react";
+import { Truck, ShieldCheck, RefreshCw } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import CartActionButton from "@/components/cart/cart-action-button";
+import Breadcrumb from "@/components/shared/breadcrumb";
 import { useState, useEffect } from "react";
 import type { Product } from "@/lib/types";
 
 export default function ProductDetailClient({ product }: { product: Product }) {
-  const router = useRouter();
   const { cartItems, updateCart } = useCart();
   const [quantity, setQuantity] = useState(0);
   const [adding, setAdding] = useState(false);
@@ -88,13 +87,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </button>
+          <Breadcrumb
+            items={[
+              { label: product?.name || "Product" },
+            ]}
+          />
         </div>
       </div>
 

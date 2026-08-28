@@ -13,16 +13,15 @@ import {
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ArrowLeft,
   Package,
   Calendar,
   MapPin,
   ShoppingBag,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useOrders } from "@/hooks/use-orders";
 import { useAuth } from "@/contexts/auth-context";
+import Breadcrumb from "@/components/shared/breadcrumb";
 import type { Order, OrderItem } from "@/lib/types";
 
 const getStatusColor = (status: string) => {
@@ -173,9 +172,7 @@ function LoginPrompt() {
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" size="icon" onClick={() => window.history.back()}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <Breadcrumb items={[{ label: "My Orders" }]} />
         <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
       </div>
 
@@ -204,7 +201,6 @@ function LoginPrompt() {
 }
 
 export default function OrdersPage() {
-  const router = useRouter();
   const { authState } = useAuth();
   const { orders, isLoading, error } = useOrders();
 
@@ -242,13 +238,11 @@ export default function OrdersPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-4 sm:py-8">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="outline" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
-        </div>
+    <div className="container mx-auto px-4 py-4 sm:py-8">
+      <div className="flex items-center gap-4 mb-6">
+        <Breadcrumb items={[{ label: "My Orders" }]} />
+        <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
+      </div>
         <Card>
           <CardContent className="flex items-center justify-center py-8 sm:py-12">
             <div className="text-center">
@@ -266,9 +260,7 @@ export default function OrdersPage() {
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <Breadcrumb items={[{ label: "My Orders" }]} />
         <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
       </div>
 

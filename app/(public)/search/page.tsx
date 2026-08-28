@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
 import type { Product } from "@/lib/types";
 import Products from "@/components/product/products";
-import BackButton from "@/components/shared/back-button";
+import Breadcrumb from "@/components/shared/breadcrumb";
 
 function SearchResults() {
   const searchParams = useSearchParams();
@@ -60,7 +60,7 @@ function SearchResults() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4 sm:py-6">
             <div className="flex items-center space-x-4">
-              <BackButton />
+              <Breadcrumb items={[{ label: "Search" }]} />
             </div>
           </div>
         </div>
