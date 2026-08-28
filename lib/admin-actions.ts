@@ -9,37 +9,37 @@ import type {
 } from "@/lib/admin-types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
-
-type ServerActionResponse<T = unknown> = {
-  success: boolean;
-  message: string;
-  data?: T;
-};
-
-function toPlainResponse<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
+  process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // ─── Cookie helpers (server-side) ────────────
 
 const ADMIN_TOKEN_KEY = "admin_access_token";
 const ADMIN_REFRESH_KEY = "admin_refresh_token";
 
-async function setCookie(name: string, value: string) {
-  const cookieStore = await cookies();
-  cookieStore.set(name, value, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-    path: "/",
-    maxAge: 60 * 60 * 24, // 1 day
-  });
+async function safeSetCookie(name: string, value: string) {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set(name, value, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+  } catch (err) {
+    // Non-fatal: client-side code in cookie-utils.ts also sets the same
+    // cookies via document.cookie so the middleware can still read them.
+    console.warn(`[admin-actions] safeSetCookie failed for "${name}":`, err);
+  }
 }
 
 async function removeCookie(name: string) {
-  const cookieStore = await cookies();
-  cookieStore.delete(name);
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete(name);
+  } catch (err) {
+    console.warn(`[admin-actions] removeCookie failed for "${name}":`, err);
+  }
 }
 
 // ─── Admin Login ─────────────────────────────
@@ -48,7 +48,7 @@ export async function adminLogin(
   credentials: AdminLoginCredentials
 ): Promise<AdminLoginResponse> {
   try {
-    const { data } = await axios.post(
+    const { data } = await axios.post<Record<string, unknown>>(
       `${API_BASE_URL}/api/admin/auth/login/`,
       credentials,
       {
@@ -57,37 +57,30 @@ export async function adminLogin(
       }
     );
 
-    // Handle plain axios response (may or may not be AdminLoginResponse-shaped)
-    const result = data as Record<string, unknown>;
+    const success =
+      (data.success as boolean) ?? (data.status as string) === "success";
+    const message = [
+      data.message,
+      data.detail,
+      success ? "Login successful" : "Login failed",
+    ].find((item) => typeof item === "string") as string;
 
-    // Backend may return success at the top level or inside a wrapper
-    const success = result.success ?? result.status === "success";
-    const message =
-      (typeof result.message === "string" && result.message) ||
-      (typeof result.detail === "string" && result.detail) ||
-      (success ? "Login successful" : "Login failed");
-
-    // Tokens may be nested under data.tokens, data.access, or at top level
-    const nestedData = (result.data ?? result) as Record<string, unknown>;
-    const tokens =
-      (nestedData.tokens as Record<string, string> | undefined) ?? null;
+    const nestedData = (data.data ?? data) as Record<string, unknown>;
+    const tokens = nestedData.tokens as Record<string, string> | undefined;
     const accessToken =
       tokens?.access_token ??
-      (nestedData.access_token as string | undefined) ??
-      (nestedData.access as string | undefined);
+      (nestedData.access_token as string) ??
+      (nestedData.access as string);
     const refreshToken =
       tokens?.refresh_token ??
-      (nestedData.refresh_token as string | undefined) ??
-      (nestedData.refresh as string | undefined);
-
-    // User may be nested under data.user, data.profile, or at top level
+      (nestedData.refresh_token as string) ??
+      (nestedData.refresh as string);
     const user = (nestedData.user ?? nestedData) as ApiAdminUser | undefined;
 
     if (success && accessToken && refreshToken && user) {
-      // Set httpOnly cookies so the middleware can read them
-      await Promise.all([
-        setCookie(ADMIN_TOKEN_KEY, accessToken),
-        setCookie(ADMIN_REFRESH_KEY, refreshToken),
+      await Promise.allSettled([
+        safeSetCookie(ADMIN_TOKEN_KEY, accessToken),
+        safeSetCookie(ADMIN_REFRESH_KEY, refreshToken),
       ]);
 
       return {
@@ -95,62 +88,44 @@ export async function adminLogin(
         message,
         data: {
           user,
-          tokens: {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          },
+          tokens: { access_token: accessToken, refresh_token: refreshToken },
         },
       };
     }
 
-    // Credentials were wrong or backend returned an error payload
-    return {
-      success: false,
-      message,
-    };
+    return { success: false, message };
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
-      const serverData = error.response?.data;
+      const serverData = error.response?.data as Record<string, unknown> | undefined;
+      const detail = serverData
+        ? (serverData.detail ?? serverData.message ?? serverData.error)
+        : null;
 
-      // Try to extract a meaningful message from the backend error
-      const detail =
-        (serverData as Record<string, unknown>)?.detail ??
-        (serverData as Record<string, unknown>)?.message ??
-        (serverData as Record<string, unknown>)?.error ??
-        null;
-
-      if (detail && typeof detail === "string") {
+      if (typeof detail === "string") {
         return { success: false, message: detail };
       }
-
-      // If the server returned a response body, forward it so the client can
-      // surface whatever message the API provided.
       if (serverData && typeof serverData === "object") {
-        return toPlainResponse(serverData) as AdminLoginResponse;
+        return JSON.parse(JSON.stringify(serverData)) as AdminLoginResponse;
       }
-
       if (error.code === "ECONNABORTED") {
         return {
           success: false,
           message: "Request timed out. Please check your connection.",
         };
       }
-
       if (!error.response) {
         return {
           success: false,
           message: "Network error. Please check your internet connection.",
         };
       }
-
       return {
         success: false,
-        message: `Server returned status ${status ?? "unknown"}. Please try again.`,
+        message: `Server returned status ${error.response.status ?? "unknown"}. Please try again.`,
       };
     }
 
-    // Non-axios error (e.g. JSON.parse, runtime error)
+    console.error("[admin-actions] adminLogin non-axios error:", error);
     return {
       success: false,
       message: "Something went wrong. Please try again.",
@@ -230,9 +205,9 @@ export async function adminRefreshToken(): Promise<{
     );
 
     if (data.success && data.data) {
-      await Promise.all([
-        setCookie(ADMIN_TOKEN_KEY, data.data.access_token),
-        setCookie(ADMIN_REFRESH_KEY, data.data.refresh_token),
+      await Promise.allSettled([
+        safeSetCookie(ADMIN_TOKEN_KEY, data.data.access_token),
+        safeSetCookie(ADMIN_REFRESH_KEY, data.data.refresh_token),
       ]);
     }
 
@@ -254,7 +229,7 @@ export async function adminRefreshToken(): Promise<{
 // ─── Admin Logout ────────────────────────────
 
 export async function adminLogout(): Promise<{ success: boolean; message: string }> {
-  await Promise.all([
+  await Promise.allSettled([
     removeCookie(ADMIN_TOKEN_KEY),
     removeCookie(ADMIN_REFRESH_KEY),
   ]);

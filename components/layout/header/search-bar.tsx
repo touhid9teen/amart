@@ -25,6 +25,8 @@ export default function SearchBar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { searchProducts } = useProducts();
+  const searchProductsRef = useRef(searchProducts);
+  searchProductsRef.current = searchProducts;
   const debouncedQuery = useDebounce(input, 300);
 
   // Rotate placeholder text
@@ -50,7 +52,7 @@ export default function SearchBar() {
       const lower = debouncedQuery.toLowerCase();
 
       // Match products
-      const matchedProducts = searchProducts(debouncedQuery).slice(0, 5);
+      const matchedProducts = searchProductsRef.current(debouncedQuery).slice(0, 5);
       setProductResults(matchedProducts);
 
       // Match categories
@@ -64,7 +66,7 @@ export default function SearchBar() {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [debouncedQuery, searchProducts]);
+  }, [debouncedQuery]);
 
   // Close dropdown on outside click
   useEffect(() => {

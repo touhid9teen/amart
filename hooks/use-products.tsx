@@ -1,13 +1,14 @@
 import { getRequest } from "@/lib/api";
 import type { Product } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 const PRODUCTS_QUERY_KEY = ["products"] as const;
+const EMPTY_PRODUCTS: Product[] = [];
 
 export const useProducts = () => {
   const {
-    data: products = [],
+    data,
     isLoading: loading,
     error,
   } = useQuery<Product[]>({
@@ -19,6 +20,8 @@ export const useProducts = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  const products = useMemo(() => data ?? EMPTY_PRODUCTS, [data]);
 
   const searchProducts = useCallback(
     (query: string): Product[] => {
