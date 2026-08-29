@@ -1,5 +1,11 @@
 // Directly read from environment — no import from config
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+// Same cleanup as config.ts to handle newlines/comments in .env
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+let baseUrl = rawBaseUrl;
+if (baseUrl && (baseUrl.includes("\n") || baseUrl.startsWith("#"))) {
+  const match = baseUrl.match(/https?:\/\/[^\s"']+/);
+  if (match) baseUrl = match[0];
+}
 
 // ─── All endpoint paths (single source of truth) ────────────
 
