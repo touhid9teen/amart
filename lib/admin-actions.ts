@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import axios from "axios";
-import { API_BASE_URL } from "@/lib/config";
+import { getEndpoint } from "@/lib/endpoint";
 import type {
   AdminLoginCredentials,
   AdminLoginResponse,
@@ -47,7 +47,7 @@ export async function adminLogin(
 ): Promise<AdminLoginResponse> {
   try {
     const { data } = await axios.post<Record<string, unknown>>(
-      `${API_BASE_URL}/api/admin/auth/login/`,
+      getEndpoint("adminLogin"),
       credentials,
       {
         headers: { "Content-Type": "application/json" },
@@ -150,7 +150,7 @@ export async function adminGetProfile(): Promise<{
     }
 
     const { data } = await axios.get(
-      `${API_BASE_URL}/api/admin/auth/profile/`,
+      getEndpoint("adminProfile"),
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -194,7 +194,7 @@ export async function adminRefreshToken(): Promise<{
     }
 
     const { data } = await axios.post(
-      `${API_BASE_URL}/api/admin/auth/refresh/`,
+      getEndpoint("adminRefreshToken"),
       { refresh_token: refreshToken },
       {
         headers: { "Content-Type": "application/json" },

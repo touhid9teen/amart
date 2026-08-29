@@ -69,6 +69,8 @@ export const BASE_URL = baseUrl;
  */
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
+
+
 // Category Types and Data
 export type CategoryItem = {
   name: string;

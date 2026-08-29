@@ -38,7 +38,7 @@ export async function getRequest<T = AnyType>(
     const pathname =
       query.pathname ?? (query.params?.slug ? String(query.params.slug) : "");
 
-    const endpoint = await getEndpoint(url, pathname);
+    const endpoint = getEndpoint(url, pathname);
 
     console.log("ENDPOINT:", endpoint);
 
@@ -83,7 +83,7 @@ export async function postRequest(
   query: QueryParamType = queryParamDefaultValue,
   hasFile = false
 ) {
-  const endpoint = await getEndpoint(url, query.pathname);
+  const endpoint = getEndpoint(url, query.pathname);
   // const locale = await getLocale(); // Add if you have locale logic
   return await api
     .post(endpoint, values, {

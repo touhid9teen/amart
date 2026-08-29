@@ -11,7 +11,7 @@ import {
   SignupCredentials,
   SignupResponse,
 } from "@/lib/types";
-import { BASE_URL } from "@/lib/config";
+
 import axios, { AxiosError } from "axios";
 import { cookies } from "next/headers";
 
@@ -19,7 +19,7 @@ import { cookies } from "next/headers";
 
 export async function getCartItems(jwt: string) {
   try {
-    const endpoint = await getEndpoint("getCartItems");
+    const endpoint = getEndpoint("getCartItems");
     const response = await axios.get(endpoint, {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -36,8 +36,8 @@ export async function getCartItems(jwt: string) {
 // 2. Remove one item from cart
 export async function removeOneFromCart(jwt: string, itemId: number) {
   try {
-    // Convert itemId to string if required by getEndpoint
-    const endpoint = await getEndpoint(`removeCartItem`, String(itemId));
+    // Convert itemId to string
+    const endpoint = getEndpoint("removeCartItem", String(itemId));
     const response = await axios.delete(endpoint, {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -52,7 +52,7 @@ export async function removeOneFromCart(jwt: string, itemId: number) {
 // 3. Remove all items from cart
 export async function removeAllFromCart(jwt: string) {
   try {
-    const endpoint = await getEndpoint("removeAllCartItems");
+    const endpoint = getEndpoint("removeAllCartItems");
     const response = await axios.delete(endpoint, {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -67,7 +67,7 @@ export async function removeAllFromCart(jwt: string) {
 // 4. Add item to cart
 export async function addToCart(data: AnyType, jwt: string) {
   try {
-    const endpoint = await getEndpoint("addToCart");
+    const endpoint = getEndpoint("addToCart");
     const response = await axios.post(endpoint, data, {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -81,7 +81,7 @@ export async function addToCart(data: AnyType, jwt: string) {
 
 // AUTH SERVER ACTIONS
 
-const SIGNUP_ENDPOINT = `${BASE_URL}auth/email-signup/`;
+const SIGNUP_ENDPOINT = getEndpoint("signup");
 
 export async function signupWithEmail(
   credentials: SignupCredentials,
@@ -146,7 +146,7 @@ export async function loginWithEmail(
   credentials: LoginCredentials,
 ): Promise<LoginResponse> {
   try {
-    const endpoint = `${BASE_URL}auth/email-login/`;
+    const endpoint = getEndpoint("login");
     const { data } = await axios.post<LoginResponse>(endpoint, credentials, {
       headers: { "Content-Type": "application/json" },
       timeout: 10_000, // 10s timeout
@@ -203,7 +203,7 @@ function resolveLoginError(error: unknown): LoginResponse {
   };
 }
 
-const OTP_VERIFY_ENDPOINT = `${BASE_URL}auth/verify-otp/`;
+const OTP_VERIFY_ENDPOINT = getEndpoint("verifyOtp");
 
 export async function verifyOtpServer(
   credentials: OtpVerifyCredentials,
@@ -270,7 +270,7 @@ export async function refreshAuthTokenServer() {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get("refreshToken")?.value;
     if (!refreshToken) throw new Error("No refresh token");
-    const endpoint = `${BASE_URL}auth/refresh-token/`;
+    const endpoint = getEndpoint("refreshAuthToken");
     const response = await axios.post(endpoint, { refresh: refreshToken });
     if (response.data.access_token) {
       await setCookie("authToken", response.data.access_token);
@@ -309,10 +309,10 @@ export async function logoutUserServer() {
 
 // Get order by ID
 export async function getOrderById(orderId: string, authToken: string) {
-  const baseUrl = BASE_URL;
+  const endpoint = getEndpoint("getOrderById", orderId);
   const headers: Record<string, string> = {};
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
-  const res = await axios.get(`${baseUrl}detail/orders/${orderId}/`, {
+  const res = await axios.get(endpoint, {
     headers,
   });
   return res.data;
@@ -321,7 +321,7 @@ export async function getOrderById(orderId: string, authToken: string) {
 // Get all products (server action)
 export async function getProductsServer() {
   try {
-    const endpoint = await getEndpoint("getProducts");
+    const endpoint = getEndpoint("getProducts");
     const response = await axios.get(endpoint);
     return response.data;
   } catch (error) {
@@ -332,9 +332,7 @@ export async function getProductsServer() {
 // Get a single product by ID (server action) — much faster than fetching all products
 export async function getProductByIdServer(id: string) {
   try {
-    const baseUrl = BASE_URL;
-    const safeBaseUrl = baseUrl?.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    const endpoint = `${safeBaseUrl}store/products/${id}/`;
+    const endpoint = getEndpoint("getProducts", id);
     const response = await axios.get(endpoint, { timeout: 10000 });
     const product = response.data;
 
@@ -356,7 +354,7 @@ export async function getProductByIdServer(id: string) {
 // Fetch the full product list (raw array) — used at build time by generateStaticParams
 export async function getAllProductsServer(): Promise<any[]> {
   try {
-    const endpoint = await getEndpoint("getProducts");
+    const endpoint = getEndpoint("getProducts");
     const response = await axios.get(endpoint, { timeout: 15000 });
     const body = response.data;
     return Array.isArray(body) ? body : (body?.data ?? []);
@@ -397,7 +395,7 @@ export async function getProductsByCategoryServer(
 // Get all categories (server action)
 export async function getCategoryListServer() {
   try {
-    const endpoint = await getEndpoint("getCategoryList");
+    const endpoint = getEndpoint("getCategoryList");
     const response = await axios.get(endpoint);
     return response.data;
   } catch (error) {
@@ -419,7 +417,8 @@ export async function submitOrderServer(orderData: AnyType) {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const res = await axios.post(`${BASE_URL}detail/orders/`, orderData, {
+    const endpoint = getEndpoint("submitOrder");
+    const res = await axios.post(endpoint, orderData, {
       headers,
     });
 
