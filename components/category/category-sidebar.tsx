@@ -30,6 +30,7 @@ export default function CategorySidebar({
             src="/sale-banner.png"
             alt="Sale Discounts Up To 30%"
             fill
+            sizes="(max-width: 768px) 100vw, 300px"
             className="object-cover"
          />
       </div>

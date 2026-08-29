@@ -63,6 +63,12 @@ if (baseUrl && (baseUrl.includes("\n") || baseUrl.startsWith("#"))) {
 
 export const BASE_URL = baseUrl;
 
+/**
+ * Centralized API base URL for all admin/client services.
+ * Set NEXT_PUBLIC_API_BASE_URL in your .env.local (dev) or Vercel env vars (prod).
+ */
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 // Category Types and Data
 export type CategoryItem = {
   name: string;

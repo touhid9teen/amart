@@ -2,14 +2,12 @@
 
 import { cookies } from "next/headers";
 import axios from "axios";
+import { API_BASE_URL } from "@/lib/config";
 import type {
   AdminLoginCredentials,
   AdminLoginResponse,
   ApiAdminUser,
 } from "@/lib/admin-types";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // ─── Cookie helpers (server-side) ────────────
 

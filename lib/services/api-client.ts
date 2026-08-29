@@ -3,8 +3,7 @@
 
 import axios from "axios";
 import { getAdminToken, clearAdminSession } from "@/lib/cookie-utils";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
+import { API_BASE_URL } from "@/lib/config";
 
 // Axios instance for real API calls
 export const apiClient = axios.create({

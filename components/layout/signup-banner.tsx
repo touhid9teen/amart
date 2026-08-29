@@ -14,6 +14,7 @@ export default function SignupBanner() {
           src="/signup-bg.png"
           alt="Signup Background Pattern"
           fill
+          sizes="100vw"
           className="object-cover opacity-100"
           priority
         />
@@ -26,6 +27,7 @@ export default function SignupBanner() {
             src="/signup-text.png"
             alt="Get 20% Discount On Your First Purchase"
             fill
+            sizes="(max-width: 640px) 80vw, 500px"
             className="object-contain"
           />
         </div>

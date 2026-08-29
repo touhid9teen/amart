@@ -1,7 +1,6 @@
 import type { AdminProduct, AdminProductFormData, ApiProductListItem, ApiProductDetail, ApiResponse, ApiCategory, ApiBrand } from "@/lib/admin-types";
 import { apiClient } from "./api-client";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://amart-backend-wpqx.onrender.com";
+import { API_BASE_URL } from "@/lib/config";
 
 function resolveImageUrl(url: string | null | undefined): string {
   if (!url) return "";
