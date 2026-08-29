@@ -11,9 +11,9 @@ const ENDPOINTS: Record<string, string> = {
   refreshAuthToken: "auth/refresh-token/",
 
   // Admin Auth
-  adminLogin: "/api/admin/auth/login/",
-  adminProfile: "/api/admin/auth/profile/",
-  adminRefreshToken: "/api/admin/auth/refresh/",
+  adminLogin: "api/admin/auth/login/",
+  adminProfile: "api/admin/auth/profile/",
+  adminRefreshToken: "api/admin/auth/refresh/",
 
   // Store
   getProducts: "store/products/",

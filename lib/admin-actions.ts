@@ -122,7 +122,7 @@ export async function adminLogin(
       };
     }
 
-    console.error("[admin-actions] adminLogin non-axios error:", error);
+    console.error("[admin-actions] adminLogin error:", error);
     return {
       success: false,
       message: "Something went wrong. Please try again.",
