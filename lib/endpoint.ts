@@ -52,11 +52,9 @@ export function getEndpoint(key: string, param?: string): string {
     throw new Error(`Unknown endpoint key: "${key}". Check amart/lib/endpoint.ts`);
   }
 
-  // Ensure BASE_URL ends with "/"
+  // Build URL without double slashes
   const safeBase = baseUrl?.endsWith("/") ? baseUrl : `${baseUrl}/`;
-
-  // Ensure path starts with "/" if it doesn't already
-  const safePath = path.startsWith("/") ? path : `/${path}`;
+  const safePath = path.startsWith("/") ? path.slice(1) : path;
 
   let url = `${safeBase}${safePath}`;
 
