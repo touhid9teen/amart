@@ -11,14 +11,16 @@ import { Button } from "@/components/ui/button";
 
 export default function AdminLayoutWrapper({
   children,
+  token,
 }: {
   children: React.ReactNode;
+  token?: string;
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isInitialized, isLoading } = useAdminAuth();
+  const { isAuthenticated, isInitialized, isLoading } = useAdminAuth(token);
 
   const isLoginPage = pathname === "/admin/login";
 

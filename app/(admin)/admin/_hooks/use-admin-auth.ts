@@ -18,7 +18,12 @@ import { toast } from "sonner";
 // ADMIN AUTH HOOK
 // ==============================
 
-export function useAdminAuth() {
+/**
+ * @param serverToken - Token passed from server-side layout.
+ *   If provided, the user is considered authenticated immediately
+ *   (server already verified the cookie exists).
+ */
+export function useAdminAuth(serverToken?: string) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [user, setUser] = useState<ApiAdminUser | null>(null);
@@ -27,8 +32,32 @@ export function useAdminAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // On mount: check cookie + localStorage, then fetch profile from server
+  // On mount: use server-provided token or fall back to client-side cookie
   useEffect(() => {
+    // Server already confirmed the cookie exists — trust it immediately
+    if (serverToken) {
+      const stored = getAdminStoredUser();
+      setIsAuthenticated(true);
+      setUser(stored);
+
+      // Background profile refresh (best-effort, don't block auth)
+      adminGetProfile()
+        .then((res) => {
+          if (res.success && res.data) {
+            setUser(res.data);
+            localStorage.setItem("admin_user", JSON.stringify(res.data));
+          }
+          // If profile fails (admin not in DB), that's fine — keep stored data
+        })
+        .catch(() => {
+          // Profile endpoint failed — keep stored data, user is still authenticated
+        });
+
+      setIsInitialized(true);
+      return;
+    }
+
+    // Fallback: client-side cookie check (e.g. during SPA navigation)
     const token = getAdminToken();
     const stored = getAdminStoredUser();
 
@@ -36,7 +65,6 @@ export function useAdminAuth() {
       setIsAuthenticated(true);
       setUser(stored);
 
-      // Background profile refresh via server action
       adminGetProfile()
         .then((res) => {
           if (res.success && res.data) {
@@ -50,12 +78,10 @@ export function useAdminAuth() {
     }
 
     setIsInitialized(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [serverToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = useCallback(
     async (credentials: { email: string; password: string }) => {
-      // Login is now handled directly in the login page via adminLogin server action.
-      // This is kept as a fallback / convenience for other consumers.
       setIsLoading(true);
       try {
         const { adminLogin } = await import("@/lib/admin-actions");
