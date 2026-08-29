@@ -115,7 +115,7 @@ export default function CheckoutPage() {
         throw new Error(res.message || "Order submission failed.");
       }
 
-      const data = res.data;
+      const data = res.data as any;
       router.replace(`/order-conformation?page=success&id=${data.order_id}`);
       setTimeout(() => updateCart({}), 0);
     } catch (err) {

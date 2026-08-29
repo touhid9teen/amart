@@ -18,5 +18,5 @@ export default async function ProductsByCategory({ params }: Props) {
   const { CategoryName } = await params;
   const products = await getProductsByCategoryServer(CategoryName);
 
-  return <ProductsByCategoryClient categoryName={CategoryName} products={products} />;
+  return <ProductsByCategoryClient categoryName={CategoryName} products={products as any} />;
 }

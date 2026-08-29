@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 export default async function Page() {
   const rawProducts = await getAllProductsServer();
 
-  const products = rawProducts.map((p) => ({
+  const products = rawProducts.map((p: any) => ({
     id: p?.id,
     name: p?.name,
     description: p?.description || "",

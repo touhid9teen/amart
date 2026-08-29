@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import axios from "axios";
 import { getEndpoint } from "@/lib/endpoint";
+import { handleError } from "@/lib/response-helpers";
 import type {
   AdminLoginCredentials,
   AdminLoginResponse,
@@ -25,8 +26,6 @@ async function safeSetCookie(name: string, value: string) {
       maxAge: 60 * 60 * 24, // 1 day
     });
   } catch (err) {
-    // Non-fatal: client-side code in cookie-utils.ts also sets the same
-    // cookies via document.cookie so the middleware can still read them.
     console.warn(`[admin-actions] safeSetCookie failed for "${name}":`, err);
   }
 }
@@ -149,28 +148,20 @@ export async function adminGetProfile(): Promise<{
       };
     }
 
-    const { data } = await axios.get(
-      getEndpoint("adminProfile"),
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        timeout: 15_000,
-      }
-    );
+    const { data } = await axios.get(getEndpoint("adminProfile"), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 15_000,
+    });
 
     return data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const serverResponse = error.response?.data;
-      if (serverResponse) {
-        return serverResponse;
-      }
-    }
+    const result = await handleError(error);
     return {
       success: false,
-      message: "Failed to fetch profile.",
+      message: result.message,
     };
   }
 }
@@ -211,15 +202,10 @@ export async function adminRefreshToken(): Promise<{
 
     return data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const serverResponse = error.response?.data;
-      if (serverResponse) {
-        return serverResponse;
-      }
-    }
+    const result = await handleError(error);
     return {
       success: false,
-      message: "Failed to refresh token.",
+      message: result.message,
     };
   }
 }

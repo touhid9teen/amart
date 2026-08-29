@@ -129,6 +129,24 @@ export type Order = {
 // For legacy code, provide a generic type
 export type AnyType = unknown;
 
+// ─── Standard API response types ──────────────────────────────
+
+export interface ApiSuccessResponse<T = unknown> {
+  success: true;
+  message: string | undefined;
+  data: T | undefined;
+  code: number | string | undefined;
+  errors: null;
+}
+
+export interface ApiErrorResponse {
+  success: false;
+  message: string;
+  data: unknown;
+  code: number | string | undefined;
+  errors: unknown;
+}
+
 export interface LoginResponse {
   success: boolean;
   code: string;

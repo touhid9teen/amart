@@ -2,9 +2,10 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getEndpoint } from "@/lib/endpoint";
-import { AnyType, EndpointType, QueryParamType } from "./types";
+import { handleError } from "@/lib/response-helpers";
+import type { AnyType, EndpointType, QueryParamType } from "./types";
 
 const api = axios.create();
 
@@ -22,81 +23,49 @@ const queryParamDefaultValue: QueryParamType = {
   params: {},
 };
 
-import { AxiosError } from "axios";
-interface ApiResponse<T = AnyType> {
-  success: boolean;
-  message: string;
-  data?: T;
-}
 export async function getRequest<T = AnyType>(
   url: keyof EndpointType,
   query: QueryParamType = queryParamDefaultValue
-): Promise<ApiResponse<T>> {
+): Promise<T> {
   try {
-    console.log("REQUEST:", url, query);
-
     const pathname =
       query.pathname ?? (query.params?.slug ? String(query.params.slug) : "");
 
     const endpoint = getEndpoint(url, pathname);
 
-    console.log("ENDPOINT:", endpoint);
-
-    const response = await api.get<ApiResponse<T>>(endpoint, {
+    const response = await api.get(endpoint, {
       params: { ...(query?.params || {}) },
     });
 
-    return response.data;
+    // Return the raw data directly (unwrap .data.data or .data)
+    return (response.data?.data ?? response.data) as T;
   } catch (error) {
-    const err = error as AxiosError<ApiResponse>;
-
-    console.log("❌ STATUS:", err.response?.status);
-    console.log("❌ DATA:", err.response?.data);
-
-    // 🔥 Handle server error
-    if (err.response?.status === 500) {
-      return {
-        success: false,
-        message: "Server error. Please try again later.",
-      };
-    }
-
-    // 🔥 Handle known API error
-    if (err.response?.data) {
-      return {
-        success: false,
-        message: err.response.data.message || "Request failed",
-      };
-    }
-
-    // 🔥 Network / unknown error
-    return {
-      success: false,
-      message: err.message || "Network error",
-    };
+    const result = await handleError(error);
+    throw new Error(result.message);
   }
 }
 
-export async function postRequest(
+export async function postRequest<T = AnyType>(
   url: keyof EndpointType,
   values: unknown,
   query: QueryParamType = queryParamDefaultValue,
   hasFile = false
-) {
-  const endpoint = getEndpoint(url, query.pathname);
-  // const locale = await getLocale(); // Add if you have locale logic
-  return await api
-    .post(endpoint, values, {
+): Promise<T> {
+  try {
+    const endpoint = getEndpoint(url, query.pathname);
+
+    const response = await api.post(endpoint, values, {
       headers: {
         "Content-Type": hasFile ? "multipart/form-data" : "application/json",
-        // 'Accept-Language': locale,
       },
-    })
-    .then((res) => res.data)
-    .catch(async (error) => {
-      if (error?.status === 401) {
-        redirect("/");
-      }
-      return Promise.reject(error?.response?.data);
     });
+
+    return (response.data?.data ?? response.data) as T;
+  } catch (error) {
+    if ((error as AxiosError)?.response?.status === 401) {
+      redirect("/");
+    }
+    const result = await handleError(error);
+    throw new Error(result.message);
+  }
 }

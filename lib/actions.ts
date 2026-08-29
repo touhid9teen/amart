@@ -2,7 +2,7 @@
 
 import { getEndpoint } from "@/lib/endpoint";
 import { handleError, handleSuccess } from "@/lib/response-helpers";
-import {
+import type {
   AnyType,
   LoginCredentials,
   LoginResponse,
@@ -15,20 +15,17 @@ import {
 import axios, { AxiosError } from "axios";
 import { cookies } from "next/headers";
 
-// 1. Get all cart items
+// ─── Cart ─────────────────────────────────────────────────────
 
+// 1. Get all cart items
 export async function getCartItems(jwt: string) {
   try {
     const endpoint = getEndpoint("getCartItems");
     const response = await axios.get(endpoint, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
+      headers: { Authorization: `Bearer ${jwt}` },
     });
-    // return response;
-    return { ...(await handleSuccess(response)), data: response };
+    return handleSuccess(response);
   } catch (error) {
-    // return error;
     return handleError(error);
   }
 }
@@ -36,12 +33,9 @@ export async function getCartItems(jwt: string) {
 // 2. Remove one item from cart
 export async function removeOneFromCart(jwt: string, itemId: number) {
   try {
-    // Convert itemId to string
     const endpoint = getEndpoint("removeCartItem", String(itemId));
     const response = await axios.delete(endpoint, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
+      headers: { Authorization: `Bearer ${jwt}` },
     });
     return handleSuccess(response);
   } catch (error) {
@@ -54,9 +48,7 @@ export async function removeAllFromCart(jwt: string) {
   try {
     const endpoint = getEndpoint("removeAllCartItems");
     const response = await axios.delete(endpoint, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
+      headers: { Authorization: `Bearer ${jwt}` },
     });
     return handleSuccess(response);
   } catch (error) {
@@ -69,9 +61,7 @@ export async function addToCart(data: AnyType, jwt: string) {
   try {
     const endpoint = getEndpoint("addToCart");
     const response = await axios.post(endpoint, data, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
+      headers: { Authorization: `Bearer ${jwt}` },
     });
     return handleSuccess(response);
   } catch (error) {
@@ -79,12 +69,76 @@ export async function addToCart(data: AnyType, jwt: string) {
   }
 }
 
-// AUTH SERVER ACTIONS
+// ─── Auth ─────────────────────────────────────────────────────
 
+const ACCESS_TOKEN_COOKIE = "authToken";
+const REFRESH_TOKEN_COOKIE = "refreshToken";
+
+// 1. Login with email
+export async function loginWithEmail(
+  credentials: LoginCredentials
+): Promise<LoginResponse> {
+  try {
+    const endpoint = getEndpoint("login");
+    const { data } = await axios.post<LoginResponse>(endpoint, credentials, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 10_000,
+    });
+
+    if (data.success && data.data) {
+      await Promise.all([
+        setCookie(ACCESS_TOKEN_COOKIE, data.data.access_token),
+        setCookie(REFRESH_TOKEN_COOKIE, data.data.refresh_token),
+      ]);
+    }
+
+    return data;
+  } catch (error) {
+    return resolveLoginError(error);
+  }
+}
+
+function resolveLoginError(error: unknown): LoginResponse {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError<LoginResponse>;
+    const serverResponse = axiosError.response?.data;
+
+    if (serverResponse?.code) {
+      return {
+        success: false,
+        code: serverResponse.code,
+        message: serverResponse.message ?? "Login failed. Please try again.",
+      };
+    }
+
+    if (axiosError.code === "ECONNABORTED") {
+      return {
+        success: false,
+        code: "AUTH_TIMEOUT",
+        message: "Request timed out. Please check your connection.",
+      };
+    }
+    if (!axiosError.response) {
+      return {
+        success: false,
+        code: "AUTH_NETWORK_ERROR",
+        message: "Network error. Please check your internet connection.",
+      };
+    }
+  }
+
+  return {
+    success: false,
+    code: "AUTH_UNKNOWN_ERROR",
+    message: "Something went wrong. Please try again.",
+  };
+}
+
+// 2. Signup with email
 const SIGNUP_ENDPOINT = getEndpoint("signup");
 
 export async function signupWithEmail(
-  credentials: SignupCredentials,
+  credentials: SignupCredentials
 ): Promise<SignupResponse> {
   try {
     const { data } = await axios.post<SignupResponse>(
@@ -93,7 +147,7 @@ export async function signupWithEmail(
       {
         headers: { "Content-Type": "application/json" },
         timeout: 10_000,
-      },
+      }
     );
     return data;
   } catch (error) {
@@ -105,7 +159,6 @@ function resolveSignupError(error: unknown): SignupResponse {
   if (axios.isAxiosError(error)) {
     const serverResponse = error.response?.data as SignupResponse | undefined;
 
-    // Server returned a structured error response
     if (serverResponse?.code) {
       return {
         success: false,
@@ -138,75 +191,11 @@ function resolveSignupError(error: unknown): SignupResponse {
   };
 }
 
-// 1. Login with email
-const ACCESS_TOKEN_COOKIE = "authToken";
-const REFRESH_TOKEN_COOKIE = "refreshToken";
-
-export async function loginWithEmail(
-  credentials: LoginCredentials,
-): Promise<LoginResponse> {
-  try {
-    const endpoint = getEndpoint("login");
-    const { data } = await axios.post<LoginResponse>(endpoint, credentials, {
-      headers: { "Content-Type": "application/json" },
-      timeout: 10_000, // 10s timeout
-    });
-
-    if (data.success && data.data) {
-      await Promise.all([
-        setCookie(ACCESS_TOKEN_COOKIE, data.data.access_token),
-        setCookie(REFRESH_TOKEN_COOKIE, data.data.refresh_token),
-      ]);
-    }
-
-    return data;
-  } catch (error) {
-    return resolveLoginError(error);
-  }
-}
-
-function resolveLoginError(error: unknown): LoginResponse {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<LoginResponse>;
-    const serverResponse = axiosError.response?.data;
-
-    // Server returned a structured error response
-    if (serverResponse?.code) {
-      return {
-        success: false,
-        code: serverResponse.code,
-        message: serverResponse.message ?? "Login failed. Please try again.",
-      };
-    }
-
-    // Network-level errors
-    if (axiosError.code === "ECONNABORTED") {
-      return {
-        success: false,
-        code: "AUTH_TIMEOUT",
-        message: "Request timed out. Please check your connection.",
-      };
-    }
-    if (!axiosError.response) {
-      return {
-        success: false,
-        code: "AUTH_NETWORK_ERROR",
-        message: "Network error. Please check your internet connection.",
-      };
-    }
-  }
-
-  return {
-    success: false,
-    code: "AUTH_UNKNOWN_ERROR",
-    message: "Something went wrong. Please try again.",
-  };
-}
-
+// 3. Verify OTP
 const OTP_VERIFY_ENDPOINT = getEndpoint("verifyOtp");
 
 export async function verifyOtpServer(
-  credentials: OtpVerifyCredentials,
+  credentials: OtpVerifyCredentials
 ): Promise<OtpVerifyResponse> {
   try {
     const { data } = await axios.post<OtpVerifyResponse>(
@@ -215,9 +204,8 @@ export async function verifyOtpServer(
       {
         headers: { "Content-Type": "application/json" },
         timeout: 10_000,
-      },
+      }
     );
-
     return data;
   } catch (error) {
     return resolveOtpError(error);
@@ -226,17 +214,14 @@ export async function verifyOtpServer(
 
 function resolveOtpError(error: unknown): OtpVerifyResponse {
   if (axios.isAxiosError(error)) {
-    const serverResponse = error.response?.data as
-      | OtpVerifyResponse
-      | undefined;
+    const serverResponse = error.response?.data as OtpVerifyResponse | undefined;
 
     if (serverResponse?.code) {
       return {
         success: false,
         code: serverResponse.code,
         message:
-          serverResponse.message ??
-          "OTP verification failed. Please try again.",
+          serverResponse.message ?? "OTP verification failed. Please try again.",
       };
     }
 
@@ -264,7 +249,7 @@ function resolveOtpError(error: unknown): OtpVerifyResponse {
   };
 }
 
-// 3. Refresh Auth Token
+// 4. Refresh Auth Token
 export async function refreshAuthTokenServer() {
   try {
     const cookieStore = await cookies();
@@ -278,13 +263,14 @@ export async function refreshAuthTokenServer() {
         await setCookie("refreshToken", response.data.refresh_token);
       }
     }
-    return response;
+    return handleSuccess(response);
   } catch (error) {
     return handleError(error);
   }
 }
 
-// Cookie management functions
+// ─── Cookie helpers ───────────────────────────────────────────
+
 export async function setCookie(key: string, value: string) {
   const cookieStore = await cookies();
   cookieStore.set(key, value, {
@@ -294,42 +280,67 @@ export async function setCookie(key: string, value: string) {
   });
 }
 
-// 4. Logout
+// 5. Logout
 export async function logoutUserServer() {
   try {
     const cookieStore = await cookies();
     cookieStore.set("authToken", "");
     cookieStore.set("refreshToken", "");
     cookieStore.set("authId", "");
-    return { success: true };
+    return { success: true as const, message: "Logged out", data: undefined, code: undefined, errors: null };
   } catch (error) {
     return handleError(error);
   }
 }
 
-// Get order by ID
+// ─── Orders ───────────────────────────────────────────────────
+
 export async function getOrderById(orderId: string, authToken: string) {
-  const endpoint = getEndpoint("getOrderById", orderId);
-  const headers: Record<string, string> = {};
-  if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
-  const res = await axios.get(endpoint, {
-    headers,
-  });
-  return res.data;
+  try {
+    const endpoint = getEndpoint("getOrderById", orderId);
+    const headers: Record<string, string> = {};
+    if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+    const res = await axios.get(endpoint, { headers });
+    return handleSuccess(res);
+  } catch (error) {
+    return handleError(error);
+  }
 }
+
+export async function submitOrderServer(orderData: AnyType) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("authToken")?.value;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const endpoint = getEndpoint("submitOrder");
+    const res = await axios.post(endpoint, orderData, { headers });
+    return handleSuccess(res);
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+// ─── Products ─────────────────────────────────────────────────
 
 // Get all products (server action)
 export async function getProductsServer() {
   try {
     const endpoint = getEndpoint("getProducts");
     const response = await axios.get(endpoint);
-    return response.data;
+    return handleSuccess(response);
   } catch (error) {
     return handleError(error);
   }
 }
 
-// Get a single product by ID (server action) — much faster than fetching all products
+// Get a single product by ID — much faster than fetching all products
 export async function getProductByIdServer(id: string) {
   try {
     const endpoint = getEndpoint("getProducts", id);
@@ -341,18 +352,19 @@ export async function getProductByIdServer(id: string) {
     // detail page matches the home page.
     if (!product?.image) {
       const all = await getAllProductsServer();
-      const match = all.find((p) => String(p?.id) === String(id));
-      if (match?.image) product.image = match.image;
+      const match = all.find((p: AnyType) => String((p as AnyType & { id?: string | number })?.id) === String(id));
+      if ((match as AnyType & { image?: string })?.image)
+        product.image = (match as AnyType & { image?: string }).image;
     }
 
-    return { success: true, data: product };
+    return { success: true as const, data: product, message: undefined, code: undefined, errors: null };
   } catch (error) {
-    return { success: false, data: null };
+    return handleError(error);
   }
 }
 
 // Fetch the full product list (raw array) — used at build time by generateStaticParams
-export async function getAllProductsServer(): Promise<any[]> {
+export async function getAllProductsServer(): Promise<AnyType[]> {
   try {
     const endpoint = getEndpoint("getProducts");
     const response = await axios.get(endpoint, { timeout: 15000 });
@@ -366,7 +378,7 @@ export async function getAllProductsServer(): Promise<any[]> {
 // All product IDs — used by generateStaticParams to pre-render every product page
 export async function getAllProductIdsServer(): Promise<string[]> {
   const products = await getAllProductsServer();
-  return products.map((p) => String(p?.id)).filter(Boolean);
+  return products.map((p: AnyType) => String((p as AnyType & { id?: string | number })?.id)).filter(Boolean);
 }
 
 // Normalize a category label so it can be matched against product category names
@@ -377,14 +389,15 @@ const normalizeLabel = (value: string) =>
 // server-side using each product's category name field.
 export async function getProductsByCategoryServer(
   categoryName: string
-): Promise<any[]> {
+): Promise<AnyType[]> {
   const products = await getAllProductsServer();
   const target = normalizeLabel(categoryName);
 
   if (!target) return products;
 
-  return products.filter((product) => {
-    const categories = product?.categories;
+  return products.filter((product: AnyType) => {
+    const p = product as AnyType & { categories?: { name?: string }[] };
+    const categories = p?.categories;
     if (!Array.isArray(categories)) return false;
     return categories.some(
       (cat) => normalizeLabel(String(cat?.name ?? cat)) === target
@@ -392,37 +405,13 @@ export async function getProductsByCategoryServer(
   });
 }
 
-// Get all categories (server action)
+// ─── Categories ───────────────────────────────────────────────
+
 export async function getCategoryListServer() {
   try {
     const endpoint = getEndpoint("getCategoryList");
     const response = await axios.get(endpoint);
-    return response.data;
-  } catch (error) {
-    return handleError(error);
-  }
-}
-
-// Submit Order (server action)
-export async function submitOrderServer(orderData: AnyType) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("authToken")?.value;
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    const endpoint = getEndpoint("submitOrder");
-    const res = await axios.post(endpoint, orderData, {
-      headers,
-    });
-
-    return handleSuccess(res);
+    return handleSuccess(response);
   } catch (error) {
     return handleError(error);
   }
