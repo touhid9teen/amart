@@ -171,9 +171,9 @@ function LoginPrompt() {
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="mb-6">
         <Breadcrumb items={[{ label: "My Orders" }]} />
-        <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mt-2">My Orders</h1>
       </div>
 
       <Card>
@@ -239,9 +239,9 @@ export default function OrdersPage() {
   if (error) {
     return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="mb-6">
         <Breadcrumb items={[{ label: "My Orders" }]} />
-        <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mt-2">My Orders</h1>
       </div>
         <Card>
           <CardContent className="flex items-center justify-center py-8 sm:py-12">
@@ -259,9 +259,9 @@ export default function OrdersPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="mb-6">
         <Breadcrumb items={[{ label: "My Orders" }]} />
-        <h1 className="text-xl sm:text-2xl font-bold">My Orders</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mt-2">My Orders</h1>
       </div>
 
       {!orders || orders.length === 0 ? (

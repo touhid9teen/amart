@@ -6,9 +6,12 @@ import { useCart } from "@/contexts/cart-context";
 import CartActionButton from "@/components/cart/cart-action-button";
 import Breadcrumb from "@/components/shared/breadcrumb";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import type { Product } from "@/lib/types";
 
 export default function ProductDetailClient({ product }: { product: Product }) {
+  const router = useRouter();
   const { cartItems, updateCart } = useCart();
   const [quantity, setQuantity] = useState(0);
   const [adding, setAdding] = useState(false);
@@ -86,7 +89,15 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary transition-colors"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </button>
           <Breadcrumb
             items={[
               { label: product?.name || "Product" },
